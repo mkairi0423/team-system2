@@ -6,6 +6,8 @@
     <title>Document</title>
 </head>
 <body>
+    <h1>HELLO WORLD!</h1>
+    <h2>最新の更新05/15</h2>
     
 </body>
 </html>
