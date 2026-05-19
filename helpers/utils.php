@@ -22,7 +22,7 @@ function getPDO()
 
         // 作成した PDO を返す
         return $pdo;
-        // return "登録完了";
+        // return "登録完了";//debug用
     } catch (PDOException $e) {
         // 接続失敗時はスクリプトを停止してエラーを表示
         die("データベースに接続できませんでした。エラー：" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
