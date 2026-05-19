@@ -1,3 +1,8 @@
+<?php
+require_once  __DIR__ . "/../helpers/utils.php";
+
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
