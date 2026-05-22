@@ -16,7 +16,7 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    cname VARCHAR(50) NOT NULL
+    categorie VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE ingredients (

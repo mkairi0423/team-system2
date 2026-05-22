@@ -7,7 +7,7 @@ TRUNCATE TABLE users;
 TRUNCATE TABLE categories;
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO categories (cname) VALUES 
+INSERT INTO categories (categorie) VALUES 
 ('肉・魚類'),
 ('野菜・果物類'),
 ('卵・乳製品・大豆'),
