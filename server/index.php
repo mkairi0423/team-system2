@@ -4,7 +4,6 @@ require_once __DIR__ . "/../helpers/utils.php";
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== "POST") {
-    homeidou();
     exit;
 }
 
@@ -34,7 +33,7 @@ if (strlen(trim($pass)) <= 7) {
 
 //エラーメッセージがあったらHomeに移動
 if (!empty($_SESSION['emp_err']) || !empty($_SESSION['emp_no_err']) || !empty($_SESSION['pass_err'])) {
-    homeidou();
+        
     exit;
 }
 
@@ -65,7 +64,7 @@ try {
 } catch (PDOException $poe) {
 
     $_SESSION['error_message_detail'] = $poe->getMessage();
-    nextpage("kanrisha");
+   
     exit;
 }
 
