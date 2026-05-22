@@ -1,6 +1,25 @@
 <?php
 
 require_once __DIR__ . "/def.php";
+
+
+
+/**
+ * h
+ * htmlspecialcharsの省略
+ */
+function h($str)
+{
+    return htmlspecialchars($str, ENT_QUOTES, "UTF-8");
+}
+
+/**
+ * getPDO() 関数：
+ * MySQL に接続する PDO オブジェクトを作成して返します。
+ * static $pdo を使うことで、同じリクエスト内で PDO 接続を一度だけ作成します。
+ * モダン PHP 風に PDO 作成時にオプションを設定しています。
+ */
+
 function getPDO()
 {
     // すでに PDO 接続が存在する場合はそのまま返す
