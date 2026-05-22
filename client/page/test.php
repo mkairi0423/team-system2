@@ -4,8 +4,11 @@
 // localhostで動作
 // =======================================
 
-// APIキー（絶対に自分のキーに変更）
-$apiKey = "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";
+$env = parse_ini_file(__DIR__ . "/.env");
+
+$apiKey = $env["OPENAI_API_KEY"];
+echo $apiKey;
+
 
 // 冷蔵庫の食材
 $foods = [
