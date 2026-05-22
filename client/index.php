@@ -3,11 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ログインページ</title>
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-    <h1>HELLO WORLD!</h1>
-    <h2>最新の更新05/15</h2>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="icon-area">
+                <!-- <img src="images/Image.jpg" alt="Frigge Icon" class="icon"> -->
+                <h1>れいぞうこ</h1>
+            </div>
+
+            <form>
+                <input type="email" placeholder="メールアドレス">
+                <input type="password" placeholder="パスワード">
+                <button class="btn-primary">ログイン</button>
+            </form>
+
+            <div class="sub-links">
+                <a href="#">アカウント作成</a>
+                <a href="lost-pass.php">パスワードを忘れた方</a>
+            </div>
+        </div>
+    </div>
     
 </body>
 </html>
