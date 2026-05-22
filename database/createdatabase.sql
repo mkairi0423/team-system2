@@ -1,5 +1,5 @@
 
-DROP TABLE IF EXISTS recipes;
+
 DROP TABLE IF EXISTS ingredients;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name_id VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -16,14 +16,14 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    cname VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE ingredients (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     category_id INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
+    food VARCHAR(100) NOT NULL,
     quantity VARCHAR(50) NULL,
     expiration_date DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -31,14 +31,3 @@ CREATE TABLE ingredients (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-CREATE TABLE recipes (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    description TEXT NULL,
-    tags VARCHAR(255) NULL,
-    is_adopted BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
