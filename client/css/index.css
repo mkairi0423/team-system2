@@ -56,4 +56,23 @@ input {
   font-size: 14px;
 }
 
+.login-card h2 {
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+.login-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
 /* testフロントエンド */
