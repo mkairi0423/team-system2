@@ -15,7 +15,7 @@
             </div>
 
             <form>
-                <input type="email" placeholder="メールアドレス">
+                <input type="email" placeholder="ユーザーID">
                 <input type="password" placeholder="パスワード">
                 <button class="btn-primary">ログイン</button>
             </form>
