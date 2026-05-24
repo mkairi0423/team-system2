@@ -15,7 +15,6 @@
 
             <h2>パスワード再設定</h2>
             <p>登録しているメールアドレスを入力してください。</p>
-
             <form>
                 <label>メールアドレス</label>
                 <input type="email" placeholder="example@mail.com">
@@ -30,8 +29,6 @@
 
         </div>
     </div>
-
-
 </body>
 
 </html>
