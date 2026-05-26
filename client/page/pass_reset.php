@@ -1,3 +1,10 @@
+<?php
+//パスワードのリセット画面
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
