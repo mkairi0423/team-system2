@@ -22,7 +22,7 @@
 
             <div class="sub-links">
                 <a href="#">アカウント作成</a>
-                <a href="lost-pass.php">パスワードを忘れた方</a>
+                <a href="page/pass_reset.php">パスワードを忘れた方</a>
             </div>
         </div>
     </div>
