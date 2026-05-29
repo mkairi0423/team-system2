@@ -14,15 +14,15 @@
                 <h1>れいぞうこ</h1>
             </div>
 
-            <form>
-                <input type="email" placeholder="メールアドレス">
+            <form action=""><!-- TODO -->
+                <input type="email" placeholder="ユーザーID">
                 <input type="password" placeholder="パスワード">
                 <button class="btn-primary">ログイン</button>
             </form>
 
             <div class="sub-links">
                 <a href="#">アカウント作成</a>
-                <a href="lost-pass.php">パスワードを忘れた方</a>
+                <a href="page/pass_reset.php">パスワードを忘れた方</a>
             </div>
         </div>
     </div>

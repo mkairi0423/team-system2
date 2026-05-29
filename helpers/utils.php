@@ -3,7 +3,6 @@
 require_once __DIR__ . "/def.php";
 
 
-
 /**
  * h
  * htmlspecialcharsの省略
@@ -12,6 +11,38 @@ function h($str)
 {
     return htmlspecialchars($str, ENT_QUOTES, "UTF-8");
 }
+
+
+//ログイン画面に戻る処理
+function login()
+{
+    header("Location: " . TEAM_SYSTEM2 . "/client/page/index.php");
+}
+
+//クライアントの$pageに遷移
+function nextpage($page)
+{
+    header("Location: " . TEAM_SYSTEM2 . "/client/page/" . $page . ".php");
+}
+
+
+/**
+ * 
+ * -------- ここにファンクション作ってもいいよ ---------
+ * 
+ */
+
+
+
+
+
+/**
+ * 
+ * ----------------------------------------------------
+ * 
+ */
+
+
 
 /**
  * getPDO() 関数：
