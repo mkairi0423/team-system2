@@ -15,7 +15,7 @@
             </div>
 
             <form action=""><!-- TODO -->
-                <input type="email" placeholder="ユーザーID">
+                <input type="" placeholder="ユーザーID">
                 <input type="password" placeholder="パスワード">
                 <button class="btn-primary">ログイン</button>
             </form>
