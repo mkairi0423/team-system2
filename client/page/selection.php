@@ -1,5 +1,5 @@
 <?php
-//条件を選択する画面　ここはまだ作らなくていい
+//条件を選択するしてAIに投げる画面　ここはまだ作らなくていい
 
 
 
@@ -14,6 +14,10 @@
     <title>Document</title>
 </head>
 <body>
+
+    <form action="TODO" method="POST">
+        
+    </form>
     
 </body>
 </html>
