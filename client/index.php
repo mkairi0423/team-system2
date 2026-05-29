@@ -14,9 +14,9 @@
                 <h1>れいぞうこ</h1>
             </div>
 
-            <form action=""><!-- TODO -->
-                <input type="" placeholder="ユーザーID">
-                <input type="password" placeholder="パスワード">
+            <form action="../server/index_server.php" method="POST">
+                <input name="user_id" placeholder="ユーザーID">
+                <input type="password" name="password" placeholder="パスワード">
                 <button class="btn-primary">ログイン</button>
             </form>
 

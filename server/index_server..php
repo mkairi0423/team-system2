@@ -19,11 +19,6 @@ if (empty($pass)) {
     $_SESSION['pass_err'] = "パスワードが空です。";
 }
 
-//英数字混合か判断 preg_matchは英数字が含まれてたら1 含まれていなかったら0を返す
-// if (!preg_match('/^(?=.*[a-zA-Z])(?=.*[0-9]).+$/', $inputs['password']) === 0) {
-//     $_SESSION['pass_err'] = "パスワードは英数字混合です。";
-// }
-
 // パスワードが8文字以上か
 if (strlen(trim($pass)) <= 7) {
     // if (empty($_SESSION['pass_err'])) {
@@ -33,7 +28,7 @@ if (strlen(trim($pass)) <= 7) {
 
 //エラーメッセージがあったらHomeに移動
 if (!empty($_SESSION['emp_err']) || !empty($_SESSION['emp_no_err']) || !empty($_SESSION['pass_err'])) {
-        
+
     exit;
 }
 
@@ -66,14 +61,14 @@ try {
     // ログイン成功 → セッションに保存
     $_SESSION['user'] = [
         'emp_no' => $user['emp_no'],
-        'name'   => $user['name']
+        'name' => $user['name']
     ];
 
     // ホーム画面へ
     header("Location: ../home.php");
     exit;
 
-} catch(PDOException $e){
+} catch (PDOException $e) {
     // DBエラー時
     error_log("DB Error: " . $e->getMessage());
     $_SESSION['db_err'] = "システムエラーが発生しました。";
@@ -81,7 +76,7 @@ try {
     exit;
 }
 
-    
+
 
 
 // require_once  __DIR__ . "/../helpers/utils.php";
