@@ -1,7 +1,4 @@
 <?php
-
-//TODO:このファイルの拡張子をenvに変更する
-define('API_KEY', "AQ.Ab8RN6KS2tk5pLIbCgcvcPJI7ySZ5X_1hDcUYzVodMnELkPTpw");
 function APIRule()
 {
    $APIRule= <<<EOD
@@ -104,5 +101,6 @@ function APIRule()
 EOD;
 return $APIRule;
 }
+
 
 ?>

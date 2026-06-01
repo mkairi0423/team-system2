@@ -17,6 +17,10 @@
     <link rel="stylesheet" href="../css/selection_AI_recipe.css">
 </head>
 <body>
+
+    <form action="TODO" method="POST">
+        
+    </form>
     
 
 <div class="container">
