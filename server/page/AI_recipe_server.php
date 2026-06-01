@@ -6,7 +6,7 @@
 
 // 1. ユーザーが提示してくれた共通関数ファイルを読み込む（これでgetPDOが使えるようになります）
 require_once __DIR__ . "/../../helpers/utils.php"; // ※実際のファイル名に変えてください
-require_once __DIR__ . "/../../vendor/api_key.php";
+require_once __DIR__ . "/../../vendor/api_key.emv";
 require_once __DIR__ . "/../AIRule/AI_Rule_API.php";
 header('Content-Type: application/json; charset=UTF-8');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
