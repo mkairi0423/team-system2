@@ -15,6 +15,7 @@ include("template/sidebar.php");
         <div class="user"></div>
     </div>
 
+    
     <div class="grid">
 
         <!-- カメラ登録 -->
