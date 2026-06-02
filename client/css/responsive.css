@@ -1,0 +1,13 @@
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .section {
+    grid-template-columns: 1fr;
+  }
+}

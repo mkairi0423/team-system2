@@ -1,0 +1,33 @@
+
+
+DROP TABLE IF EXISTS ingredients;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS users;
+
+
+
+CREATE TABLE users (
+    uid BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name_id VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE categories (
+    cid INT AUTO_INCREMENT PRIMARY KEY,
+    categorie VARCHAR(50) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE ingredients (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    category_id INT NOT NULL,
+    food VARCHAR(100) NOT NULL,
+    quantity VARCHAR(50) NULL,
+    expiration_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(cid) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+

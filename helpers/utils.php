@@ -1,6 +1,56 @@
 <?php
 
 require_once __DIR__ . "/def.php";
+
+
+/**
+ * h
+ * htmlspecialcharsの省略
+ */
+function h($str)
+{
+    return htmlspecialchars($str, ENT_QUOTES, "UTF-8");
+}
+
+
+//ログイン画面に戻る処理
+function login()
+{
+    header("Location: " . TEAM_SYSTEM2 . "/client/page/index.php");
+}
+
+//クライアントの$pageに遷移
+function nextpage($page)
+{
+    header("Location: " . TEAM_SYSTEM2 . "/client/page/" . $page . ".php");
+}
+
+
+/**
+ * 
+ * -------- ここにファンクション作ってもいいよ ---------
+ * 
+ */
+
+
+
+
+
+/**
+ * 
+ * ----------------------------------------------------
+ * 
+ */
+
+
+
+/**
+ * getPDO() 関数：
+ * MySQL に接続する PDO オブジェクトを作成して返します。
+ * static $pdo を使うことで、同じリクエスト内で PDO 接続を一度だけ作成します。
+ * モダン PHP 風に PDO 作成時にオプションを設定しています。
+ */
+
 function getPDO()
 {
     // すでに PDO 接続が存在する場合はそのまま返す
@@ -22,7 +72,7 @@ function getPDO()
 
         // 作成した PDO を返す
         return $pdo;
-        // return "登録完了";
+        // return "登録完了";//debug用
     } catch (PDOException $e) {
         // 接続失敗時はスクリプトを停止してエラーを表示
         die("データベースに接続できませんでした。エラー：" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));

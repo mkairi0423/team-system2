@@ -1,0 +1,96 @@
+.hero {
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: white;
+  padding: 35px;
+  border-radius: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+}
+
+.hero h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.user {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+}
+
+.search-box {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #dbe2ea;
+}
+
+details {
+  margin-top: 15px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 0;
+}
+
+.food-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.move-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  border: none;
+  background: #ef4444;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.action-btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  padding: 18px;
+  border-radius: 16px;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+
+.secondary {
+  background: #0f172a;
+}
+
+.floating-add {
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  width: 70px;
+  height: 70px;
+  border: none;
+  border-radius: 50%;
+  font-size: 28px;
+  background: linear-gradient(135deg,#2563eb,#06b6d4);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 15px 30px rgba(37,99,235,.3);
+}

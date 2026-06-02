@@ -1,0 +1,74 @@
+.card,
+.panel {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.card {
+  border: 1px solid #e2e8f0;
+}
+
+.card h3 {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.card .value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.food {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.orange {
+  background: #ffedd5;
+  color: #ea580c;
+}
+
+.green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.recipe {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+}
+
+.btn {
+  margin-top: 20px;
+  width: 100%;
+  border: none;
+  padding: 15px;
+  border-radius: 14px;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
