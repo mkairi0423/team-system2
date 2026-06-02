@@ -2,7 +2,7 @@
 //ユーザー登録機能
 //値が空とかユーザーIDがSTR型とかチェックは厳しめに
 
-require_once __DIR__ . "../../helpers/utils.php";
+require_once __DIR__ . "/../../helpers/utils.php";
 
 session_start();
 

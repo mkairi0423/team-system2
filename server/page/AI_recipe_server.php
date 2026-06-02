@@ -1,11 +1,14 @@
 <?php
 //AI_recipe_server.php
-//AI_recipe.phpの処理
- 
-// 1. 共通関数ファイルを読み込む（これでgetPDOが使えるようになります）
-require_once __DIR__ . "/../../helpers/utils.php";
+//AI_recipe.phの処理理
+
+
+
+// 1. ユーザーが提示してくれた共通関数ファイルを読み込む（これでgetPDOが使えるようになります）
+require_once __DIR__ . "/../../helpers/utils.php"; // ※実際のファイル名に変えてください
+require_once __DIR__ . "/../../helpers/gemini_api.php"; // APIキーを安全に管理するためのファイル（例: define('API_KEY', 'あなたのAPIキー');）
 require_once __DIR__ . "/../AIRule/AI_Rule_API.php";
- 
+
 header('Content-Type: application/json; charset=UTF-8');
  
 // AIの返答待ちでタイムアウトしないためのセーフティ
@@ -52,36 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ------------------------------------------------------------------------------------
     // 4. Gemini APIの設定とプロンプトの構築（.envファイルの手動解析）
     // ------------------------------------------------------------------------------------
-    $envPath = __DIR__ . "/../../vendor/api_key.env";
-    $apiKey = "";
- 
-    if (file_exists($envPath)) {
-        $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            $cleanLine = trim($line);
-            if (strpos($cleanLine, 'API_KEY') === 0) {
-                $equalPos = strpos($cleanLine, '=');
-                if ($equalPos !== false) {
-                    $value = substr($cleanLine, $equalPos + 1);
-                    $apiKey = trim($value, " \t\n\r\0\x0B\"'");
-                    break;
-                }
-            }
-        }
-    }
- 
-    if (empty($apiKey)) {
-        echo json_encode([
-            'success' => false,
-            'error' => 'APIキーが見つからないか、.envファイルの読み込みに失敗しました。'
-        ]);
-        exit;
-    }
- 
-    // 🛠️【修正：400エラー解決】システム指示を拒絶しない「v1beta」にURLを戻します
+    
+    $api_key = getenv('GEMINI_API_KEY');
     $model = 'gemini-2.5-flash';
-    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
- 
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$api_key}";
+
     $system_prompt = APIRule();
  
     $user_prompt = <<<EOD
