@@ -19,8 +19,7 @@ unset($_SESSION['db_err']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パスワードを忘れた方</title>
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/password_reset.css">
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 
 <body>
@@ -51,7 +50,7 @@ unset($_SESSION['db_err']);
             </form>
 
             <div class="sub-links">
-                <a href="index.php">ログインに戻る</a>
+                <a href="../index.php">ログインに戻る</a>
                 <a href="emp_register.php">アカウント作成</a>
             </div>
 

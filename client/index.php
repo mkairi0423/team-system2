@@ -21,7 +21,7 @@
             </form>
 
             <div class="sub-links">
-                <a href="#">アカウント作成</a>
+                <a href="page/emp_register.php">アカウント作成</a>
                 <a href="page/pass_reset.php">パスワードを忘れた方</a>
             </div>
         </div>
