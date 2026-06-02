@@ -1,0 +1,40 @@
+* [33m2fb2b41[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/frontend2[m[33m)[m Remove API key
+[31m|[m * [33mcc8e44d[m[33m ([m[1;31morigin/feature/backend3[m[33m)[m 更新３backend3
+[31m|[m * [33m629ddf0[m 更新
+[31m|[m * [33m1ee20e8[m Merge branch 'feature-new' into feature/backend
+[31m|[m * [33m13fdf78[m 更新db
+[31m|[m [32m|[m *   [33m1a57f06[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/backend2[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #28 from mkairi0423/feature/backend2
+[31m|[m [32m|[m [33m|[m[34m\[m  
+[31m|[m [32m|[m [33m|[m * [33mc3b5a24[m fix: AIレシピのデータベース処理を修正
+[31m|[m [32m|[m [33m|[m *   [33mb2aea74[m AIレシピ検索機能とその表示
+[31m|[m [32m|[m [33m|[m [35m|[m[33m\[m  
+[31m|[m [32m|[m [33m|[m [35m|[m[33m/[m  
+[31m|[m [32m|[m [33m|[m[33m/[m[35m|[m   
+[31m|[m [32m|[m * [35m|[m   [33mffd92c7[m Merge pull request #27 from mkairi0423/feature/backend1
+[31m|[m [32m|[m [1;31m|[m[1;32m\[m [35m\[m  
+[31m|[m [32m|[m [1;31m|[m * [35m\[m   [33m1c05bbd[m[33m ([m[1;31morigin/feature/backend1[m[33m)[m 更新2
+[31m|[m [32m|[m [1;31m|[m [1;33m|[m[1;31m\[m [35m\[m  
+[31m|[m [32m|[m [1;31m|[m [1;33m|[m[1;31m/[m [35m/[m  
+[31m|[m [32m|[m [1;31m|[m[1;31m/[m[1;33m|[m [35m|[m   
+[31m|[m [32m|[m * [1;33m|[m [35m|[m   [33m411a121[m Merge pull request #26 from mkairi0423/feature/backend3
+[31m|[m [32m|[m [1;35m|[m[32m\[m [1;33m\[m [35m\[m  
+[31m|[m [32m|[m [1;35m|[m[32m/[m [1;33m/[m [35m/[m  
+[31m|[m [32m|[m[32m/[m[1;35m|[m [1;33m|[m [35m|[m   
+[31m|[m * [1;35m|[m [1;33m|[m [35m|[m [33me867544[m ログイン画面の更新
+[31m|[m [1;36m|[m * [1;33m|[m [35m|[m [33m2d28fe1[m Merge pull request #25 from mkairi0423/feature/backend
+[31m|[m [1;36m|[m[1;36m/[m[32m|[m [1;33m|[m [35m|[m 
+[31m|[m [1;36m|[m * [1;33m|[m [35m|[m   [33mbec3758[m[33m ([m[1;31morigin/feature/backend[m[33m)[m Merge branch 'main' into feature/backend
+[31m|[m [1;36m|[m [33m|[m[1;36m\[m [1;33m\[m [35m\[m  
+[31m|[m [1;36m|[m [33m|[m[1;36m/[m [1;33m/[m [35m/[m  
+[31m|[m [1;36m|[m[1;36m/[m[33m|[m [1;33m|[m [35m|[m   
+[31m|[m [1;36m|[m [33m|[m * [35m|[m [33mcdb44f6[m 更新
+[31m|[m [1;36m|[m [33m|[m[33m/[m[1;36m|[m [35m|[m 
+[31m|[m [1;36m|[m [33m|[m[1;36m/[m [35m/[m  
+[31m|[m [1;36m|[m[1;36m/[m[33m|[m [35m|[m   
+[31m|[m [1;36m|[m * [35m|[m   [33mcf7d4a8[m 更新
+[31m|[m [1;36m|[m [1;31m|[m[1;32m\[m [35m\[m  
+[31m|[m [1;36m|[m * [1;32m|[m [35m|[m [33m904d597[m 更新feature/backend
+[31m|[m [1;36m|[m * [1;32m|[m [35m|[m   [33m5bc1cb9[m ログインページphp
+[31m|[m [1;36m|[m [1;33m|[m[1;34m\[m [1;32m\[m [35m\[m  
+[31m|[m [1;36m|[m * [1;34m|[m [1;32m|[m [35m|[m [33maa44730[m 更新バックエンド
+[31m|[m [1;36m|[m * [1;34m|[m [1;32m|[m [35m|[m [33m3e1f51c[m 更新バックエンド

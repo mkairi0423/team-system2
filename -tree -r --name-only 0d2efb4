@@ -1,0 +1,51 @@
+[33mcommit 0d2efb4bfdb504e21f309366fe0ba997266312d7[m
+Merge: d4fbd0a 528ff1e
+Author: hinata412 <hinaura905@gmail.com>
+Date:   Tue Jun 2 13:57:06 2026 +0900
+
+    全部の画面
+
+ client/JavaScript/food.js                     |   39 [32m+[m
+ client/JavaScript/fridge.js                   |   90 [32m+[m
+ client/css/components.css                     |   74 [32m+[m
+ client/css/food_loss.css                      |  170 [32m++[m
+ client/css/footer.css                         |    0
+ client/css/home.css                           |   96 [32m+[m
+ client/css/index.css                          |   76 [32m+[m[31m-[m
+ client/css/layout.css                         |   29 [32m+[m
+ client/css/reset.css                          |   12 [32m+[m
+ client/css/responsive.css                     |   13 [32m+[m
+ client/css/sidebar.css                        |   37 [32m+[m
+ client/css/style.css                          |  205 [32m++[m
+ client/images/Image.jpg                       |  Bin [31m0[m -> [32m527746[m bytes
+ client/index.php                              |   25 [32m+[m[31m-[m
+ server/index.php => client/page/AI_recipe.php |    8 [32m+[m[31m-[m
+ client/page/a.php                             |    3 [31m-[m
+ client/page/barcode.php                       |   39 [32m+[m
+ client/page/cacert.pem                        | 2957 [31m-------------------------[m
+ client/page/emp_register.php                  |   16 [32m+[m
+ client/page/food_loss.php                     |  135 [32m++[m
+ client/page/food_register.php                 |  119 [32m+[m
+ client/page/fridge.php                        |  260 [32m+++[m
+ client/page/home.php                          |   94 [32m+[m
+ client/page/pass_reset.php                    |   62 [32m+[m
+ client/page/selection.php                     |   19 [32m+[m
+ client/page/template/footer.php               |    5 [32m+[m
+ client/page/template/header.php               |   14 [32m+[m
+ client/page/template/sidebar.php              |   46 [32m+[m
+ client/page/test.env                          |    2 [31m-[m
+ client/page/test.php                          |  133 [31m--[m
+ database/createdatabase.sql                   |   33 [32m+[m
+ database/index.sql                            |   25 [32m+[m
+ database/root.php                             |    1 [32m+[m
+ helpers/def.php                               |    2 [32m+[m
+ helpers/utils.php                             |   52 [32m+[m[31m-[m
+ server/index_server..php                      |    6 [32m+[m
+ server/page/AI_recipe_server.php              |    7 [32m+[m
+ server/page/emp_register_server.php           |  109 [32m+[m
+ server/page/food_register_server..php         |    4 [32m+[m
+ server/page/home_server..php                  |    4 [32m+[m
+ server/page/pass_reset_server..php            |   74 [32m+[m
+ server/page/selection_server..php             |    5 [32m+[m
+ vendor/api_key.php                            |    6 [32m+[m
+ 43 files changed, 2001 insertions(+), 3105 deletions(-)
