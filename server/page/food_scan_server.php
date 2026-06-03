@@ -12,8 +12,6 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../../helpers/gemini_api.php';
 require_once __DIR__ . '/../../helpers/utils.php';
 
-require_once __DIR__ . '/../../helpers/gemini_api.php';
-
 // 🛠️ 2. 【安全ガード付き】自前で .env を読み込む関数
 if (!function_exists('loadSimpleEnv')) {
     function loadSimpleEnv($envPath)
