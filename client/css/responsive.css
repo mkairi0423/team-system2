@@ -1,13 +1,21 @@
+/* =========================
+   TABLET (900px)
+========================= */
 @media (max-width: 900px) {
+
+  /* SIDEBAR */
   .sidebar {
     display: none;
   }
 
+  /* MAIN */
   .main {
     margin-left: 0;
   }
 
+  /* LAYOUT */
   .section {
     grid-template-columns: 1fr;
   }
+
 }

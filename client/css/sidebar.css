@@ -1,21 +1,36 @@
+/* =========================
+   SIDEBAR
+========================= */
 .sidebar {
   position: fixed;
+
   width: 220px;
   height: 100vh;
+
+  padding: 20px;
+
   background: #fff;
   border-right: 1px solid #e2e8f0;
-  padding: 20px;
 }
 
+/* =========================
+   LOGO
+========================= */
 .logo {
+  margin-bottom: 40px;
+
   font-size: 1.3rem;
   font-weight: 700;
-  margin-bottom: 40px;
+
   background: linear-gradient(135deg, #2563eb, #06b6d4);
+
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* =========================
+   MENU
+========================= */
 .menu {
   display: flex;
   flex-direction: column;
@@ -23,9 +38,11 @@
 }
 
 .menu a {
-  text-decoration: none;
-  color: #64748b;
   padding: 12px;
+
+  color: #64748b;
+  text-decoration: none;
+
   border-radius: 12px;
   transition: 0.3s;
 }

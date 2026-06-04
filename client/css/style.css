@@ -1,9 +1,19 @@
 @import url("reset.css");
+
+/* レイアウト */
 @import url("layout.css");
 @import url("sidebar.css");
 @import url("Hamburger-menu.css");
-@import url("home.css");
+
+/* 共通パーツ */
 @import url("components.css");
+
+/* ページ別 */
+@import url("home.css");
 @import url("food_loss.css");
-@import url("responsive.css");
+
+/* 共通エリア */
 @import url("footer.css");
+
+/* レスポンシブ（最後） */
+@import url("responsive.css");

@@ -1,6 +1,6 @@
 /* ==========================================================================
-   1. 共通設定（ダッシュボードと同じ品のある薄グレー背景）
-   ========================================================================== */
+   RESET
+========================================================================== */
 *,
 *::before,
 *::after {
@@ -9,20 +9,22 @@
 
 body {
   margin: 0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-  /* ダッシュボードの背景と同じ、ほんのり青みがかった爽やかな超薄グレー */
-  background: #f4f7fc;
   height: 100vh;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  background: #f4f7fc;
 }
 
 /* ==========================================================================
-   2. カード共通（真っ白で丸みの強いシャドウカード）
-   ========================================================================== */
+   ANIMATION
+========================================================================== */
 .login-card,
 .register-card {
   animation: fadeUp 0.8s ease;
@@ -33,6 +35,7 @@ body {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -40,76 +43,81 @@ body {
 }
 
 /* ==========================================================================
-   3. タイトル・ロゴ・ラベル共通
-   ========================================================================== */
-/* ロゴエリア */
+   TITLE / LOGO
+========================================================================== */
 .logo,
 .icon-area h1 {
+  margin: 0 0 12px;
+
   font-size: 26px;
   font-weight: 800;
-  margin-top: 0;
-  margin-bottom: 12px;
-  color: #1d4ed8; /* ダッシュボードの「FridgeAI」と同じ鮮やかなブルー */
   letter-spacing: -0.5px;
+
+  color: #1d4ed8;
 }
 
-/* ログイン画面の「れいぞうこ」用表記調整 */
 .icon-area h1 {
   font-size: 28px;
 }
+
 .icon-area h1::before {
   content: "🧊 ";
 }
 
-/* サブテキスト */
 .register-card h2 {
+  margin: 0 0 6px;
+
   font-size: 20px;
   font-weight: 700;
+
   color: #0f172a;
-  margin: 0 0 6px 0;
 }
 
 .register-card p {
-  color: #64748b; /* 落ち着いたグレー */
-  font-size: 14px;
-  margin-top: 0;
-  margin-bottom: 28px;
-}
+  margin: 0 0 28px;
 
-/* 入力欄のラベル */
-label {
-  display: block;
-  text-align: left;
-  font-size: 13px;
-  color: #475569;
-  font-weight: 600;
-  margin-top: 16px;
+  font-size: 14px;
+  color: #64748b;
 }
 
 /* ==========================================================================
-   4. 入力フォーム（クリーンで高品質な形状）
-   ========================================================================== */
-input {
+   FORM
+========================================================================== */
+label {
+  display: block;
+  margin-top: 16px;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+
+  text-align: left;
+}
+
+input,
+.select-wrapper select {
   width: 100%;
   padding: 14px 16px;
-  margin-top: 8px;
-  border-radius: 14px;
-  background: #f8fafc; /* ほんのりグレーの入力エリア */
-  color: #0f172a;
+
   border: 1px solid #e2e8f0;
-  outline: none;
+  border-radius: 14px;
+
+  background: #f8fafc;
+  color: #0f172a;
   font-size: 15px;
+
+  outline: none;
   transition: all 0.2s ease;
 }
 
 .login-card input {
-  margin-top: 0;
   margin-bottom: 16px;
 }
 
-input:focus {
-  background: #ffffff;
-  border-color: #3b82f6; /* フォーカス時はメインブルー */
+input:focus,
+.select-wrapper select:focus {
+  background: #fff;
+  border-color: #3b82f6;
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
@@ -118,54 +126,45 @@ input::placeholder {
 }
 
 /* ==========================================================================
-   5. セレクトボックス（カスタムドロップダウン）
-   ========================================================================== */
+   SELECT
+========================================================================== */
 .select-wrapper {
   position: relative;
   margin-top: 8px;
 }
 
 .select-wrapper select {
-  width: 100%;
-  padding: 14px 42px 14px 16px;
-  border-radius: 14px;
-  background: #f8fafc;
-  color: #0f172a;
-  border: 1px solid #e2e8f0;
-  font-size: 15px;
-  cursor: pointer;
-  outline: none;
+  padding-right: 42px;
+
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  transition: all 0.2s ease;
+
+  cursor: pointer;
 }
 
 .select-wrapper select:hover {
   border-color: #cbd5e1;
 }
 
-.select-wrapper select:focus {
-  background: #ffffff;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-}
-
-/* ▼アイコン（ダッシュボードの洗練された雰囲気に合わせた細めの矢印） */
 .select-wrapper::after {
   content: "▼";
-  font-size: 10px;
+
   position: absolute;
-  right: 16px;
   top: 50%;
+  right: 16px;
+
   transform: translateY(-50%);
+
+  font-size: 10px;
   color: #64748b;
+
   pointer-events: none;
 }
 
 select option {
   color: #0f172a;
-  background: #ffffff;
+  background: #fff;
 }
 
 select:invalid {
@@ -173,22 +172,26 @@ select:invalid {
 }
 
 /* ==========================================================================
-   6. ボタン（ダッシュボード最大の主役：美しいブルーグラデーション）
-   ========================================================================== */
+   BUTTON
+========================================================================== */
 .btn,
 .btn-primary {
   width: 100%;
   padding: 15px;
   margin-top: 28px;
-  /* ダッシュボード最上部のフードロス検知エリアと全く同じ、鮮やかで美しい青のグラデーション */
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
-  color: #ffffff;
+
   border: none;
   border-radius: 14px;
+
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: #fff;
+
   font-size: 16px;
   font-weight: 700;
+
   cursor: pointer;
   transition: all 0.2s ease;
+
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
 }
 
@@ -199,9 +202,9 @@ select:invalid {
 
 .btn:hover,
 .btn-primary:hover {
-  transform: translateY(-1px); /* ほんの少し上に浮く軽快なエフェクト */
-  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
   opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
 }
 
 .btn:active,
@@ -210,10 +213,11 @@ select:invalid {
 }
 
 /* ==========================================================================
-   7. 下部リンクエリア
-   ========================================================================== */
+   LINK
+========================================================================== */
 .login-link {
   margin-top: 28px;
+
   font-size: 13px;
   color: #64748b;
 }
@@ -222,15 +226,19 @@ select:invalid {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   font-size: 13px;
 }
 
 .login-link a,
 .sub-links a {
-  color: #2563eb; /* リンクはFridgeAIカラー */
   text-decoration: none;
-  font-weight: 600;
   transition: color 0.2s;
+}
+
+.login-link a {
+  color: #2563eb;
+  font-weight: 600;
 }
 
 .sub-links a {
@@ -240,49 +248,54 @@ select:invalid {
 
 .login-link a:hover,
 .sub-links a:hover {
-  text-decoration: underline;
   color: #1d4ed8;
+  text-decoration: underline;
 }
 
 /* ==========================================================================
-   8. メッセージ表示（アラートバッジと同期）
-   ========================================================================== */
+   MESSAGE
+========================================================================== */
 .mt-15 {
   margin-top: 15px !important;
 }
 
-/* エラーメッセージ（賞味期限「本日まで」の赤バッジと色を同期） */
 .err-msg {
   display: block;
-  text-align: left;
+  margin-top: 6px;
+
   color: #ef4444;
   font-size: 12px;
-  margin-top: 6px;
   font-weight: 600;
+
+  text-align: left;
 }
 
 .err-msg-top {
+  margin-bottom: 16px;
+  padding: 12px;
+
   text-align: center;
+
+  color: #ef4444;
   background: #fef2f2;
   border: 1px solid #fee2e2;
-  color: #ef4444;
-  padding: 12px;
   border-radius: 12px;
-  margin-bottom: 16px;
 }
 
-/* 成功メッセージ（賞味期限「残り5日」の緑バッジと色を同期） */
 .success-msg {
-  display: block;
+  margin-bottom: 20px;
+  padding: 12px;
+
   text-align: center;
+
+  color: #16a34a;
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
-  color: #16a34a;
+  border-radius: 12px;
+
   font-size: 14px;
   font-weight: 600;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+
   box-shadow: 0 4px 12px rgba(22, 163, 74, 0.05);
 }
 

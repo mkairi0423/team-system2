@@ -1,3 +1,6 @@
+/* =========================
+   RESET
+========================= */
 * {
   margin: 0;
   padding: 0;
@@ -5,8 +8,11 @@
   font-family: "Inter", sans-serif;
 }
 
+/* =========================
+   BODY
+========================= */
 body {
-  background: #f7f9fc;
   min-height: 100vh;
+  background: #f7f9fc;
   color: #1e293b;
 }
