@@ -65,7 +65,7 @@ try {
     ];
 
     // ホーム画面へ
-    header("Location: ../home.php");
+    header("Location: ../../client\page\home.php");
     exit;
 
 } catch (PDOException $e) {

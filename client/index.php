@@ -11,7 +11,7 @@
         <div class="login-card">
             <div class="icon-area">
                 <!-- <img src="images/Image.jpg" alt="Frigge Icon" class="icon"> -->
-                <h1>れいぞうこ</h1>
+                <h1>FridgeAI</h1>
             </div>
 
             <form action="../server/index_server.php" method="POST">

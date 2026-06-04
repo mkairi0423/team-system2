@@ -56,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規登録 | 冷蔵庫AIアシスタント</title>
     <link rel="stylesheet" href="../css/index.css">
 
@@ -67,7 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <div class="register-card">
             <div class="logo">
-                🧊 冷蔵庫AIアシスタント
+                🧊 冷蔵庫AIアシスタント<br>
+                FridgeAI
             </div>
 
             <h2>新規アカウント作成</h2>
