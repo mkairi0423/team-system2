@@ -4,13 +4,20 @@
 .sidebar {
   position: fixed;
 
+  top: 0;
+  left: 0;
+
   width: 220px;
   height: 100vh;
 
   padding: 20px;
 
-  background: #fff;
-  border-right: 1px solid #e2e8f0;
+  box-sizing: border-box;
+
+  box-shadow: 2px 0 15px rgba(0,0,0,0.05);
+
+  /* エフェクト追加 */
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
 /* =========================
@@ -22,7 +29,11 @@
   font-size: 1.3rem;
   font-weight: 700;
 
-  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #06b6d4
+  );
 
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

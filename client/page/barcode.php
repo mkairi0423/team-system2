@@ -12,7 +12,6 @@ include("template/sidebar.php");
 
     <div class="topbar">
         <h1>バーコード登録</h1>
-        <div class="user"></div>
     </div>
 
     <div class="hero">

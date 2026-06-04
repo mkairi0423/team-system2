@@ -1,4 +1,6 @@
-<div class="sidebar">
+<button class="hamburger" onclick="toggleMenu()">☰</button>
+
+<div class="sidebar" id="sidebar">
 
     <div class="logo">
         FridgeAI

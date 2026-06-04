@@ -12,7 +12,6 @@ include("template/sidebar.php");
 
     <div class="topbar">
         <h1>冷蔵庫管理</h1>
-        <div class="user"></div>
     </div>
 
     <div class="grid">
@@ -96,11 +95,11 @@ include("template/sidebar.php");
                         <button
                             class="delete-btn"
                             onclick="deleteFood(this)">
-                            ❌
+                            ✖
                         </button>
                     </div>
                 </div>
-
+                ✖
                 <div class="food-row">
                     <span>サーモン (2切れ)</span>
 
@@ -114,7 +113,7 @@ include("template/sidebar.php");
                         <button
                             class="delete-btn"
                             onclick="deleteFood(this)">
-                            ❌
+                            ✖
                         </button>
                     </div>
                 </div>
@@ -138,7 +137,7 @@ include("template/sidebar.php");
                         <button
                             class="delete-btn"
                             onclick="deleteFood(this)">
-                            ❌
+                            ✖
                         </button>
                     </div>
                 </div>
@@ -202,7 +201,7 @@ include("template/sidebar.php");
                         <button
                             class="delete-btn"
                             onclick="deleteFood(this)">
-                            ❌
+                            ✖
                         </button>
                     </div>
                 </div>
@@ -226,7 +225,7 @@ include("template/sidebar.php");
                         <button
                             class="delete-btn"
                             onclick="deleteFood(this)">
-                            ❌
+                            ✖
                         </button>
                     </div>
                 </div>
@@ -250,9 +249,8 @@ include("template/sidebar.php");
         </a>
 
     </div>
-
     <button class="floating-add">
-        ➕
+        ＋
     </button>
 
 </div>
