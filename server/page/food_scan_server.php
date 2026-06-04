@@ -4,7 +4,7 @@
 // ===================================================
 
 // 🚀 AIの解析時間を確保するため、制限時間を「無制限」に設定（先頭で実行）
-set_time_limit(0);
+set_time_limit(30);
 
 header('Content-Type: application/json; charset=utf-8');
 
