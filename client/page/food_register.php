@@ -19,8 +19,6 @@ include("template/sidebar.php");
 
         <!-- カメラ登録 -->
 
-        <!-- カメラ登録 -->
-
         <div class="card">
 
             <h3>📷 レシート食材重量逆算スキャナー</h3>
