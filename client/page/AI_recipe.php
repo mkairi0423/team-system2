@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>レシピ条件の選択</title>
       <link rel="stylesheet" href="../css/selection_AI_recipe.css">
 </head>
 <body>
@@ -75,6 +75,6 @@
     </div>
 </div>
 
-<script src="../JS/selection_AI_recipe.js"></script>
+<script src="../js/selection_AI_recipe.js"></script>
 </body>
 </html>
