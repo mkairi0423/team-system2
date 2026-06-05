@@ -1,6 +1,6 @@
-<script src="../JavaScript/fridge.js"></script>
-<script src="../JavaScript/food.js"></script>
-<script src="../JavaScript/Hamburger-menu.js"></script>
+<script src="../js/fridge.js"></script>
+<script src="../js/food.js"></script>
+<script src="../js/Hamburger-menu.js"></script>
 </body>
 
 </html>
