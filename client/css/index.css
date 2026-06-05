@@ -37,12 +37,18 @@ input {
     width: 100%;
     padding: 14px;
     margin: 10px 0;
-    border: 1px solid #4db6ac;
+    background: #4db6ac;
     color: #fff;
     border: none;
     border-radius: 10px;
     font-size: 17px;
     cursor: pointer;
+    transition: 0.3s;
+}
+
+
+.btn-primary:hover {
+    background: #3da99f;
 }
 
 .sub-links {

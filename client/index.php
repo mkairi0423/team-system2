@@ -15,7 +15,7 @@
             </div>
 
             <form action="../server/index_server.php" method="POST">
-                <input name="user_id" placeholder="ユーザーID">
+                <input name="name_id" placeholder="ユーザーID">
                 <input type="password" name="password" placeholder="パスワード">
                 <button class="btn-primary">ログイン</button>
             </form>
