@@ -1,11 +1,17 @@
 <?php
+// helpers/gemini_api.php
+
 // ==========================================
-// 🛠️ 【超シンプル】自前で .env を読み込む関数
+// 🛠️ 【超シンプル】自前で .env を読み込む関数（改良版）
 // ==========================================
 function loadSimpleEnv($envPath)
 {
     if (!file_exists($envPath)) {
-        echo json_encode(['error' => '.env ファイルが同じ場所に存在しません。']);
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode([
+            'success' => false,
+            'error' => '.env ファイルが見つかりません。指定されたパス: ' . $envPath
+        ]);
         exit;
     }
 
@@ -14,10 +20,15 @@ function loadSimpleEnv($envPath)
         if (strpos(trim($line), '#') === 0) continue;
         if (strpos($line, '=') !== false) {
             list($key, $value) = explode('=', $line, 2);
-            putenv(trim($key) . '=' . trim($value));
+            $key = trim($key);
+            $value = trim($value);
+            
+            // 💡 putenvに頼らず、確実にPHPのグローバル配列に保存する
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
         }
     }
 }
 
-
-?>
+// 関数を実行する（1つ上の階層の .env を見に行く）
+loadSimpleEnv(__DIR__ . '/../.env');
