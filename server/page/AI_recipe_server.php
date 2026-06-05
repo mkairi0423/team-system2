@@ -56,7 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 4. Gemini APIの設定とプロンプトの構築（.envファイルの手動解析）
     // ------------------------------------------------------------------------------------
     
-    $api_key = getenv('GEMINI_API_KEY');
+    $api_key = // 変更前
+// $api_key = getenv('GEMINI_API_KEY');
+
+// 変更後：getenvに頼らず、サーバー環境に合わせて3つの方法のどれからでも取れるようにする
+$api_key = getenv('GEMINI_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? ($_SERVER['GEMINI_API_KEY'] ?? ''));
     $model = 'gemini-2.5-flash';
     $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$api_key}";
 

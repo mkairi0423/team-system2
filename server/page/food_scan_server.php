@@ -1,6 +1,6 @@
 <?php
 // ===================================================
-// page/food_scan_server.php （完全修正版）
+// page/food_scan_server.php （完全解決版）
 // ===================================================
 
 // 🚀 AIの解析時間を確保するため、制限時間を「無制限」に設定（先頭で実行）
@@ -12,32 +12,26 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../../helpers/gemini_api.php';
 require_once __DIR__ . '/../../helpers/utils.php';
 
-// 🛠️ 2. 【安全ガード付き】自前で .env を読み込む関数
-if (!function_exists('loadSimpleEnv')) {
-    function loadSimpleEnv($envPath)
-    {
-        if (!file_exists($envPath)) {
-            echo json_encode(['error' => '.env ファイルが同じ場所に存在しません。路径:' . $envPath], JSON_UNESCAPED_UNICODE);
-            exit;
-        }
-        $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            if (strpos(trim($line), '#') === 0) continue;
-            if (strpos($line, '=') !== false) {
-                list($key, $value) = explode('=', $line, 2);
-                // 前後のスペースや、" などのクォーテーションを綺麗に掃除
-                $clean_key = trim($key);
-                $clean_value = trim(trim($value), '"\'');
-                putenv($clean_key . '=' . $clean_value);
-            }
+// 🛠️ 2. 【超確実】このファイルから直接ルートの .env を狙い撃ちして読み込む処理
+$envPath = __DIR__ . '/../../.env'; // server/page/ から2つ上がプロジェクトルート
+
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $clean_key = trim($key);
+            $clean_value = trim(trim($value), '"\'');
+
+            // 確実にこのファイル内の $_ENV に保存
+            $_ENV[$clean_key] = $clean_value;
         }
     }
 }
 
-// 🛠️ 3. プロジェクトルート（2つ上）にある .env ファイルをロード
-loadSimpleEnv(__DIR__ . '/../../.env');
-
-$api_key = getenv('GEMINI_API_KEY');
+// 💡 3. 格納した $_ENV から直接引き出す
+$api_key = $_ENV['GEMINI_API_KEY'] ?? '';
 
 // フロントからのJSONデータを取得
 $input = json_decode(file_get_contents('php://input'), true);
@@ -157,7 +151,7 @@ if ($action === 'save') {
         $pdo = getPDO();
 
         $stmt = $pdo->prepare("
-            INSERT INTO ingredients (user_id, category_id, food, quantity) 
+            INSERT INTO ingredients (user_id, category_id, food, quantity)
             VALUES (:user_id, :category_id, :food, :quantity)
         ");
 
