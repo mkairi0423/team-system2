@@ -1,5 +1,4 @@
 <?php
-
 $title = "冷蔵庫管理";
 $page = "fridge";
 
