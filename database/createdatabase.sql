@@ -32,7 +32,7 @@ CREATE TABLE ingredients (
     FOREIGN KEY (category_id) REFERENCES categories(cid) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- 4. 🍳 調理中専用の一時テーブル（短縮版）
+-- 4. 調理中専用の一時テーブル（短縮版）
 CREATE TABLE cooking_now (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,                           -- 誰が調理中か

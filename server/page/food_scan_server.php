@@ -23,7 +23,7 @@ if (file_exists($envPath)) {
             list($key, $value) = explode('=', $line, 2);
             $clean_key = trim($key);
             $clean_value = trim(trim($value), '"\'');
-            
+
             // 確実にこのファイル内の $_ENV に保存
             $_ENV[$clean_key] = $clean_value;
         }
@@ -151,7 +151,7 @@ if ($action === 'save') {
         $pdo = getPDO();
 
         $stmt = $pdo->prepare("
-            INSERT INTO ingredients (user_id, category_id, food, quantity) 
+            INSERT INTO ingredients (user_id, category_id, food, quantity)
             VALUES (:user_id, :category_id, :food, :quantity)
         ");
 

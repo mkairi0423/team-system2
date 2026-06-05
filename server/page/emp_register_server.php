@@ -12,7 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] !== "POST") {
     exit;
 }
 
-// $_SESSION = [];//TODO:これまずいかも
+//TODO:これまずいかも
+// $_SESSION = [];
 
 //　IDが空じゃないか
 $name_id = $_POST['name_id'] ?? "";
