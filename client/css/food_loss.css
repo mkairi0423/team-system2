@@ -1,0 +1,185 @@
+/* =========================
+   RESET
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #f5f7fb;
+  color: #333;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.header p {
+  color: #777;
+}
+
+/* =========================
+   COMMON BOX
+========================= */
+.card,
+.chart-box,
+.rank-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================
+   CARD
+========================= */
+.card h3 {
+  margin-bottom: 10px;
+  color: #666;
+  font-size: 14px;
+}
+
+.card .value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* =========================
+   STATUS COLORS
+========================= */
+.good {
+  color: #16a34a;
+}
+
+.bad {
+  color: #dc2626;
+}
+
+.warning {
+  color: #f59e0b;
+}
+
+/* =========================
+   CHART
+========================= */
+.chart-title {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.bar {
+  margin-bottom: 20px;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.progress {
+  width: 100%;
+  height: 14px;
+  background: #eee;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  border-radius: 20px;
+}
+
+.progress .red {
+  background: #ef4444;
+}
+
+.progress .orange {
+  background: #f59e0b;
+}
+
+.progress .green {
+  background: #10b981;
+}
+
+/* =========================
+   RANKING
+========================= */
+.rank-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.rank-item:last-child {
+  border-bottom: none;
+}
+
+.rank-name {
+  font-weight: 500;
+}
+
+.rank-count {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* =========================
+   AI ADVICE
+========================= */
+.ai-box {
+  margin-top: 25px;
+  padding: 25px;
+  border-radius: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+}
+
+.ai-box h2 {
+  margin-bottom: 15px;
+}
+
+.ai-box ul {
+  margin-left: 20px;
+  line-height: 2;
+}

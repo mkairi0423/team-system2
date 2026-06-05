@@ -1,82 +1,413 @@
-/* ここにCSS */
+/* ==========================================================================
+   RESET
+========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
-    background: #f4f9f9;
-    font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  background: #f4f7fc;
 }
 
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* ==========================================================================
+   ANIMATION
+========================================================================== */
+.login-card,
+.register-card {
+  animation: fadeUp 0.8s ease;
 }
 
-.login-card {
-    background: #fff;
-    width: 90%;
-    max-width: 380px;
-    padding: 32px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    text-align: center;
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-input {
-    width: 100%;
-    padding: 14px;
-    margin: 10px 0;
-    border: 1px solid #dce7e7;
-    border-radius: 10px;
-    font-size: 16px;
-    box-sizing: border-box;
+/* ==========================================================================
+   TITLE / LOGO
+========================================================================== */
+.logo,
+.icon-area h1 {
+  margin: 0 0 12px;
+
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+
+  color: #1d4ed8;
+
+  text-align: center;
 }
 
+.icon-area h1 {
+  font-size: 28px;
+}
 
+.icon-area h1::before {
+  content: "🧊 ";
+}
+
+.register-card h2 {
+  margin: 0 0 6px;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.register-card p {
+  margin: 0 0 28px;
+
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   FORM
+========================================================================== */
+label {
+  display: block;
+  margin-top: 16px;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+
+  text-align: left;
+}
+
+input,
+.select-wrapper select {
+  width: 100%;
+  padding: 14px 16px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 15px;
+
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.login-card input {
+  margin-bottom: 16px;
+}
+
+input:focus,
+.select-wrapper select:focus {
+  background: #fff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   SELECT
+========================================================================== */
+.select-wrapper {
+  position: relative;
+  margin-top: 8px;
+}
+
+.select-wrapper select {
+  padding-right: 42px;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  cursor: pointer;
+}
+
+.select-wrapper select:hover {
+  border-color: #cbd5e1;
+}
+
+.select-wrapper::after {
+  content: "▼";
+
+  position: absolute;
+  top: 50%;
+  right: 16px;
+
+  transform: translateY(-50%);
+
+  font-size: 10px;
+  color: #64748b;
+
+  pointer-events: none;
+}
+
+select option {
+  color: #0f172a;
+  background: #fff;
+}
+
+select:invalid {
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   BUTTON
+========================================================================== */
+.btn,
+.btn-primary {
+  width: 100%;
+  padding: 15px;
+  margin-top: 28px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: #fff;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
 
 .btn-primary {
-    width: 100%;
-    padding: 14px;
-    margin: 10px 0;
-    background: #4db6ac;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-size: 17px;
-    cursor: pointer;
-    transition: 0.3s;
+  margin-top: 8px;
+  margin-bottom: 24px;
 }
 
-
+.btn:hover,
 .btn-primary:hover {
-    background: #3da99f;
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+}
+
+.btn:active,
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   LINK
+========================================================================== */
+.login-link {
+  margin-top: 28px;
+
+  font-size: 13px;
+  color: #64748b;
 }
 
 .sub-links {
-    margin-top: 16px;
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 13px;
+}
+
+.login-link a,
+.sub-links a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.login-link a {
+  color: #2563eb;
+  font-weight: 600;
 }
 
 .sub-links a {
-    color: #4db6ac;
-    font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
 }
 
-.login-card h2 {
-    margin-bottom: 10px;
-    font-size: 22px;
+.login-link a:hover,
+.sub-links a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
-.login-card p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
+/* ==========================================================================
+   MESSAGE
+========================================================================== */
+.mt-15 {
+  margin-top: 15px !important;
 }
 
-label {
-    display: block;
+.err-msg {
+  display: block;
+  margin-top: 6px;
+
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+
+  text-align: left;
+}
+
+.err-msg-top {
+  margin-bottom: 16px;
+  padding: 12px;
+
+  text-align: center;
+
+  color: #ef4444;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+}
+
+.success-msg {
+  margin-bottom: 20px;
+  padding: 12px;
+
+  text-align: center;
+
+  color: #16a34a;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.05);
+}
+
+/*レスポンシブ対応*/
+/* ==========================================
+   レスポンシブ対応
+========================================== */
+
+/* タブレット */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+
+  .login-card,
+  .register-card {
     width: 100%;
-    text-align: left;
-    margin-bottom: 4px;
+    max-width: 500px;
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+
+  .icon-area h1,
+  .logo {
+    font-size: 24px;
+  }
+
+  input,
+  .select-wrapper select {
+    padding: 13px 14px;
     font-size: 14px;
+  }
+
+  .btn,
+  .btn-primary {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+/* スマホ */
+@media screen and (max-width: 480px) {
+  body {
+    padding: 16px;
+    align-items: center;
+  }
+
+  .login-card,
+  .register-card {
+    width: 100%;
+    padding: 28px 20px;
+    border-radius: 18px;
+  }
+
+  .icon-area h1,
+  .logo {
+    font-size: 22px;
+  }
+
+  .register-card h2 {
+    font-size: 18px;
+  }
+
+  .register-card p {
+    font-size: 13px;
+  }
+
+  input,
+  .select-wrapper select {
+    padding: 12px 14px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .btn,
+  .btn-primary {
+    padding: 13px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .sub-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .login-link {
+    text-align: center;
+  }
+}
+
+/* 超小型端末 */
+@media screen and (max-width: 360px) {
+  .login-card,
+  .register-card {
+    padding: 24px 16px;
+  }
+
+  .icon-area h1,
+  .logo {
+    font-size: 20px;
+  }
+
+  input,
+  .select-wrapper select {
+    font-size: 13px;
+  }
+
+  .btn,
+  .btn-primary {
+    font-size: 13px;
+  }
 }
