@@ -1,5 +1,11 @@
 <?php
+require_once __DIR__ . "/../helpers/utils.php";
+
 session_start();
+$name_err = $_SESSION['name_id_err'] ?? "";
+$pass_err = $_SESSION['pass_err'] ?? "";
+unset($_SESSION['name_id_err']);
+unset($_SESSION['pass_err']);
 ?>
 
 <!DOCTYPE html>
@@ -20,22 +26,21 @@ session_start();
                 <h1>FridgeAI</h1>
             </div>
 
-            <?php if (!empty($_SESSION['name_id_err'])): ?>
-                <p style="color:red;">
-                    <?= $_SESSION['name_id_err']; ?>
-                </p>
-            <?php endif; ?>
-
-            <?php if (!empty($_SESSION['pass_err'])): ?>
-                <p style="color:red;">
-                    <?= $_SESSION['pass_err']; ?>
-                </p>
-            <?php endif; ?>
-
-
             <form action="../server/index_server.php" method="POST">
-                <input name="name_id" placeholder="ユーザーID">
-                <input type="password" name="password" placeholder="パスワード">
+                <div class="form-group">
+                    <input name="name_id" placeholder="ユーザーID">
+                    <?php if (!empty($name_err)): ?>
+                        <p class="err-msg"><?= h($name_err) ?></p>
+                    <?php endif; ?>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="パスワード">
+                    <?php if (!empty($pass_err)): ?>
+                        <p class="err-msg">
+                            <?= h($pass_err) ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
                 <button class="btn-primary">ログイン</button>
             </form>
 
@@ -49,10 +54,3 @@ session_start();
 </body>
 
 </html>
-
-<?php
-// 表示後に削除
-unset($_SESSION['name_id_err']);
-unset($_SESSION['pass_err']);
-unset($_SESSION['db_err']);
-?>

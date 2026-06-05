@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== "POST") {
 $name_id = trim($_POST['name_id'] ?? "");
 $pass = trim($_POST['password'] ?? "");
 
-// 入力値を保持（ここが超重要）
+//入力値を保持（ここが超重要）
 $_SESSION['old'] = [
     'name_id' => $name_id
 ];
@@ -32,7 +32,7 @@ if (empty($pass)) {
 
 // パスワードが8文字以上か
 if (!empty($pass) && strlen(trim($pass)) <= 7) {
-    $_SESSION['pass_err'] = "パスワードを8文字以上に設定してください";
+    $_SESSION['pass_err'] = "パスワードを8文字以上で入力してください";
 }
 
 //エラーメッセージがあったら戻る
@@ -62,9 +62,7 @@ try {
 
     // パスワードチェック（ハッシュ前提）
     if (
-        !password_verify($pass, $user['password']) &&
-        $pass !== $user['password']
-    ) {
+        !password_verify($pass, $user['password'])) {
         $_SESSION['pass_err'] = "パスワードが間違っています。";
         header("Location: ../client/index.php");
         exit;
