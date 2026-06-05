@@ -2,7 +2,7 @@
 //AI_recipe_server.php
 //AI_recipe.phの処理理
 
-
+//AIに条件を選択してもらって、レシピを提案してもらうためのサーバー側のコード
 
 // 1. ユーザーが提示してくれた共通関数ファイルを読み込む（これでgetPDOが使えるようになります）
 require_once __DIR__ . "/../../helpers/utils.php"; // ※実際のファイル名に変えてください
