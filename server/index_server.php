@@ -3,9 +3,20 @@ require_once __DIR__ . "/../helpers/utils.php";
 
 session_start();
 
+unset($_SESSION['name_id_err'], $_SESSION['pass_err']);
+
 if ($_SERVER['REQUEST_METHOD'] !== "POST") {
     exit;
 }
+
+// 入力値取得
+$name_id = trim($_POST['name_id'] ?? "");
+$pass = trim($_POST['password'] ?? "");
+
+//入力値を保持（ここが超重要）
+$_SESSION['old'] = [
+    'name_id' => $name_id
+];
 
 //　IDが空じゃないか
 $name_id = $_POST['name_id'] ?? "";
@@ -21,12 +32,12 @@ if (empty($pass)) {
 
 // パスワードが8文字以上か
 if (!empty($pass) && strlen(trim($pass)) <= 7) {
-    $_SESSION['pass_err'] = "パスワードを8文字以上に設定してください";
+    $_SESSION['pass_err'] = "パスワードを8文字以上で入力してください";
 }
 
 //エラーメッセージがあったら戻る
 if (!empty($_SESSION['name_id_err']) || !empty($_SESSION['pass_err'])) {
-    header("Location: ../index.php");
+    header("Location: ../client/index.php");
     exit;
 }
 
@@ -45,19 +56,15 @@ try {
     // ユーザーが存在しない
     if (!$user) {
         $_SESSION['name_id_err'] = "ユーザーIDが間違っています。";
-        header("Location: ../index.php");
+        header("Location: ../client/index.php");
         exit;
     }
 
     // パスワードチェック（ハッシュ前提）
-
-
     if (
-        !password_verify($pass, $user['password']) &&
-        $pass !== $user['password']
-    ) {
+        !password_verify($pass, $user['password'])) {
         $_SESSION['pass_err'] = "パスワードが間違っています。";
-        header("Location: ../index.php");
+        header("Location: ../client/index.php");
         exit;
     }
 
@@ -76,7 +83,7 @@ try {
     // DBエラー時
     error_log("DB Error: " . $e->getMessage());
     $_SESSION['db_err'] = "システムエラーが発生しました。";
-    header("Location: ../index.php");
+    header("Location: ../client/index.php");
     exit;
 }
 
