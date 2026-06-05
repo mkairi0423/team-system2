@@ -8,27 +8,25 @@ if ($_SERVER['REQUEST_METHOD'] !== "POST") {
 }
 
 //　IDが空じゃないか
-$emp_no = $_POST['emp_no'] ?? "";
-if (empty($emp_no)) {
-    $_SESSION['emp_no_err'] = "従業員番号が空です。";
+$name_id = $_POST['name_id'] ?? "";
+if (empty($name_id)) {
+    $_SESSION['name_id_err'] = "ユーザーIDが空です";
 }
 
 // パスワードは空じゃないか
 $pass = $_POST['password'] ?? "";
 if (empty($pass)) {
-    $_SESSION['pass_err'] = "パスワードが空です。";
+    $_SESSION['pass_err'] = "パスワードが空です";
 }
 
 // パスワードが8文字以上か
-if (strlen(trim($pass)) <= 7) {
-    // if (empty($_SESSION['pass_err'])) {
+if (!empty($pass) && strlen(trim($pass)) <= 7) {
     $_SESSION['pass_err'] = "パスワードを8文字以上に設定してください";
-    // }
 }
 
-//エラーメッセージがあったらHomeに移動
-if (!empty($_SESSION['emp_err']) || !empty($_SESSION['emp_no_err']) || !empty($_SESSION['pass_err'])) {
-
+//エラーメッセージがあったら戻る
+if (!empty($_SESSION['name_id_err']) || !empty($_SESSION['pass_err'])) {
+    header("Location: ../index.php");
     exit;
 }
 
@@ -36,51 +34,50 @@ try {
     // DB接続
     $pdo = getPDO();
 
-    // 従業員番号でユーザーを検索
-    $sql = "SELECT * FROM employees WHERE emp_no = :emp_no LIMIT 1";
+    // name_idでユーザーを検索
+    $sql = "SELECT * FROM users WHERE name_id = :name_id LIMIT 1";
     $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(":emp_no", $emp_no, PDO::PARAM_STR);
+    $stmt->bindValue(":name_id", $name_id, PDO::PARAM_STR);
     $stmt->execute();
 
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // ユーザーが存在しない
     if (!$user) {
-        $_SESSION['emp_no_err'] = "従業員番号が間違っています。";
-        header("Location: ../login.php");
+        $_SESSION['name_id_err'] = "ユーザーIDが間違っています。";
+        header("Location: ../index.php");
         exit;
     }
 
     // パスワードチェック（ハッシュ前提）
-    if (!password_verify($pass, $user['password'])) {
+
+
+    if (
+        !password_verify($pass, $user['password']) &&
+        $pass !== $user['password']
+    ) {
         $_SESSION['pass_err'] = "パスワードが間違っています。";
-        header("Location: ../login.php");
+        header("Location: ../index.php");
         exit;
     }
 
     // ログイン成功 → セッションに保存
     $_SESSION['user'] = [
-        'emp_no' => $user['emp_no'],
-        'name' => $user['name']
+        'uid' => $user['uid'],
+        'name_id' => $user['name_id'],
+        'email' => $user['email']
     ];
 
     // ホーム画面へ
-    header("Location: ../../client\page\home.php");
+    header("Location: ../client/page/home.php");
     exit;
 
 } catch (PDOException $e) {
     // DBエラー時
     error_log("DB Error: " . $e->getMessage());
     $_SESSION['db_err'] = "システムエラーが発生しました。";
-    header("Location: ../login.php");
+    header("Location: ../index.php");
     exit;
 }
-
-
-
-
-// require_once  __DIR__ . "/../helpers/utils.php";
-
-//ログイン画面（サーバーサイド）
 
 ?>
