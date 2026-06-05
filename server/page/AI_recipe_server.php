@@ -12,7 +12,7 @@ require_once __DIR__ . "/../AIRule/AI_Rule_API.php";
 header('Content-Type: application/json; charset=UTF-8');
  
 // AIの返答待ちでタイムアウトしないためのセーフティ
-set_time_limit(0);
+set_time_limit(30);
  
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
