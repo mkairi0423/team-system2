@@ -14,28 +14,51 @@ include("template/sidebar.php");
         <h1>食材登録</h1>
     </div>
 
-    
+
     <div class="grid">
+
+        <!-- カメラ登録 -->
 
         <!-- カメラ登録 -->
 
         <div class="card">
 
-            <h3>📷 カメラ登録</h3>
+            <h3>📷 レシート食材重量逆算スキャナー</h3>
 
             <br>
+
+            <p>
+                レシートの写真を撮影するか、
+                画像を選択してください
+            </p>
+
+            <br>
+
+            <label for="receipt-file" class="file-label">
+                📸 写真を撮る / 画像を選択
+            </label>
 
             <input
                 type="file"
                 accept="image/*"
                 capture="environment"
-                id="cameraInput">
+                id="receipt-file">
 
             <br><br>
 
-            <button class="btn">
-                画像を登録
+            <button
+                class="btn"
+                id="scanBtn">
+
+                画像を解析
+
             </button>
+
+            <br><br>
+
+            <div id="result">
+                ここに解析結果が表示されます
+            </div>
 
         </div>
 
