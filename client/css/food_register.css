@@ -1,0 +1,170 @@
+/* =========================
+   MAIN
+========================= */
+.main {
+  margin-left: 220px;
+  padding: 20px;
+  min-height: 100vh;
+  background: #f8fafc;
+  box-sizing: border-box;
+}
+
+/* =========================
+   TITLE
+========================= */
+.page-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #0f172a;
+
+  margin: 0 0 30px 0;
+
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* =========================
+   UPLOAD CARD
+========================= */
+.upload-container {
+  width: 100%;
+  max-width: 1000px;
+
+  margin: 0 0 30px 0;
+
+  background: #fff;
+  padding: 30px;
+
+  border-radius: 20px;
+  box-sizing: border-box;
+
+  text-align: center;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.upload-container p {
+  font-size: 18px;
+  color: #334155;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   FILE BUTTON
+========================= */
+.file-label {
+  display: inline-block;
+
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  padding: 14px 30px;
+  border-radius: 12px;
+
+  cursor: pointer;
+  transition: 0.3s;
+
+  white-space: nowrap;
+}
+
+.file-label:hover {
+  transform: translateY(-2px);
+}
+
+#cameraInput,
+#receipt-file {
+  display: none;
+}
+
+/* =========================
+   RESULT
+========================= */
+#result {
+  width: 100%;
+
+  background: #fff;
+
+  padding: 25px;
+  border-radius: 20px;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   TABLE
+========================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #2563eb;
+  color: white;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* =========================
+   SAVE BUTTON
+========================= */
+.save-btn {
+  margin-top: 20px;
+
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+
+  color: white;
+  border: none;
+
+  padding: 14px 28px;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+/*レスポンシブ対応*/
+@media (max-width: 768px) {
+  table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    padding: 6px;
+    font-size: 12px;
+    word-break: break-word;
+  }
+
+  td input[type="text"] {
+    width: 100%;
+    max-width: 120px;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
+
+  td input[type="number"] {
+    width: 60px;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
+
+  .save-btn {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  #result {
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+}
