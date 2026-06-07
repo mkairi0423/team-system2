@@ -45,7 +45,7 @@ unset($_SESSION['pass_err']);
             </form>
 
             <div class="sub-links">
-                <a href="page/emp_register.php">アカウント作成</a>
+                <a href="page/user_register.php">アカウント作成</a>
                 <a href="page/pass_reset.php">パスワードを忘れた方</a>
             </div>
         </div>
