@@ -1,6 +1,6 @@
 <?php
 
-$title = "ダッシュボード";
+$title = "ホーム";
 $page = "home";
 
 include "template/header.php";
@@ -11,7 +11,7 @@ include "template/sidebar.php";
 <div class="main">
 
     <div class="topbar">
-        <h1>ダッシュボード</h1>
+        <h1>home</h1>
     </div>
 
     <div class="hero">
