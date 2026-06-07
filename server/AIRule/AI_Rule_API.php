@@ -135,7 +135,7 @@ function henkan($input_name) {
     $name = mb_convert_kana($name, "cVa", "UTF-8");
  
     // 3. アルファベットがあった場合、大文字を「小文字」に統一（例：牛肉A5 → 牛肉a5）
-    $name = mb_lowercase($name);
+    $name = mb_strtolower($name);//ここ
  
     // 4. 【おまけ】「じゃが芋」などの漢字混じりをどうするか？
     // 完全にひらがな化したい場合は、のちのち画面5・6で作る「Gemini API」に
