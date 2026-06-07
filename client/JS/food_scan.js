@@ -1,3 +1,7 @@
+// food_scan.js
+// 画面：食材スキャン（food_scan.php）で動くJavaScript
+
+
 const fileInput = document.getElementById("receipt-file");
 const resultDiv = document.getElementById("result");
 
