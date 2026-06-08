@@ -27,6 +27,7 @@ CREATE TABLE ingredients (
     food VARCHAR(100) NOT NULL,
     quantity INT NULL COMMENT 'グラム数または個数',
     expiration_date DATE NULL,
+    -- 🔥 term_type を完全復活させました
     term_type VARCHAR(20) NOT NULL DEFAULT '賞味期限' COMMENT '賞味期限 または 消費期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE,
@@ -40,7 +41,7 @@ CREATE TABLE cooking_now (
     original_ingredient_id BIGINT NOT NULL,               -- キャンセル時の復元用ID
     food VARCHAR(100) NOT NULL,                               -- 食材名
     quantity INT NULL,                                   -- 使う分量
-    original_storage_type VARCHAR(20) NOT NULL,           -- 元の場所 ('fridge' / 'freezer' / 'storage_place'等に対応)
+    original_storage_type VARCHAR(20) NOT NULL,           -- 元の場所
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,       -- 24時間判定用
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
