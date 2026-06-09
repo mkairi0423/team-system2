@@ -1,6 +1,6 @@
 //selection_AI_recipe.js
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // 現在どのページ（ファイル）を開いているかをIDや要素の存在で判定します
     const submitBtn = document.getElementById('submit-to-ai');
     const recipeContainer = document.getElementById('recipe-list-container');
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // ➔ 【処理専用ファイル（suggest_recipe.php）】へお使いを頼む！
-             const response = await fetch('../../server/page/AI_recipe_server.php', { method: 'POST', body: formData });
+                const response = await fetch('../../server/page/AI_recipe_server.php', { method: 'POST', body: formData });
                 if (!response.ok) throw new Error('通信に失敗しました。');
 
                 const data = await response.json();
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.success) {
                     // 👑 届いたお土産データをブラウザの一時ポケット（sessionStorage）に格納！
                     sessionStorage.setItem('ai_recipes', JSON.stringify(data.recipes));
-                    
+
                     // 👑 準備ができたら、【結果を表示するファイル（show_result.php）】へジャンプ！
                     window.location.href = 'selection.php';
                 } else {
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recipeContainer) {
         // ブラウザの一時ポケットからさっき保存したデータを取り出す
         const savedData = sessionStorage.getItem('ai_recipes');
-        
+
         if (!savedData) {
             recipeContainer.innerHTML = '<p>レシピデータが見つかりません。条件選択からやり直してください。</p>';
             return;
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1個ずつカードにしてHTMLをガシガシ生成し、画面にドッキング！
         recipes.forEach((recipe, index) => {
             const proposalNumber = index + 1;
-            
+
             let featureBadges = '';
             if (recipe.features && Array.isArray(recipe.features)) {
                 featureBadges = recipe.features.map(f => `<span class="feature-badge">[${f}]</span>`).join('');
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             recipeCard.innerHTML = `
                 <div class="recipe-header">
-                    <input type="checkbox" class="recipe-checkbox" id="recipe-check-${proposalNumber}" name="selected_recipe" value="${proposalNumber}">
+                    
                     <label class="recipe-label" for="recipe-check-${proposalNumber}">⭐ 提案 ${proposalNumber}</label>
                 </div>
                 <h3 class="recipe-title">料理名：${recipe.recipe_name}</h3>
@@ -112,11 +112,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 「この料理にする！」ボタンのイベント処理
         const adoptButtons = recipeContainer.querySelectorAll('.btn-adopt');
+
         adoptButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const idx = e.target.getAttribute('data-index');
+            btn.addEventListener('click', async () => {
+
+                const idx = btn.getAttribute('data-index');
                 const chosenRecipe = recipes[idx];
-                alert(`「${chosenRecipe.recipe_name}」が選ばれました！画面4（食材確認）へ進みます。`);
+
+                console.log(chosenRecipe);
+
+                // ✅ 連打防止
+                btn.disabled = true;
+                btn.innerText = "登録中...";
+
+                try {
+                    const response = await fetch('../../server/page/selection_server.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ recipe: chosenRecipe })
+                    });
+
+
+                    if (!response.ok) {
+                        throw new Error('サーバーエラー');
+                    }
+
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.error || '登録に失敗しました');
+                    }
+
+                    alert(`「${chosenRecipe.recipe_name}」が選ばれました！`);
+
+                    // ✅ 画面4へ
+                    window.location.href = 'cooking_now.php';
+
+                } catch (err) {
+                    alert('エラー: ' + err.message);
+
+                    // ✅ 失敗時は戻す
+                    btn.disabled = false;
+                    btn.innerText = "🍳 この料理にする！（採用）";
+                }
             });
         });
     }
