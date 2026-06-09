@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/def.php";
+
 
 
 /**
@@ -16,7 +16,7 @@ function h(string $str): string
 //ログイン画面に戻る処理
 function login()
 {
-    header("Location: " . TEAM_SYSTEM2 . "/client/page/index.php");
+    header("Location: " . TEAM_SYSTEM2 . "/client/index.php");
 }
 
 //クライアントの$pageに遷移
@@ -53,6 +53,7 @@ function nextpage(string $page)
 
 function getPDO(): PDO
 {
+    require_once __DIR__ . "/../helpers/def.php";
     // すでに PDO 接続が存在する場合はそのまま返す
     static $pdo = null;
     if ($pdo != null) return $pdo;
