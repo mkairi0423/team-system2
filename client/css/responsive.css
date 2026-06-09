@@ -2,7 +2,6 @@
    TABLET (900px)
 ========================= */
 @media (max-width: 900px) {
-
   /* サイドバーは隠す（PC寄り） */
   .sidebar {
     display: none;
@@ -22,7 +21,6 @@
    MOBILE (768px)
 ========================= */
 @media (max-width: 768px) {
-
   /* ===== ハンバーガーボタン ===== */
   .hamburger {
     display: block;
@@ -37,30 +35,57 @@
     border: none;
     border-radius: 10px;
 
-    padding: 10px 15px;
     font-size: 24px;
 
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+
+    cursor: pointer;
   }
 
-  /* ===== サイドバー（開閉） ===== */
+  /* ===== サイドバー（ポップアップ表示） ===== */
+  /* ===== サイドバー（ポップアップ表示） ===== */
   .sidebar {
-    display: block; /* tabletで消してるので戻す */
+    display: block;
 
-    position: relative;
-    width: 100%;
+    position: fixed;
+    left: 50%;
 
-    height: 0;
-    overflow: hidden;
+    width: calc(100% - 20px);
+    height: auto;
 
-    padding: 0 20px;
+    background: #fff;
+    border-radius: 16px;
 
-    transition: height 0.35s ease;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+
+    padding: 20px;
+
+    z-index: 2500;
+
+    /* 初期位置を上へ */
+    transform: translateX(-50%) translateY(-50px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.4s ease;
   }
 
   .sidebar.active {
-    height: 500px;
-    padding: 20px;
+    /* 下へ降りる */
+    transform: translateX(-50%) translateY(-100px);
+
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar.active {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateX(-50%) translateY(0);
   }
 
   /* ===== メイン ===== */
@@ -110,9 +135,8 @@
    SMALL MOBILE (480px)
 ========================= */
 @media (max-width: 480px) {
-
   .main {
-    padding: 15px;
+    padding: 10px;
   }
 
   .topbar h1 {

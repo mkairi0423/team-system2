@@ -1,4 +1,12 @@
-<button class="hamburger" onclick="toggleMenu()">☰</button>
+<?php
+$current = basename($_SERVER['PHP_SELF']);
+?>
+
+<button class="hamburger" onclick="toggleMenu()" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
 
 <div class="sidebar" id="sidebar">
 
@@ -6,11 +14,12 @@
         FridgeAI
     </div>
 
+
     <div class="menu">
 
         <a href="home.php"
             class="<?= ($page ?? '') === 'home' ? 'active' : '' ?>">
-            🏠 ダッシュボード
+            🏠 ホーム
         </a>
 
         <a href="fridge.php"
@@ -19,7 +28,7 @@
         </a>
 
         <a href="food_register.php"
-            class="<?= ($page ?? '') === 'food_add' ? 'active' : '' ?>">
+            class="<?= ($page ?? '') === 'food' ? 'active' : '' ?>">
             📷 食材登録
         </a>
 
@@ -28,7 +37,7 @@
             📦 バーコード登録
         </a>
 
-        <a href="recipe_select.php"
+        <a href="AI_recipe.php"
             class="<?= ($page ?? '') === 'recipe' ? 'active' : '' ?>">
             🤖 AIレシピ
         </a>
