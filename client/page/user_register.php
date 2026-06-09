@@ -1,54 +1,21 @@
 <?php
 //ユーザー情報の登録画面
-//TODO:
-// ユーザー登録処理
+session_start();
 
-$errors = [];
+$pass_err = $_SESSION['pass_err'] ?? "";
+$email_null_err = $_SESSION['email_null_err'] ?? "";
+$email_err = $_SESSION['email_err'] ?? "";
+$name_null_err = $_SESSION['name_null_err'] ?? "";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $name = trim($_POST["name"] ?? "");
-    $email = trim($_POST["email"] ?? "");
-    $password = $_POST["password"] ?? "";
-    $fridge_type = $_POST["fridge_type"] ?? "";
 
-    // バリデーション
-    if ($name === "") $errors[] = "ユーザー名を入力してください";
-    if ($email === "") $errors[] = "メールアドレスを入力してください";
-    if ($password === "") $errors[] = "パスワードを入力してください";
-    if ($fridge_type === "") $errors[] = "冷蔵庫タイプを選択してください";
+//debug用
+// $db_register_err = $_SESSION['db_register_err'] ?? "";
+// echo $db_register_err;
 
-    // エラーなしなら保存（仮）
-    if (empty($errors)) {
+unset($_SESSION['pass_err'], $_SESSION['email_null_err'], $_SESSION['email_err'], $_SESSION['name_null_err']);
 
-        // パスワードはハッシュ化（重要）
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // 仮保存（本来はDB）
-        $user = [
-            "name" => $name,
-            "email" => $email,
-            "password" => $hashedPassword,
-            "fridge_type" => $fridge_type
-        ];
-
-        // ファイル保存（簡易）
-        $file = "users.json";
-
-        $users = [];
-        if (file_exists($file)) {
-            $users = json_decode(file_get_contents($file), true) ?? [];
-        }
-
-        $users[] = $user;
-
-        file_put_contents($file, json_encode($users, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-
-        // 登録後リダイレクト
-        header("Location: login.php");
-        exit;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 
 <body>
-
     <div class="register-wrapper">
 
         <div class="register-card">
@@ -75,24 +41,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <h2>新規アカウント作成</h2>
             <p class="sub">あなたの冷蔵庫をスマート管理</p>
 
-            <form action="register.php" method="POST">
+            <form action="../../server/page/user_register_server.php" method="POST">
 
                 <div class="form-group">
                     <label>ユーザー名</label>
-                    <input type="text" name="name" placeholder="山田 太郎" required>
+                    <input type="text" name="name" placeholder="例: user_name" required>
+                    <?php if (!empty($name_null_err)): ?>
+                        <p class="err-msg"><?= htmlspecialchars($name_null_err, ENT_QUOTES, 'UTF-8') ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
                     <label>メールアドレス</label>
                     <input type="email" name="email" placeholder="example@mail.com" required>
+                    <?php if (!empty($email_null_err)): ?>
+                        <p class="err-msg"><?= htmlspecialchars($email_null_err, ENT_QUOTES, 'UTF-8') ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($email_err)): ?>
+                        <p class="err-msg"><?= htmlspecialchars($email_err, ENT_QUOTES, 'UTF-8') ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
                     <label>パスワード</label>
-                    <input type="password" name="password" placeholder="••••••••" required>
+                    <input type="password" name="password" placeholder="••••••••" autocomplete="new-password" required>
+                    <?php if (!empty($pass_err)): ?>
+                        <p class="err-msg"><?= htmlspecialchars($pass_err, ENT_QUOTES, 'UTF-8') ?></p>
+                    <?php endif; ?>
                 </div>
 
-                <div class="form-group">
+
+                <!-- TODO:ここは考え中 -->
+                <!-- <div class="form-group">
                     <label>冷蔵庫タイプ</label>
 
                     <div class="select-wrapper">
@@ -104,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <option value="smart">🤖 スマート冷蔵庫（IoT対応）</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <button type="submit" class="btn">
                     登録する
@@ -113,9 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </form>
 
             <p class="login-link">
-                すでにアカウントがある？ <a href="../index.php">ログイン</a>
+                すでにアカウントをお持ちの方 <a href="../index.php">ログイン</a>
             </p>
-
         </div>
 
     </div>

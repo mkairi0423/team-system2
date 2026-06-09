@@ -6,6 +6,7 @@ $name_err = $_SESSION['name_id_err'] ?? "";
 $pass_err = $_SESSION['pass_err'] ?? "";
 unset($_SESSION['name_id_err']);
 unset($_SESSION['pass_err']);
+
 ?>
 
 <!DOCTYPE html>
