@@ -14,10 +14,12 @@
 
   box-sizing: border-box;
 
-  box-shadow: 2px 0 15px rgba(0,0,0,0.05);
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
 
   /* エフェクト追加 */
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  transition:
+    transform 0.4s ease,
+    opacity 0.4s ease;
 }
 
 /* =========================
@@ -29,11 +31,7 @@
   font-size: 1.3rem;
   font-weight: 700;
 
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #06b6d4
-  );
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
 
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -58,8 +56,56 @@
   transition: 0.3s;
 }
 
-.menu a:hover,
 .menu a.active {
   background: #eff6ff;
   color: #2563eb;
+  font-weight: 700;
+  border-left: 4px solid #2563eb;
+}
+
+/* =========================
+   スマホメニュー
+========================= */
+
+.hamburger {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+
+    position: fixed;
+    top: 15px;
+    right: 15px;
+
+    width: 45px;
+    height: 45px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #2563eb;
+    color: #fff;
+
+    font-size: 24px;
+    z-index: 3000;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+
+    background: #fff;
+
+    transform: translateY(-100%);
+    opacity: 0;
+
+    transition: all 0.4s ease;
+  }
+
+  .sidebar.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
