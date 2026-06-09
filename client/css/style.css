@@ -12,6 +12,7 @@
 @import url("home.css");
 @import url("food_loss.css");
 @import url("food_register.css");
+@import url("setting.css");
 
 /* 共通エリア */
 @import url("footer.css");
