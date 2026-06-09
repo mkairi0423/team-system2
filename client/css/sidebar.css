@@ -56,10 +56,11 @@
   transition: 0.3s;
 }
 
-.menu a:hover,
 .menu a.active {
   background: #eff6ff;
   color: #2563eb;
+  font-weight: 700;
+  border-left: 4px solid #2563eb;
 }
 
 /* =========================

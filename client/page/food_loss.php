@@ -1,7 +1,7 @@
 <?php
 
 $title = "食品ロス分析";
-$page = "analysis";
+$page = "analytics";
 
 include("template/header.php");
 include("template/sidebar.php");
