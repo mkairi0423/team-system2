@@ -273,7 +273,7 @@ select:invalid {
   margin-top: 0px;
   padding-left: 8px;
 
-  color: #ef4444;
+  color: #ef4444 !important;
   font-size: 12px;
   font-weight: 600;
 
