@@ -37,7 +37,7 @@ $current = basename($_SERVER['PHP_SELF']);
             📦 バーコード登録
         </a>
 
-        <a href="recipe_select.php"
+        <a href="AI_recipe.php"
             class="<?= ($page ?? '') === 'recipe' ? 'active' : '' ?>">
             🤖 AIレシピ
         </a>
