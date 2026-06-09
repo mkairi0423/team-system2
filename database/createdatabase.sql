@@ -27,6 +27,7 @@ CREATE TABLE ingredients (
     food VARCHAR(100) NOT NULL,
     quantity INT NULL COMMENT 'グラム数または個数',
     expiration_date DATE NULL,
+    term_type VARCHAR(20) NOT NULL DEFAULT '賞味期限' COMMENT '賞味期限 または 消費期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES categories(cid) ON DELETE RESTRICT
@@ -35,11 +36,11 @@ CREATE TABLE ingredients (
 -- 4. 調理中専用の一時テーブル（短縮版）
 CREATE TABLE cooking_now (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,                           -- 誰が調理中か
-    original_ingredient_id BIGINT NOT NULL,           -- キャンセル時の復元用ID
-    food VARCHAR(100) NOT NULL,                        -- 食材名
-    quantity INT NULL,                                 -- 使う分量
-    original_storage_type VARCHAR(20) NOT NULL,       -- 元の場所 ('fridge' / 'freezer')
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 24時間判定用
+    user_id BIGINT NOT NULL,                               -- 誰が調理中か
+    original_ingredient_id BIGINT NOT NULL,               -- キャンセル時の復元用ID
+    food VARCHAR(100) NOT NULL,                               -- 食材名
+    quantity INT NULL,                                   -- 使う分量
+    original_storage_type VARCHAR(20) NOT NULL,           -- 元の場所 ('fridge' / 'freezer' / 'storage_place'等に対応)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,       -- 24時間判定用
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
 ) ENGINE=InnoDB;

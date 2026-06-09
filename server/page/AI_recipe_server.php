@@ -7,7 +7,7 @@
 // 1. ユーザーが提示してくれた共通関数ファイルを読み込む（これでgetPDOが使えるようになります）
 require_once __DIR__ . "/../../helpers/utils.php"; // ※実際のファイル名に変えてください
 require_once __DIR__ . "/../../helpers/gemini_api.php"; // APIキーを安全に管理するためのファイル（例: define('API_KEY', 'あなたのAPIキー');）
-require_once __DIR__ . "/../AIRule/AI_Rule_API.php";
+require_once __DIR__ . "/../AI_info/ai_rule_recipe.php";
 
 header('Content-Type: application/json; charset=UTF-8');
  
@@ -64,7 +64,7 @@ $api_key = getenv('GEMINI_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? ($_SERVER['GE
     $model = 'gemini-2.5-flash';
     $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$api_key}";
 
-    $system_prompt = APIRule();
+    $system_prompt = recipe_rule();
  
     $user_prompt = <<<EOD
 【実行指示】：今回は「◆ タスクA：条件に沿ったAIレシピ提案」を実行してください。
