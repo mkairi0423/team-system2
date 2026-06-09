@@ -11,7 +11,7 @@ include "template/sidebar.php";
 <div class="main">
 
     <div class="topbar">
-        <h1>home</h1>
+        <h1>ホーム</h1>
     </div>
 
     <div class="hero">
