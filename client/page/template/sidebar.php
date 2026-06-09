@@ -1,4 +1,8 @@
-<button class="hamburger" onclick="toggleMenu()">☰</button>
+<button class="hamburger" onclick="toggleMenu()" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
 
 <div class="sidebar" id="sidebar">
 
@@ -10,7 +14,7 @@
 
         <a href="home.php"
             class="<?= ($page ?? '') === 'home' ? 'active' : '' ?>">
-            🏠 ダッシュボード
+            🏠 home
         </a>
 
         <a href="fridge.php"
