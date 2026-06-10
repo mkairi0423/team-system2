@@ -1,47 +1,50 @@
--- 既存のテーブルを依存関係の逆順で安全に削除
-DROP TABLE IF EXISTS cooking_now;
-DROP TABLE IF EXISTS ingredients;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS users;
+-- ====================================================================
+-- 食材・在庫一括管理システム データベース設計
+-- ====================================================================
 
--- 1. ユーザー管理
+-- 1. ユーザー管理テーブル (既存の想定)
+-- ※すでに存在している場合はこのCREATE文はスキップしてください。
 CREATE TABLE users (
     uid BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name_id VARCHAR(255) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- 2. 食材カテゴリ管理
+
+-- 2. 食材カテゴリマスタ (野菜、肉、魚、調味料など)
+-- ※すでに存在している場合はこのCREATE文はスキップしてください。
 CREATE TABLE categories (
     cid INT AUTO_INCREMENT PRIMARY KEY,
-    category_name VARCHAR(50) NOT NULL
+    category_name VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- 3. 在庫食材管理（冷蔵庫・冷凍庫の中身）
+
+-- 3. 🔥 保管場所マスタ（冷蔵庫、冷凍庫、常温などを管理）
+-- ここで場所を一括定義することで、将来「野菜室」や「パントリー」が増えても対応できます。
+CREATE TABLE storage_locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    location_name VARCHAR(50) NOT NULL COMMENT '冷蔵庫、冷凍庫、常温、野菜室、チルド室 など',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+
+-- 4. 🛒 在庫食材管理テーブル（すべての食材をここで一括管理）
+-- `storage_location_id` カラムによって、その食材がどこにあるかを判別します。
 CREATE TABLE ingredients (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,
-    category_id INT NOT NULL,
-    food VARCHAR(100) NOT NULL,
+    user_id BIGINT NOT NULL COMMENT '所有しているユーザーのID',
+    category_id INT NOT NULL COMMENT '食材のカテゴリID',
+    storage_location_id INT NOT NULL COMMENT '🔥 保管場所マスタ(冷蔵庫/冷凍庫など)への外部キー',
+    food_name VARCHAR(100) NOT NULL COMMENT '食材名（例: ニンジン、豚バラ肉）',
     quantity INT NULL COMMENT 'グラム数または個数',
-    expiration_date DATE NULL,
-    -- 🔥 term_type を完全復活させました
+    expiration_date DATE NULL COMMENT '期限の年月日',
     term_type VARCHAR(20) NOT NULL DEFAULT '賞味期限' COMMENT '賞味期限 または 消費期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- 外部キー制約（紐づく親データが消えたときの挙動を設定）
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(cid) ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
--- 4. 調理中専用の一時テーブル（短縮版）
-CREATE TABLE cooking_now (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,                               -- 誰が調理中か
-    original_ingredient_id BIGINT NOT NULL,               -- キャンセル時の復元用ID
-    food VARCHAR(100) NOT NULL,                               -- 食材名
-    quantity INT NULL,                                   -- 使う分量
-    original_storage_type VARCHAR(20) NOT NULL,           -- 元の場所
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,       -- 24時間判定用
-    FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES categories(cid) ON DELETE RESTRICT,
+    FOREIGN KEY (storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
