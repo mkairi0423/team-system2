@@ -1,59 +1,103 @@
--- ====================================================================
--- 食材・在庫一括管理システム データベース設計
--- ====================================================================
+SET NAMES utf8mb4;
 
--- DROP TABLE
+-- ====================================================================
+-- 1. 古いテーブルの削除（初期化用）
+-- ====================================================================
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS cooking_now;
 DROP TABLE IF EXISTS ingredients;
 DROP TABLE IF EXISTS storage_locations;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
 SET FOREIGN_KEY_CHECKS = 1;
 
--- 1. ユーザー管理テーブル (既存の想定)
--- ※すでに存在している場合はこのCREATE文はスキップしてください。
+
+-- ====================================================================
+-- 2. テーブル作成（構造定義）
+-- ====================================================================
+
+-- ユーザー管理テーブル
 CREATE TABLE users (
     uid BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name_id VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL COMMENT 'ユーザー名',
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
--- 2. 食材カテゴリマスタ (野菜、肉、魚、調味料など)
--- ※すでに存在している場合はこのCREATE文はスキップしてください。
+-- 食材カテゴリマスタ
 CREATE TABLE categories (
     cid INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
--- 3. 🔥 保管場所マスタ（冷蔵庫、冷凍庫、常温などを管理）
--- ここで場所を一括定義することで、将来「野菜室」や「パントリー」が増えても対応できます。
+-- 保管場所マスタ
 CREATE TABLE storage_locations (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    location_name VARCHAR(50) NOT NULL COMMENT '冷蔵庫、冷凍庫、常温、野菜室、チルド室 など',
+    location_name VARCHAR(50) NOT NULL COMMENT '冷蔵庫、冷凍庫、常温、野菜室 など',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
--- 4. 🛒 在庫食材管理テーブル（すべての食材をここで一括管理）
--- `storage_location_id` カラムによって、その食材がどこにあるかを判別します。
+-- 🛒 在庫食材管理テーブル（一括管理）
 CREATE TABLE ingredients (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL COMMENT '所有しているユーザーのID',
-    category_id INT NOT NULL COMMENT '食材のカテゴリID',
-    storage_location_id INT NOT NULL COMMENT '🔥 保管場所マスタ(冷蔵庫/冷凍庫など)への外部キー',
-    food_name VARCHAR(100) NOT NULL COMMENT '食材名（例: ニンジン、豚バラ肉）',
-    quantity INT NULL COMMENT 'グラム数または個数',
-    expiration_date DATE NULL COMMENT '期限の年月日',
-    term_type VARCHAR(20) NOT NULL DEFAULT '賞味期限' COMMENT '賞味期限 または 消費期限',
+    user_id BIGINT NOT NULL,
+    category_id INT NOT NULL,
+    storage_location_id INT NOT NULL, 
+    food_name VARCHAR(100) NOT NULL,
+    quantity INT NULL,
+    expiration_date DATE NULL,
+    -- 🔥 term_type を ENUM 型に変更して、不正な文字列が入るのをガードします
+    term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- 外部キー制約（紐づく親データが消えたときの挙動を設定）
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES categories(cid) ON DELETE RESTRICT,
     FOREIGN KEY (storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- 🍳 調理中一時管理テーブル
+CREATE TABLE cooking_now (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    original_ingredient_id BIGINT NOT NULL,
+    food VARCHAR(100) NOT NULL,
+    quantity INT NULL,
+    original_storage_location_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE,
+    FOREIGN KEY (original_ingredient_id) REFERENCES ingredients(id) ON DELETE CASCADE,
+    FOREIGN KEY (original_storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+-- ====================================================================
+-- 3. 初期・テストデータの投入（インデックス・テスト用）
+-- ====================================================================
+
+-- ① カテゴリの登録
+INSERT INTO categories (cid, category_name) VALUES 
+(1, '肉類'),
+(2, '野菜'),
+(3, '魚介類'),
+(4, 'その他');
+
+-- ② 保管場所マスタの登録
+INSERT INTO storage_locations (id, location_name) VALUES 
+(1, '冷蔵庫'),
+(2, '冷凍庫'),
+(3, '常温（パントリー）'),
+(4, '野菜室');
+
+-- ③ テストユーザーの登録
+INSERT INTO users (uid, name, email, password) VALUES 
+(1, 'test2026', 'test@example.com', 'hashed_password_here');
+
+-- ④ 在庫食材の登録（ENUM型にしても今まで通りの文字列でインサート可能です）
+INSERT INTO ingredients (user_id, category_id, storage_location_id, food_name, quantity, expiration_date, term_type) VALUES 
+(1, 1, 1, '豚ひき肉', 200, '2026-05-22', '消費期限'),
+(1, 2, 1, 'キャベツ', 1,   '2026-05-23', '賞味期限'),
+(1, 4, 1, '卵',       10,  '2026-05-24', '賞味期限'), 
+(1, 3, 1, 'サーモン', 2,   '2026-05-26', '消費期限');
