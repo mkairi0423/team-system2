@@ -21,10 +21,10 @@ function register_user($name, $email, $password)
         // ⭕️ 自前で new PDO せず、共通の getPDO() を使うことで安全な接続オプションがそのまま適用されます
         $pdo = getPDO();
 
-        $stmt = $pdo->prepare("INSERT INTO users (name_id, email, password) VALUES (:name_id, :email, :password)");
+        $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
 
         // 型を明示して安全にバインド
-        $stmt->bindValue(':name_id',  $name,            PDO::PARAM_STR);
+        $stmt->bindValue(':name',     $name,            PDO::PARAM_STR);
         $stmt->bindValue(':email',    $email,           PDO::PARAM_STR);
         $stmt->bindValue(':password', $hashed_password, PDO::PARAM_STR);
 
