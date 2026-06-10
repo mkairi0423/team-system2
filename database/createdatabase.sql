@@ -2,11 +2,20 @@
 -- 食材・在庫一括管理システム データベース設計
 -- ====================================================================
 
+-- DROP TABLE
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS ingredients;
+DROP TABLE IF EXISTS storage_locations;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- 1. ユーザー管理テーブル (既存の想定)
 -- ※すでに存在している場合はこのCREATE文はスキップしてください。
 CREATE TABLE users (
     uid BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
+    name_id VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
