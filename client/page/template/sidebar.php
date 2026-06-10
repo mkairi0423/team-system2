@@ -19,7 +19,7 @@ $current = basename($_SERVER['PHP_SELF']);
 
         <a href="home.php"
             class="<?= ($page ?? '') === 'home' ? 'active' : '' ?>">
-            🏠 home
+            🏠 ホーム
         </a>
 
         <a href="fridge.php"

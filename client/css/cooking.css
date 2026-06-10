@@ -1,0 +1,60 @@
+body {
+    font-family: sans-serif;
+    padding: 20px;
+    background: #f9f9f9;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+}
+
+.title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.food-name {
+    font-size: 16px;
+}
+
+button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.return {
+    background: #ddd;
+}
+
+.return:hover {
+    background: #ccc;
+}
+
+.complete {
+    width: 100%;
+    background: orange;
+    color: white;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.complete:hover {
+    background: #e69500;
+}
+
+.empty {
+    color: #666;
+}
