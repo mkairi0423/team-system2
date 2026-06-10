@@ -1,8 +1,10 @@
 SET NAMES utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE cooking_now; -- 追加した一時テーブルも一緒にクリアしておくと安全です
+-- 一括クリア（storage_locations も追加）
+TRUNCATE TABLE cooking_now; 
 TRUNCATE TABLE ingredients;
+TRUNCATE TABLE storage_locations;
 TRUNCATE TABLE users;
 TRUNCATE TABLE categories;
 SET FOREIGN_KEY_CHECKS = 1;
@@ -14,13 +16,23 @@ INSERT INTO categories (cid, category_name) VALUES
 (3, '魚介類'),
 (4, 'その他');
 
--- 2. テストユーザーの登録（自動的に uid = 1 になります）
-INSERT INTO users (name_id, email, password) VALUES 
-('test2026', 'test@example.com', 'hashed_password_here');
+-- 2. 🔥 保管場所マスタの登録（自動的に 冷蔵庫=1, 冷凍庫=2 ... になります）
+INSERT INTO storage_locations (id, location_name) VALUES 
+(1, '冷蔵庫'),
+(2, '冷凍庫'),
+(3, '常温（パントリー）'),
+(4, '野菜室');
 
--- 3. 在庫食材の登録（quantity を数値に変更、卵のカテゴリを4に修正）
-INSERT INTO ingredients (user_id, category_id, food, quantity, expiration_date) VALUES 
-(1, 1, '豚ひき肉', 200,  '2026-05-22'),
-(1, 2, 'キャベツ', 1,    '2026-05-23'),
-(1, 4, '卵',       10,   '2026-05-24'), -- カテゴリを「その他」、数量を10（個）にしました
-(1, 3, 'サーモン', 2,    '2026-05-26'); -- カテゴリを「魚介類」にスッキリ修正
+-- 3. テストユーザーの登録（自動的に uid = 1 になります）
+-- ※お使いのテーブルの「name_id」または「username」に合わせて調整してください
+INSERT INTO users (uid, name_id, email, password) VALUES 
+(1, 'test2026', 'test@example.com', 'hashed_password_here');
+
+-- 4. 🛒 在庫食材の登録（第3引数に storage_location_id を追加）
+-- ここではすべて一旦 「1（冷蔵庫）」 に入るように設定しています。
+-- もし「サーモン」を冷凍庫に入れたい場合は、第3引数の「1」を「2」に変えてください。
+INSERT INTO ingredients (user_id, category_id, storage_location_id, food_name, quantity, expiration_date, term_type) VALUES 
+(1, 1, 1, '豚ひき肉', 200, '2026-05-22', '消費期限'),
+(1, 2, 1, 'キャベツ', 1,   '2026-05-23', '賞味期限'),
+(1, 4, 1, '卵',       10,  '2026-05-24', '賞味期限'), 
+(1, 3, 1, 'サーモン', 2,   '2026-05-26', '消費期限');
