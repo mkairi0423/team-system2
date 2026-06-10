@@ -15,7 +15,8 @@ function get_ingredients()
         $pdo = getPDO();
 
         // ingredients テーブルから賞味期限が古い順（ASC）にすべての食材を取得
-        $sql = "SELECT id, category_id, food, quantity, expiration_date FROM ingredients ORDER BY expiration_date ASC";
+        $sql = "SELECT id, category_id, food_name
+        , quantity, expiration_date FROM ingredients ORDER BY expiration_date ASC";
         $stmt = $pdo->query($sql);
         $all_ingredients = $stmt->fetchAll();
 
