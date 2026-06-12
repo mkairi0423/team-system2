@@ -4,7 +4,7 @@ SET NAMES utf8mb4;
 -- 1. 古いテーブルの削除（初期化用）
 -- ====================================================================
 SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS cooking_history; -- 🔥 追加
+DROP TABLE IF EXISTS cooking_history;
 DROP TABLE IF EXISTS cooking_now;
 DROP TABLE IF EXISTS ingredients;
 DROP TABLE IF EXISTS storage_locations;
@@ -47,7 +47,9 @@ CREATE TABLE ingredients (
     category_id INT NOT NULL,
     storage_location_id INT NOT NULL, 
     food_name VARCHAR(100) NOT NULL,
-    quantity INT NULL,
+    quantity INT NULL COMMENT '数量（数値のみ）',
+    -- 🔥 単位カラムを新設！ これで「g」や「個」をバラバラに管理できます
+    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個' COMMENT '食材の単位',
     expiration_date DATE NULL,
     term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -57,13 +59,15 @@ CREATE TABLE ingredients (
     FOREIGN KEY (storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 🍳 調理中一時管理テーブル（これから作る料理の予定）
+-- 🍳 調理中一時管理テーブル
 CREATE TABLE cooking_now (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     original_ingredient_id BIGINT NOT NULL,
     food VARCHAR(100) NOT NULL,
-    quantity INT NULL,
+    quantity INT NULL COMMENT '使用する数量',
+    -- 🔥 調理中テーブルにも単位を合わせて持たせます
+    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個',
     original_storage_location_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
@@ -72,16 +76,16 @@ CREATE TABLE cooking_now (
     FOREIGN KEY (original_storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 📜 🔥【新設】調理履歴テーブル
--- 「いつ、誰が、何という料理（または食材）を、どれだけ使って作ったか」を記録します。
+-- 📜 調理履歴テーブル
 CREATE TABLE cooking_history (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL COMMENT '作ったユーザーのID',
-    dish_name VARCHAR(255) NOT NULL COMMENT '作った料理名（例: カレー、キャベツ炒め）',
-    used_food_name VARCHAR(100) NOT NULL COMMENT '使った食材名（例: キャベツ）',
-    quantity INT NULL COMMENT '消費した数量',
-    cooked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '調理した日時',
+    user_id BIGINT NOT NULL,
+    dish_name VARCHAR(255) NOT NULL,
+    used_food_name VARCHAR(100) NOT NULL,
+    quantity INT NULL,
+    -- 🔥 履歴にも「何の単位でどれだけ使ったか」を残せるようにします
+    unit VARCHAR(20) NOT NULL DEFAULT '個' COMMENT '削除対策のためVARCHARにしています',
+    cooked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- ユーザーが退会したら履歴も消す
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
