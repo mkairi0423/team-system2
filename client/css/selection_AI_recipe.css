@@ -13,13 +13,14 @@ body {
 
 .container {
     max-width: 900px;
-    margin: 0 auto;
+    margin-left: 220px; /* サイドバー幅220px + 余白40px */
+    margin-right: auto;
+
     background: #ffffff;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
-
 .header {
     display: flex;
     justify-content: space-between;
@@ -157,3 +158,54 @@ body {
 .adopt-container { text-align: center; margin-top: 20px; }
 .btn-adopt { padding: 12px 35px; background: #48bb78; color: #ffffff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
 .btn-adopt:hover { background: #38a169; }
+
+/* ==========================================
+   スマホ
+   ========================================== */
+@media (max-width: 768px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-home,
+    .btn-mypage {
+        width: 100%;
+    }
+
+    .grid-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .grid-options.two-cols,
+    .grid-options.three-cols {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .option-btn {
+        padding: 14px 8px;
+        font-size: 0.9rem;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        font-size: 1rem;
+    }
+}
