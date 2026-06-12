@@ -114,19 +114,27 @@ $today = date('Y-m-d');
         </div>
     </div>
 
-    <div class="panel" style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px;">
-        <h2>📋 直近で登録された食材</h2>
+    <div class="topbar">
+        <h1>バーコード登録</h1>
+    </div>
+
+    <div class="hero">
+        <h2>📦 バーコード読み取り</h2>
+        <p>商品のバーコードを読み取って食材を登録します。</p>
+    </div>
+
+    <div class="panel">
+
+        <h2>バーコードスキャン</h2>
+
         <br>
-        <div id="foodList">
-            <div class="food-row" style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                <span>卵 (6個)</span>
-                <span style="color: #666; font-size: 0.9em;">[賞味期限] 2026-06-21</span>
-            </div>
-            <div class="food-row" style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                <span>牛乳 (1本)</span>
-                <span style="color: #666; font-size: 0.9em;">[賞味期限] 2026-06-12</span>
-            </div>
-        </div>
+
+        <input type="file" accept="image/*">
+
+        <button class="btn">
+            バーコードを読み取る
+        </button>
+
     </div>
 </div>
 

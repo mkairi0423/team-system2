@@ -12,40 +12,6 @@ include("template/sidebar.php");
         <h1>冷蔵庫管理</h1>
     </div>
 
-    <div class="grid">
-        <div class="card">
-            <h2>⚠️ 賞味期限が近い食材</h2>
-            <div class="food">
-                <span>🥛 牛乳</span>
-                <span class="badge red">本日</span>
-            </div>
-            <div class="food">
-                <span>🥚 卵</span>
-                <span class="badge orange">2日</span>
-            </div>
-            <div class="food">
-                <span>🥬 レタス</span>
-                <span class="badge orange">3日</span>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>❄️ 冷凍焼けの可能性</h2>
-            <div class="food">
-                <span>🐷 豚ひき肉</span>
-                <span class="badge red">90日</span>
-            </div>
-            <div class="food">
-                <span>🍄 しめじ</span>
-                <span class="badge orange">60日</span>
-            </div>
-            <div class="food">
-                <span>🐟 サーモン</span>
-                <span class="badge orange">45日</span>
-            </div>
-        </div>
-    </div>
-
     <div class="panel">
         <h2>🧊 冷蔵庫</h2>
         <br>

@@ -32,13 +32,9 @@ $current = basename($_SERVER['PHP_SELF']);
             📷 食材登録
         </a>
 
-        <a href="barcode.php"
-            class="<?= ($page ?? '') === 'barcode' ? 'active' : '' ?>">
-            📦 バーコード登録
-        </a>
 
         <a href="AI_recipe.php"
-            class="<?= ($page ?? '') === 'recipe' ? 'active' : '' ?>">
+            class="<?= ($page ?? '') === 'AI_recipe' ? 'active' : '' ?>">
             🤖 AIレシピ
         </a>
 
