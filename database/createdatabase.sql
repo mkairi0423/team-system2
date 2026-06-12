@@ -4,6 +4,7 @@ SET NAMES utf8mb4;
 -- 1. 古いテーブルの削除（初期化用）
 -- ====================================================================
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS cooking_history; -- 🔥 追加
 DROP TABLE IF EXISTS cooking_now;
 DROP TABLE IF EXISTS ingredients;
 DROP TABLE IF EXISTS storage_locations;
@@ -48,7 +49,6 @@ CREATE TABLE ingredients (
     food_name VARCHAR(100) NOT NULL,
     quantity INT NULL,
     expiration_date DATE NULL,
-    -- 🔥 term_type を ENUM 型に変更して、不正な文字列が入るのをガードします
     term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
@@ -57,7 +57,7 @@ CREATE TABLE ingredients (
     FOREIGN KEY (storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 🍳 調理中一時管理テーブル
+-- 🍳 調理中一時管理テーブル（これから作る料理の予定）
 CREATE TABLE cooking_now (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -70,5 +70,19 @@ CREATE TABLE cooking_now (
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE,
     FOREIGN KEY (original_ingredient_id) REFERENCES ingredients(id) ON DELETE CASCADE,
     FOREIGN KEY (original_storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- 📜 🔥【新設】調理履歴テーブル
+-- 「いつ、誰が、何という料理（または食材）を、どれだけ使って作ったか」を記録します。
+CREATE TABLE cooking_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT '作ったユーザーのID',
+    dish_name VARCHAR(255) NOT NULL COMMENT '作った料理名（例: カレー、キャベツ炒め）',
+    used_food_name VARCHAR(100) NOT NULL COMMENT '使った食材名（例: キャベツ）',
+    quantity INT NULL COMMENT '消費した数量',
+    cooked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '調理した日時',
+    
+    -- ユーザーが退会したら履歴も消す
+    FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
