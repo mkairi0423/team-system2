@@ -85,4 +85,3 @@ CREATE TABLE cooking_history (
     -- ユーザーが退会したら履歴も消す
     FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
