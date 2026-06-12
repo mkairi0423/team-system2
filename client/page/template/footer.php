@@ -2,6 +2,7 @@
 <script src="../js/food.js"></script>
 <script src="../js/food_scan.js"></script>
 <script src="../js/hamburger-menu.js"></script>
+<script src="../js/selection_AI_recipe.js"></script>
 </body>
 
 </html>

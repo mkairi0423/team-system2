@@ -21,6 +21,53 @@ include "template/sidebar.php";
         </p>
     </div>
 
+    <div class="section">
+        <div class="panel">
+            <h2>賞味期限アラート</h2>
+            <div class="food">
+                <span>🥛 牛乳</span>
+                <span class="badge red">本日まで</span>
+            </div>
+            <div class="food">
+                <span>🥚 卵</span>
+                <span class="badge orange">残り2日</span>
+            </div>
+            <div class="food">
+                <span>🥬 レタス</span>
+                <span class="badge green">残り5日</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <h2>❄️ 冷凍焼けの可能性</h2>
+        <div class="food">
+            <span>🐷 豚ひき肉</span>
+            <span class="badge red">90日</span>
+        </div>
+        <div class="food">
+            <span>🍄 しめじ</span>
+            <span class="badge orange">60日</span>
+        </div>
+        <div class="food">
+            <span>🐟 サーモン</span>
+            <span class="badge orange">45日</span>
+        </div>
+    </div>
+
+    <div class="panel recipe">
+        <h2>AIおすすめ</h2>
+        <br>
+        <h3>野菜オムレツ</h3>
+        <p>
+            牛乳・卵・レタスを消費できます。
+        </p>
+        <button class="btn">
+            レシピを見る
+        </button>
+    </div>
+
     <div class="grid">
 
         <div class="card">
@@ -45,34 +92,7 @@ include "template/sidebar.php";
 
     </div>
 
-    <div class="section">
-        <div class="panel">
-            <h2>賞味期限アラート</h2>
-            <div class="food">
-                <span>🥛 牛乳</span>
-                <span class="badge red">本日まで</span>
-            </div>
-            <div class="food">
-                <span>🥚 卵</span>
-                <span class="badge orange">残り2日</span>
-            </div>
-            <div class="food">
-                <span>🥬 レタス</span>
-                <span class="badge green">残り5日</span>
-            </div>
-        </div>
-        <div class="panel recipe">
-            <h2>AIおすすめ</h2>
-            <br>
-            <h3>野菜オムレツ</h3>
-            <p>
-                牛乳・卵・レタスを消費できます。
-            </p>
-            <button class="btn">
-                レシピを見る
-            </button>
-        </div>
-    </div>
+
 </div>
 
 <?php include "template/footer.php"; ?>
