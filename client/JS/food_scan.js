@@ -125,7 +125,7 @@
                           <input type="checkbox" class="food-select-checkbox" ${checkedAttr} style="transform: scale(1.3); cursor:pointer;">
                       </td>
                       <td style="padding:8px; border:1px solid #ddd;"><input type="text" class="food-name" value="${item.food_name || ""}" style="width:90%; padding:4px;"></td>
-                      <td style="padding:8px; border:1px solid #ddd;"><input type="number" class="food-weight" value="${item.estimated_weight || 0}" style="width:70px; padding:4px;"> g</td>
+                      <td style="padding:8px; border:1px solid #ddd;"><input type="number" class="food-weight" value="${item.estimated_weight || 0}" style="width:70px; padding:4px;"> </td>
                       
                       <td style="padding:8px; border:1px solid #ddd;">
                           <select class="food-storage-place" style="padding: 4px; border-radius: 4px; width:100%;">
