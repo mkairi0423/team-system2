@@ -4,6 +4,7 @@ SET NAMES utf8mb4;
 -- 1. 古いテーブルの削除（初期化用）
 -- ====================================================================
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS cooking_history;
 DROP TABLE IF EXISTS cooking_now;
 DROP TABLE IF EXISTS ingredients;
 DROP TABLE IF EXISTS storage_locations;
@@ -46,9 +47,10 @@ CREATE TABLE ingredients (
     category_id INT NOT NULL,
     storage_location_id INT NOT NULL, 
     food_name VARCHAR(100) NOT NULL,
-    quantity INT NULL,
+    quantity INT NULL COMMENT '数量（数値のみ）',
+    -- 🔥 単位カラムを新設！ これで「g」や「個」をバラバラに管理できます
+    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個' COMMENT '食材の単位',
     expiration_date DATE NULL,
-    -- 🔥 term_type を ENUM 型に変更して、不正な文字列が入るのをガードします
     term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
@@ -63,7 +65,9 @@ CREATE TABLE cooking_now (
     user_id BIGINT NOT NULL,
     original_ingredient_id BIGINT NOT NULL,
     food VARCHAR(100) NOT NULL,
-    quantity INT NULL,
+    quantity INT NULL COMMENT '使用する数量',
+    -- 🔥 調理中テーブルにも単位を合わせて持たせます
+    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個',
     original_storage_location_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
@@ -72,32 +76,16 @@ CREATE TABLE cooking_now (
     FOREIGN KEY (original_storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
--- ====================================================================
--- 3. 初期・テストデータの投入（インデックス・テスト用）
--- ====================================================================
-
--- ① カテゴリの登録
-INSERT INTO categories (cid, category_name) VALUES 
-(1, '肉類'),
-(2, '野菜'),
-(3, '魚介類'),
-(4, 'その他');
-
--- ② 保管場所マスタの登録
-INSERT INTO storage_locations (id, location_name) VALUES 
-(1, '冷蔵庫'),
-(2, '冷凍庫'),
-(3, '常温（パントリー）'),
-(4, '野菜室');
-
--- ③ テストユーザーの登録
-INSERT INTO users (uid, name, email, password) VALUES 
-(1, 'test2026', 'test@example.com', 'hashed_password_here');
-
--- ④ 在庫食材の登録（ENUM型にしても今まで通りの文字列でインサート可能です）
-INSERT INTO ingredients (user_id, category_id, storage_location_id, food_name, quantity, expiration_date, term_type) VALUES 
-(1, 1, 1, '豚ひき肉', 200, '2026-05-22', '消費期限'),
-(1, 2, 1, 'キャベツ', 1,   '2026-05-23', '賞味期限'),
-(1, 4, 1, '卵',       10,  '2026-05-24', '賞味期限'), 
-(1, 3, 1, 'サーモン', 2,   '2026-05-26', '消費期限');
+-- 📜 調理履歴テーブル
+CREATE TABLE cooking_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    dish_name VARCHAR(255) NOT NULL,
+    used_food_name VARCHAR(100) NOT NULL,
+    quantity INT NULL,
+    -- 🔥 履歴にも「何の単位でどれだけ使ったか」を残せるようにします
+    unit VARCHAR(20) NOT NULL DEFAULT '個' COMMENT '削除対策のためVARCHARにしています',
+    cooked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
