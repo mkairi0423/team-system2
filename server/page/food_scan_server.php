@@ -85,8 +85,8 @@ if ($action === 'save') {
 
         // 💡 既存のDB構造に合わせて storage_place は含めないインサート文
         $stmt = $pdo->prepare("
-            INSERT INTO ingredients (user_id, category_id, food, quantity, expiration_date, term_type)
-            VALUES (:user_id, :category_id, :food, :quantity, :expiration_date, :term_type)
+            INSERT INTO ingredients (user_id, category_id, food_name, quantity, expiration_date, term_type)
+            VALUES (:user_id, :category_id, :_, :quantity, :expiration_date, :term_type)
         ");
 
         $current_user_id = 1;
@@ -112,7 +112,7 @@ if ($action === 'save') {
             $stmt->execute([
                 ':user_id'         => $current_user_id,
                 ':category_id'     => $categoryId,
-                ':food'            => $name,
+                ':_'            => $name,
                 ':quantity'        => (int)$item['estimated_weight'],
                 ':expiration_date' => $expirationDate,
                 ':term_type'       => $termTypeJapanese
