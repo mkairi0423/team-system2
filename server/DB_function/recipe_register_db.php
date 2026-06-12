@@ -15,10 +15,19 @@ function get_ingredients()
         $pdo = getPDO();
 
         // ingredients テーブルから賞味期限が古い順（ASC）にすべての食材を取得
-        $sql = "SELECT id, category_id, food_name
-        , quantity, expiration_date FROM ingredients ORDER BY expiration_date ASC";
+        $sql = "SELECT 
+                    i.id, 
+                    i.food_name, 
+                    i.quantity, 
+                    i.expiration_date, 
+                    i.term_type, 
+                    s.location_name 
+                FROM ingredients i
+                JOIN storage_locations s ON i.storage_location_id = s.id
+                ORDER BY i.expiration_date ASC";
+
         $stmt = $pdo->query($sql);
-        $all_ingredients = $stmt->fetchAll();
+        $all_ingredients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // AIに渡しやすいように連想配列の形に整える
         return [
