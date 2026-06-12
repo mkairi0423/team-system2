@@ -1,4 +1,6 @@
 <?php
+
+//search_recipe.php
 // 💡 共通の定義・DB接続ファイルを読み込む（必要に応じてパスを調整してください）
 // client/page/ の階層から見て、1つ上の client/ の外に出て helpers や database 内にある場合
 // require_once __DIR__ . "/../../helpers/db.php"; 

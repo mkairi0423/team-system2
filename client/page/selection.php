@@ -3,7 +3,11 @@
 //selection.php
 //条件検索をしてその結果のレシピを表示する画面
 
+$title = "レシピ一覧";
+$page = "selection";
 
+include "template/header.php";
+include "template/sidebar.php";
 
 ?>
 
@@ -14,7 +18,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>AIレシピ提案</title>
     <link rel="stylesheet" href="../css/selection_AI_recipe.css">
 </head>
 
@@ -31,7 +35,9 @@
         <div id="recipe-list-container"></div>
     </div>
 
-    <script src="../JS/selection_AI_recipe.js"></script>
-</body>
+    <p style="color: #666; margin-top: 15px;">💡 賞味期限が近い食材、冷凍保存の長いストックを優先した提案です</p>
 
-</html>
+    <div id="recipe-list-container"></div>
+</div>
+
+<?php include "template/footer.php"; ?>
