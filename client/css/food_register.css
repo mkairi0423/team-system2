@@ -168,3 +168,74 @@ td {
     box-sizing: border-box;
   }
 }
+
+
+.food-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+
+.food-top {
+    display: grid;
+    grid-template-columns: 50px 1fr 150px;
+    gap: 15px;
+    align-items: end;
+    margin-bottom: 15px;
+}
+
+.food-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.food-card label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+.food-card input[type="text"],
+.food-card input[type="number"],
+.food-card input[type="date"],
+.food-card select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.food-select-checkbox {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    margin-top: 25px;
+}
+
+.food-name-area,
+.food-weight-area {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+
+    .food-top {
+        grid-template-columns: 40px 1fr;
+    }
+
+    .food-weight-area {
+        grid-column: 2;
+    }
+
+    .food-bottom {
+        grid-template-columns: 1fr;
+    }
+}
