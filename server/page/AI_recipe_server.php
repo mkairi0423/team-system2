@@ -19,11 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ------------------------------------------------------------------------------------
     // 1. 画面から送られてきた「選択条件」を変数に格納
     // ------------------------------------------------------------------------------------
-    $meal_type    = $_POST['meal_type']    ?? '夜ごはん';
-    $cuisine      = $_POST['cuisine']      ?? '中華';
-    $flavor       = $_POST['flavor']       ?? '辛い系';
+    $meal_type = $_POST['meal_type'] ?? '夜ごはん';
+    $cuisine = $_POST['cuisine'] ?? '中華';
+    $flavor = $_POST['flavor'] ?? '辛い系';
     $cooking_time = $_POST['cooking_time'] ?? '15分以内';
-    $servings     = $_POST['servings']     ?? '2人前';
+    $servings = $_POST['servings'] ?? '2人前';
 
     // ------------------------------------------------------------------------------------
     // 🗄️ 2. DB処理用の関数を呼び出して、冷蔵庫の在庫を取得
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($db_result['success'] === false) {
         echo json_encode([
             'success' => false,
-            'error'   => $db_result['error']
+            'error' => $db_result['error']
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
@@ -45,9 +45,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ------------------------------------------------------------------------------------
     // 🤖 3. Gemini APIの設定とプロンプトの構築
     // ------------------------------------------------------------------------------------
+    if (empty($db_result['ingredients'])) {
+        echo json_encode([
+            'success' => true, // エラーではなく正常なレスポンスとして扱う
+            'recipes' => [],   // レシピは空
+            'message' => '現在、調理可能な食材がありません。食材を登録してください。'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+
     $api_key = getenv('GEMINI_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? ($_SERVER['GEMINI_API_KEY'] ?? ''));
-    $model   = 'gemini-2.5-flash';
-    $url     = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$api_key}";
+    $model = 'gemini-2.5-flash';
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$api_key}";
 
     $system_prompt = recipe_rule();
 
@@ -65,7 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ■ 現在の食材の在庫リスト（ID付き・賞味期限の古い順）
 {$inventory_json}
  
-上記の在庫リストから、賞味期限の古い食材を最優先で消費できるレシピを3つ考えて、システムルールで指定された「【出力フォーマット（タスクA）】」のJSON形式（最初の1文字から最後の文字まで純粋なJSON文字列）のみで出力してください。
+【📢 AIシェフへの場所別調理ルール】
+在庫リストに含まれる「location_name（冷蔵庫、冷凍庫など）」を確認し、以下の基準でレシピを考案してください。
+・「冷凍庫」の食材は、解凍が必要であることを考慮し、メインのタンパク源として積極的に使用してください。
+・「冷蔵庫」や「野菜室」の食材は、賞味期限が近いものを最優先で消費してください。
+ 
+上記の在庫リストから、賞味期限の古い食材と保管場所の特性を考慮してレシピを3つ考えて、システムルールで指定された「【出力フォーマット（タスクA）】」のJSON形式のみで出力してください。
 EOD;
 
     // v1beta用の構造データ
@@ -92,7 +107,8 @@ EOD;
     // ------------------------------------------------------------------------------------
     try {
         $ch = curl_init($url);
-        if ($ch === false) throw new Exception('cURLの初期化に失敗しました。');
+        if ($ch === false)
+            throw new Exception('cURLの初期化に失敗しました。');
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -103,7 +119,8 @@ EOD;
 
         $response = curl_exec($ch);
 
-        if ($response === false) throw new Exception(curl_error($ch));
+        if ($response === false)
+            throw new Exception(curl_error($ch));
 
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
@@ -125,10 +142,16 @@ EOD;
             'recipes' => $recipe_array
         ], JSON_UNESCAPED_UNICODE);
     } catch (Exception $e) {
-        echo json_encode([
-            'success' => false,
-            'error'   => 'AI通信エラー: ' . $e->getMessage()
-        ], JSON_UNESCAPED_UNICODE);
-    }
+    $errorMessage = $e->getMessage();
+    // 429エラーなら親切なメッセージを返す
+    $displayMessage = (strpos($errorMessage, '429') !== false) 
+        ? "AIの利用制限に達しました。1分ほど待ってから再度お試しください。"
+        : "AI通信エラー: " . $errorMessage;
+
+    echo json_encode([
+        'success' => false,
+        'error' => $displayMessage
+    ], JSON_UNESCAPED_UNICODE);
+}
     exit;
 }
