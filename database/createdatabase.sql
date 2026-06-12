@@ -4,6 +4,7 @@ SET NAMES utf8mb4;
 -- 1. 古いテーブルの削除（初期化用）
 -- ====================================================================
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS cooking_history; -- 🔥 追加
 DROP TABLE IF EXISTS cooking_now;
 DROP TABLE IF EXISTS ingredients;
 DROP TABLE IF EXISTS storage_locations;
@@ -48,7 +49,6 @@ CREATE TABLE ingredients (
     food_name VARCHAR(100) NOT NULL,
     quantity INT NULL,
     expiration_date DATE NULL,
-    -- 🔥 term_type を ENUM 型に変更して、不正な文字列が入るのをガードします
     term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
@@ -57,7 +57,7 @@ CREATE TABLE ingredients (
     FOREIGN KEY (storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 🍳 調理中一時管理テーブル
+-- 🍳 調理中一時管理テーブル（これから作る料理の予定）
 CREATE TABLE cooking_now (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -72,32 +72,17 @@ CREATE TABLE cooking_now (
     FOREIGN KEY (original_storage_location_id) REFERENCES storage_locations(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
+-- 📜 🔥【新設】調理履歴テーブル
+-- 「いつ、誰が、何という料理（または食材）を、どれだけ使って作ったか」を記録します。
+CREATE TABLE cooking_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT '作ったユーザーのID',
+    dish_name VARCHAR(255) NOT NULL COMMENT '作った料理名（例: カレー、キャベツ炒め）',
+    used_food_name VARCHAR(100) NOT NULL COMMENT '使った食材名（例: キャベツ）',
+    quantity INT NULL COMMENT '消費した数量',
+    cooked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '調理した日時',
+    
+    -- ユーザーが退会したら履歴も消す
+    FOREIGN KEY (user_id) REFERENCES users(uid) ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- ====================================================================
--- 3. 初期・テストデータの投入（インデックス・テスト用）
--- ====================================================================
-
--- ① カテゴリの登録
-INSERT INTO categories (cid, category_name) VALUES 
-(1, '肉類'),
-(2, '野菜'),
-(3, '魚介類'),
-(4, 'その他');
-
--- ② 保管場所マスタの登録
-INSERT INTO storage_locations (id, location_name) VALUES 
-(1, '冷蔵庫'),
-(2, '冷凍庫'),
-(3, '常温（パントリー）'),
-(4, '野菜室');
-
--- ③ テストユーザーの登録
-INSERT INTO users (uid, name, email, password) VALUES 
-(1, 'test2026', 'test@example.com', 'hashed_password_here');
-
--- ④ 在庫食材の登録（ENUM型にしても今まで通りの文字列でインサート可能です）
-INSERT INTO ingredients (user_id, category_id, storage_location_id, food_name, quantity, expiration_date, term_type) VALUES 
-(1, 1, 1, '豚ひき肉', 200, '2026-05-22', '消費期限'),
-(1, 2, 1, 'キャベツ', 1,   '2026-05-23', '賞味期限'),
-(1, 4, 1, '卵',       10,  '2026-05-24', '賞味期限'), 
-(1, 3, 1, 'サーモン', 2,   '2026-05-26', '消費期限');
