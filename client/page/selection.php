@@ -11,6 +11,15 @@ include "template/sidebar.php";
 
 ?>
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<div class="container">
+    <div class="header">
+        <button type="button" class="btn-home" onclick="window.location.href='AI_recipe.php'">← 条件を選び直す</button>
+        <h2 style="margin: 0; font-size: 1.3rem;">AIの提案レシピ</h2>
+=======
+>>>>>>> recovery-scan
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -33,6 +42,10 @@ include "template/sidebar.php";
         <p style="color: #666; margin-top: 15px;">💡 賞味期限が近い食材、冷凍保存の長いストックを優先した提案です</p>
 
         <div id="recipe-list-container"></div>
+<<<<<<< HEAD
+=======
+>>>>>>> ee4b0424032e77fad0775a43dd8ec13daebf9f86
+>>>>>>> recovery-scan
     </div>
 
     <p style="color: #666; margin-top: 15px;">💡 賞味期限が近い食材、冷凍保存の長いストックを優先した提案です</p>
