@@ -1,15 +1,3 @@
-<?php
-require_once '../helpers/utils.php';
-
-$pdo = getPDO();
-$user_id = 1; // 仮
-
-$sql = "SELECT * FROM cooking_now WHERE user_id = ?";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$user_id]);
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
-
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -22,63 +10,89 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
     <div class="container">
-
         <h2 class="title">🍳 使用する食材</h2>
         <hr>
 
-        <?php if (empty($items)): ?>
-            <p class="empty">食材がありません</p>
-        <?php else: ?>
-
-            <?php foreach ($items as $item): ?>
-                <div class="item">
-                    <div class="food-name">
-                        <?php echo htmlspecialchars($item['food']); ?>
-                    </div>
-
-                    <button class="return" onclick="returnItem(<?php echo $item['id']; ?>)">
-                        冷蔵庫に戻す
-                    </button>
-                </div>
-            <?php endforeach; ?>
-
-        <?php endif; ?>
+        <!-- ✅ ここにJSで食材が入る -->
+        <div id="food-list"></div>
 
         <hr>
 
         <button class="complete" onclick="completeCooking()">
             🍳 料理完了
         </button>
-
     </div>
 
 
-    <!-- 料理完了ボタン -->
-    <button onclick="completeCooking()">料理完了</button>
-
     <script>
-        // ✅ 戻す
-        function returnItem(id) {
-            fetch('return_item.php', {
+        // ✅ 前の画面で保存したレシピを取得
+        const recipe = JSON.parse(sessionStorage.getItem('selected_recipe'));
+
+        const container = document.getElementById('food-list');
+
+        if (!recipe) {
+            container.innerHTML = "<p class='empty'>食材がありません</p>";
+        } else {
+
+            const ingredients = recipe.used_ingredients ?? [];
+
+            ingredients.forEach(item => {
+
+                // ✅ オブジェクト → 文字列変換
+                const name = (typeof item === 'object')
+                    ? item.name || item.food || Object.values(item)[0]
+                    : item;
+
+                const div = document.createElement('div');
+                div.className = 'item';
+
+                div.innerHTML = `
+                    <div class="food-name">${name}</div>
+                `;
+
+                container.appendChild(div);
+            });
+        }
+
+
+        // ✅ 料理完了（ここがDB更新）
+        function completeCooking() {
+
+            if (!recipe) {
+                alert("データがありません");
+                return;
+            }
+
+            const ingredients = recipe.used_ingredients ?? [];
+
+            const names = ingredients.map(item => {
+                if (typeof item === 'object') {
+                    return item.name || item.food || Object.values(item)[0];
+                }
+                return item;
+            });
+
+            fetch('complete_cooking.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
+                body: JSON.stringify({ ingredients: names })
             })
-                .then(() => location.reload());
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('料理完了！');
+
+                    // ✅ データ消す
+                    sessionStorage.removeItem('selected_recipe');
+
+                    window.location.href = 'home.php';
+                } else {
+                    alert('エラー: ' + data.error);
+                }
+            });
         }
 
-        // ✅ 料理完了
-        function completeCooking() {
-            fetch('complete_cooking.php', {
-                method: 'POST'
-            })
-                .then(() => {
-                    alert('料理完了！');
-                    window.location.href = 'home.php'; // 画面1へ
-                });
-        }
     </script>
 
 </body>
-
 </html>
