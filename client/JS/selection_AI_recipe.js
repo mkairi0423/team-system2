@@ -119,7 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idx = btn.getAttribute('data-index');
                 const chosenRecipe = recipes[idx];
 
-                console.log(chosenRecipe);
+                console.log("中身", chosenRecipe.used_ingredients);
+                // console.log(chosenRecipe);
 
                 // ✅ 連打防止
                 btn.disabled = true;
@@ -148,8 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     alert(`「${chosenRecipe.recipe_name}」が選ばれました！`);
 
+                    sessionStorage.setItem('selected_recipe', JSON.stringify(chosenRecipe));
+
                     // ✅ 画面4へ
-                    window.location.href = 'cooking_now.php';
+                    window.location.href = 'cooking.php';
 
                 } catch (err) {
                     alert('エラー: ' + err.message);

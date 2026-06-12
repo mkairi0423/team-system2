@@ -3,15 +3,11 @@ require_once '../helpers/utils.php';
 
 header('Content-Type: application/json');
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 try {
 
     $pdo = getPDO();
     $user_id = 1;
 
-    // ✅ フロントから送られてきた食材リストを受け取る
     $input = json_decode(file_get_contents("php://input"), true);
 
     if (!$input || !isset($input['ingredients'])) {
@@ -21,13 +17,11 @@ try {
     $ingredients = $input['ingredients'];
 
     if (!is_array($ingredients) || empty($ingredients)) {
-        throw new Exception("食材がありません");
+        throw new Exception("食材が空です");
     }
 
-    // ✅ SQL用プレースホルダ作成
     $placeholders = implode(',', array_fill(0, count($ingredients), '?'));
 
-    // ✅ 使用済みにする
     $sql = "UPDATE ingredients
             SET is_used = 1
             WHERE user_id = ?
@@ -37,8 +31,7 @@ try {
     $stmt->execute(array_merge([$user_id], $ingredients));
 
     echo json_encode([
-        "success" => true,
-        "updated_count" => $stmt->rowCount()
+        "success" => true
     ]);
 
 } catch (Exception $e) {
