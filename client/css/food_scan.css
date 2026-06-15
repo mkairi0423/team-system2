@@ -1,0 +1,169 @@
+/* ===================================================
+   css/food_scan.css （スキャン画面専用スタイル）
+   js/food_scan.jsのcss
+   =================================================== */
+
+/* 解析中のローディングメッセージ */
+.scan-loading-box {
+    padding: 10px;
+    background: #e8f4fd;
+    border-left: 4px solid #3498db;
+    margin-bottom: 15px;
+}
+
+.scan-loading-title {
+    color: #2980b9;
+}
+
+.scan-loading-sub {
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* エラー表示 */
+.scan-error-text {
+    color: red;
+    font-weight: bold;
+}
+
+.scan-error-debug {
+    background: #eee;
+    padding: 10px;
+    overflow-x: auto;
+}
+
+/* 一括保存中のメッセージ */
+.scan-saving-box {
+    color: #e67e22;
+}
+
+/* 保存成功時のメッセージ */
+.scan-success-box {
+    padding: 15px;
+    background: #eef9f1;
+    border-left: 4px solid #2ece7d;
+    color: green;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* 食材リストのテーブル構造 */
+#scan-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#scan-table th {
+    background: #eee;
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+#scan-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+/* 特定列の幅・配置調整 */
+.col-check {
+    text-align: center;
+    width: 50px;
+}
+
+.col-quantity {
+    width: 100px;
+}
+
+.col-storage {
+    width: 140px;
+}
+
+.col-term {
+    width: 120px;
+}
+
+.col-expiry {
+    width: 150px;
+}
+
+/* 各行の入力フォーム共通設定 */
+.food-item-row {
+    border-bottom: 1px solid #ddd;
+}
+
+.food-item-row.non-food {
+    background: #f9f9f9;
+    opacity: 0.65;
+}
+
+.food-select-checkbox {
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+.food-name-input {
+    width: 90%;
+    padding: 4px;
+}
+
+.food-quantity-input {
+    width: 55px;
+    padding: 4px;
+}
+
+.food-unit-text {
+    margin-left: 4px;
+    font-weight: bold;
+    color: #555;
+}
+
+.food-select-box {
+    padding: 4px;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.food-term-select {
+    padding: 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    width: 100%;
+}
+
+.food-term-select option.best-before {
+    color: #2ece7d;
+}
+
+.food-term-select option.use-by {
+    color: #ff4d4d;
+}
+
+.food-date-input {
+    padding: 4px;
+    border-radius: 4px;
+    width: 90%;
+}
+
+/* 保存ボタン */
+.save-action-area {
+    margin-top: 15px;
+}
+
+.bulk-save-button {
+    background: #2ece7d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1em;
+    transition: background 0.2s;
+}
+
+.bulk-save-button:hover {
+    background: #27ae60;
+}
