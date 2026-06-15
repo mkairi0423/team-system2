@@ -32,11 +32,12 @@ function register_user($name, $email, $password)
 
         $stmt->execute();
         $_SESSION["log"] = "登録が成功しました";
+        return true;
     } catch (PDOException $e) {
         // 登録エラー（例: メールアドレスやユーザーIDの重複）
         if ($e->getCode() == 23000) {
-
             $_SESSION["log"] = "ユーザー登録中にエラーが発生しました。詳細: " . $e->getMessage();
         }
+        return false;
     }
 }
