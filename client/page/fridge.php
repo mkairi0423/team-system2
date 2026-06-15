@@ -20,6 +20,8 @@ include("template/sidebar.php");
             id="fridgeSearch"
             placeholder="🔍 食材を検索"
             class="search-box">
+            <!-- 検索する処理はできている
+             serch_ingredients_server.php -->
         <br><br>
 
         <div id="fridgeFoods">

@@ -34,8 +34,8 @@ unset($_SESSION['pass_err']);
                         <p class="err-msg"><?= h($name_err) ?></p>
                     <?php endif; ?>
                 </div>
-                <div class= "form-group" >
-                    <input type="password" name="password" placeholder="パスワード">
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="パスワード" required autocomplete="password">
                     <?php if (!empty($pass_err)): ?>
                         <p class="err-msg">
                             <?= h($pass_err) ?>
