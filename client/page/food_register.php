@@ -139,5 +139,3 @@ $today = date('Y-m-d');
 </div>
 
 <?php include("template/footer.php"); ?>
-
-<script src="../js/food_scan.js?v=4"></script>

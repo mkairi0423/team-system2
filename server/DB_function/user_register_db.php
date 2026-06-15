@@ -11,6 +11,8 @@
  */
 function register_user($name, $email, $password)
 {
+    session_start();
+
     require_once __DIR__ . "/../../helpers/utils.php";
 
     // パスワードをハッシュ化
@@ -18,7 +20,7 @@ function register_user($name, $email, $password)
 
     // ユーザー情報をデータベースに挿入
     try {
-        // ⭕️ 自前で new PDO せず、共通の getPDO() を使うことで安全な接続オプションがそのまま適用されます
+        
         $pdo = getPDO();
 
         $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
@@ -29,12 +31,13 @@ function register_user($name, $email, $password)
         $stmt->bindValue(':password', $hashed_password, PDO::PARAM_STR);
 
         $stmt->execute();
-        return "登録が成功しました"; // 登録成功
+        $_SESSION["log"] = "登録が成功しました";
+        return true;
     } catch (PDOException $e) {
         // 登録エラー（例: メールアドレスやユーザーIDの重複）
         if ($e->getCode() == 23000) {
-            return "このユーザーID、またはメールアドレスは既に登録されています。";
+            $_SESSION["log"] = "ユーザー登録中にエラーが発生しました。詳細: " . $e->getMessage();
         }
-        return "ユーザー登録エラーが発生しました。";
+        return false;
     }
 }

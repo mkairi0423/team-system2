@@ -23,10 +23,11 @@ include("template/sidebar.php");
             <div class="big-number">12個</div>
         </div>
 
-        <div class="card">
-            <h3>💰 節約金額</h3>
+        <!-- TODO:この項目を削除　デザインおかしくなるから直す -->
+        <!-- <div class="card">
+            <h3>💰 ロス金額</h3>
             <div class="big-number">¥4,320</div>
-        </div>
+        </div> -->
 
         <div class="card">
             <h3>📉 ロス削減率</h3>

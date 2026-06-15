@@ -1,3 +1,7 @@
+<?php
+// 調理中画面のクライアント画面
+//提案使う
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>

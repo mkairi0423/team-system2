@@ -6,6 +6,7 @@ $pass_err = $_SESSION['pass_err'] ?? "";
 $email_null_err = $_SESSION['email_null_err'] ?? "";
 $email_err = $_SESSION['email_err'] ?? "";
 $name_null_err = $_SESSION['name_null_err'] ?? "";
+$log = $_SESSION["log"] ?? "";
 
 
 
@@ -13,7 +14,7 @@ $name_null_err = $_SESSION['name_null_err'] ?? "";
 // $db_register_err = $_SESSION['db_register_err'] ?? "";
 // echo $db_register_err;
 
-unset($_SESSION['pass_err'], $_SESSION['email_null_err'], $_SESSION['email_err'], $_SESSION['name_null_err']);
+unset($_SESSION['pass_err'], $_SESSION['email_null_err'], $_SESSION['email_err'], $_SESSION['name_null_err'], $_SESSION['log']);
 
 
 ?>
@@ -43,6 +44,10 @@ unset($_SESSION['pass_err'], $_SESSION['email_null_err'], $_SESSION['email_err']
 
             <form action="../../server/page/user_register_server.php" method="POST">
 
+                <?php if (!empty($log)): ?>
+                    <p class="err-msg"><?= htmlspecialchars($log, ENT_QUOTES, 'UTF-8') ?></p>
+                <?php endif; ?>
+
                 <div class="form-group">
                     <label>ユーザー名</label>
                     <input type="text" name="name" placeholder="例: user_name" required>
@@ -53,7 +58,7 @@ unset($_SESSION['pass_err'], $_SESSION['email_null_err'], $_SESSION['email_err']
 
                 <div class="form-group">
                     <label>メールアドレス</label>
-                    <input type="email" name="email" placeholder="example@mail.com" required>
+                    <input type="email" name="email" placeholder="example@mail.com" required autocomplete="email">
                     <?php if (!empty($email_null_err)): ?>
                         <p class="err-msg"><?= htmlspecialchars($email_null_err, ENT_QUOTES, 'UTF-8') ?></p>
                     <?php endif; ?>
