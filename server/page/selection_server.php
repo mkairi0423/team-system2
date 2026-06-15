@@ -1,48 +1,85 @@
 <?php
-require_once '../helpers/utils.php';
+// 1. パスの問題を解決した外部ファイルの読み込み
+require_once ('../../helpers/utils.php');
 
-header('Content-Type: application/json');
+// 2. JavaScriptが正しく受信できるようにヘッダーを設定
+header('Content-Type: application/json; charset=utf-8');
 
-ini_set('display_errors', 1);
+// デバッグ用（エラーが発生した際にJSONに割り込ませずログに残すため、画面表示はオフ）
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 try {
-
+    // データベース接続の確立（utils.php内の関数）
     $pdo = getPDO();
+    
+    // ※本来はセッション等から取得しますが、現在の仕様に合わせて固定
     $user_id = 1;
 
-    // ✅ フロントから送られてきた食材リストを受け取る
-    $input = json_decode(file_get_contents("php://input"), true);
+    // 3. フロント（JavaScript）から送られてきたデータ（JSON）をパース
+    $raw_input = file_get_contents("php://input");
+    $input = json_decode($raw_input, true);
 
-    if (!$input || !isset($input['ingredients'])) {
-        throw new Exception("食材データがありません");
+    // 「recipe」キーが存在するかチェック
+    if (!$input || !isset($input['recipe'])) {
+        throw new Exception("レシピデータが正しく送信されていません。");
     }
 
-    $ingredients = $input['ingredients'];
+    $recipe = $input['recipe'];
 
-    if (!is_array($ingredients) || empty($ingredients)) {
-        throw new Exception("食材がありません");
+    // レシピの中に「used_ingredients」が存在するかチェック
+    if (!isset($recipe['used_ingredients'])) {
+        throw new Exception("レシピ内に食材リスト（used_ingredients）が見つかりません。");
     }
 
-    // ✅ SQL用プレースホルダ作成
-    $placeholders = implode(',', array_fill(0, count($ingredients), '?'));
+    $ingredients_raw = $recipe['used_ingredients'];
+    $ingredients = [];
 
-    // ✅ 使用済みにする
-    $sql = "UPDATE ingredients
-            SET is_used = 1
-            WHERE user_id = ?
-            AND food IN ($placeholders)";
+    // 4. 【最重要】二次元配列から食材の名前（文字列）だけを安全に抽出
+    if (is_array($ingredients_raw)) {
+        foreach ($ingredients_raw as $item) {
+            if (is_array($item)) {
+                if (isset($item['food_name'])) {
+                    // キー名が food_name の場合
+                    $ingredients[] = $item['food_name'];
+                } elseif (isset($item['name'])) {
+                    // キー名が name の場合（AIのデータ構造対策）
+                    $ingredients[] = $item['name'];
+                }
+            } elseif (is_string($item)) {
+                // 万が一最初からただの文字列配列として届いた場合
+                $ingredients[] = $item;
+            }
+        }
+    }
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(array_merge([$user_id], $ingredients));
+    // 最終的に有効な食材が1つ以上あるかチェック
+    if (empty($ingredients)) {
+        throw new Exception("消費する食材の解析に失敗したか、食材が空っぽです。");
+    }
 
+    // // 5. SQL用のプレースホルダ（?）を作成 (例: '?, ?')
+    // $placeholders = implode(',', array_fill(0, count($ingredients), '?'));
+
+    // // 6. カラム名「food_name」に合わせ、使った食材を在庫から完全に削除（DELETE）
+    // $sql = "DELETE FROM ingredients
+    //         WHERE user_id = ?
+    //         AND food_name IN ($placeholders)";
+
+    // $stmt = $pdo->prepare($sql);
+    
+    // // SQL実行のためのパラメーター配列を作成（[user_id, 食材1, 食材2, ...]）
+    // $params = array_merge([$user_id], $ingredients);
+    // $stmt->execute($params);
+
+    // 7. 成功レスポンスをJSONとして返却
     echo json_encode([
         "success" => true,
-        "updated_count" => $stmt->rowCount()
+        "updated_count" => 0
     ]);
 
 } catch (Exception $e) {
-
+    // 8. 万が一エラーが発生した場合も、必ずJSON形式でエラーを返却
     echo json_encode([
         "success" => false,
         "error" => $e->getMessage()

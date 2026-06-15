@@ -1,98 +1,28 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-    <link rel="stylesheet" href="../css/cooking.css">
     <meta charset="UTF-8">
-    <title>調理中</title>
+    <title>調理中画面</title>
+    <link rel="stylesheet" href="../../css/style.css"> 
+    <link rel="stylesheet" href="cooking.css">
 </head>
-
 <body>
 
-    <div class="container">
-        <h2 class="title">🍳 使用する食材</h2>
-        <hr>
+<input type="hidden" id="current-user-id" value="1">
 
-        <!-- ✅ ここにJSで食材が入る -->
-        <div id="food-list"></div>
+<div class="cooking-container">
+    <h2 id="cooking-recipe-name">🍳 料理中...</h2>
+    <p>使用する食材の一覧です。入れ忘れた食材は「戻す」を押してください。</p>
+    
+    <hr>
+    
+    <div id="ingredients-target-list"></div>
+    
+    <hr>
+    
+    <button type="button" id="btn-cooking-complete" class="btn-complete">🍳 料理完了！</button>
+</div>
 
-        <hr>
-
-        <button class="complete" onclick="completeCooking()">
-            🍳 料理完了
-        </button>
-    </div>
-
-
-    <script>
-        // ✅ 前の画面で保存したレシピを取得
-        const recipe = JSON.parse(sessionStorage.getItem('selected_recipe'));
-
-        const container = document.getElementById('food-list');
-
-        if (!recipe) {
-            container.innerHTML = "<p class='empty'>食材がありません</p>";
-        } else {
-
-            const ingredients = recipe.used_ingredients ?? [];
-
-            ingredients.forEach(item => {
-
-                // ✅ オブジェクト → 文字列変換
-                const name = (typeof item === 'object')
-                    ? item.name || item.food || Object.values(item)[0]
-                    : item;
-
-                const div = document.createElement('div');
-                div.className = 'item';
-
-                div.innerHTML = `
-                    <div class="food-name">${name}</div>
-                `;
-
-                container.appendChild(div);
-            });
-        }
-
-
-        // ✅ 料理完了（ここがDB更新）
-        function completeCooking() {
-
-            if (!recipe) {
-                alert("データがありません");
-                return;
-            }
-
-            const ingredients = recipe.used_ingredients ?? [];
-
-            const names = ingredients.map(item => {
-                if (typeof item === 'object') {
-                    return item.name || item.food || Object.values(item)[0];
-                }
-                return item;
-            });
-
-            fetch('complete_cooking.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ingredients: names })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert('料理完了！');
-
-                    // ✅ データ消す
-                    sessionStorage.removeItem('selected_recipe');
-
-                    window.location.href = 'home.php';
-                } else {
-                    alert('エラー: ' + data.error);
-                }
-            });
-        }
-
-    </script>
-
+<script src="cooking.js"></script> 
 </body>
 </html>
