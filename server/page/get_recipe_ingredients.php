@@ -1,13 +1,40 @@
 <?php
-// フロントエンド（JS）からの非同期通信（Fetch API）を受け付ける設定
-header("Content-Type: application/json; charset=UTF-8");
+// ==================================================================================
+// page/get_recipe_ingredients.php （food_scan_server.php APIキー接続方式 適合版）
+// ==================================================================================
+
+set_time_limit(30); // AI通信待ちでタイムアウトしないためのセーフティ
+header('Content-Type: application/json; charset=utf-8');
 
 // 💡 チームの共通関数ファイルを読み込む
-require_once __DIR__ . "/../../helpers/utils.php"; 
-// 💡【追加】APIキーを有効化するための共通ファイルを読み込む
-require_once __DIR__ . "/../../helpers/gemini_api.php";
+require_once __DIR__ . '/../../helpers/gemini_api.php';
+require_once __DIR__ . '/../../helpers/utils.php';
 
-// クエリパラメータからユーザーIDと検索キーワードを取得
+// --------------------------------------------------------
+// 🛠️ 動くページと同じ方法で .env から環境変数を確実にロード
+// --------------------------------------------------------
+$envPath = __DIR__ . '/../../.env';
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $clean_key = trim($key);
+            $clean_value = trim(trim($value), '"\'');
+            $_ENV[$clean_key] = $clean_value;
+        }
+    }
+}
+
+// 💡 動くページと同じ方法で APIキーを判定・抽出
+$api_key = $_ENV['GEMINI_API_KEY'] ?? '';
+if (empty($api_key)) {
+    echo json_encode(['error' => 'APIキーが設定されていません。'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// クエリパラメータからユーザーIDと検索キーワードを取得（GET通信）
 $userId = $_GET['user_id'] ?? null;
 $keyword = $_GET['keyword'] ?? '';
 
@@ -16,19 +43,14 @@ if (!$userId || !$keyword) {
     exit;
 }
 
-// AIの返答待ちでタイムアウトしないためのセーフティ
-set_time_limit(30);
-
 try {
-    // 💡 共通ファイルからPDOオブジェクトを取得
+    // 共通関数からPDOオブジェクトを取得
     $pdo = getPDO();
 
     // --------------------------------------------------------
-    // 1. APIキー と モデル を設定 (混雑回避のため 2.0-flash を推奨)
+    // 1. AIリクエストの構築
     // --------------------------------------------------------
-    $api_key = getenv('GEMINI_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? ($_SERVER['GEMINI_API_KEY'] ?? ''));
-    $model = 'gemini-2.0-flash'; 
-    
+    $model = 'gemini-1.5-flash'; // 混雑・制限回避のため安定版を指定
     $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$api_key}";
 
     // プロンプトの構築
@@ -40,7 +62,7 @@ try {
     
     例（カレーの場合）：[\"じゃがいも\", \"にんじん\", \"ぎゅうにく\", \"かれーるー\"]";
 
-    // v1beta用の完璧な構造体 ＋ 純粋JSON出力設定
+    // v1beta用の構造体 ＋ 純粋JSON出力設定
     $data = [
         'contents' => [
             [
@@ -50,7 +72,7 @@ try {
             ]
         ],
         'generationConfig' => [
-            'responseMimeType' => 'application/json' 
+            'responseMimeType' => 'application/json'
         ]
     ];
 
@@ -69,7 +91,7 @@ try {
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    
+
     $response = curl_exec($ch);
 
     if ($response === false) {
@@ -86,7 +108,7 @@ try {
     // AIのレスポンスから純粋なJSONテキスト（食材配列）を抽出
     $result = json_decode($response, true);
     $aiResponseText = $result['candidates'][0]['content']['parts'][0]['text'] ?? '[]';
-    
+
     $neededFoods = json_decode(trim($aiResponseText), true);
 
     if (!is_array($neededFoods) || empty($neededFoods)) {
@@ -94,66 +116,86 @@ try {
     }
 
     // --------------------------------------------------------
-    // 3. 現在のユーザーのすべての在庫（ingredients）を全件取得【修正：locationも取得】
+    // 3. 現在のユーザーのすべての在庫をマスタ連携を含めて全件取得
     // --------------------------------------------------------
-    // 💡 SQL文に「location」を追加して、冷蔵庫か冷凍庫かも一緒に引っ張ってきます
-    $stmt = $pdo->prepare("SELECT id, food, location FROM ingredients WHERE user_id = ?");
+    $sql = "SELECT i.id, i.food_name, l.location_name 
+            FROM ingredients i
+            LEFT JOIN storage_locations l ON i.storage_location_id = l.id
+            WHERE i.user_id = ?";
+
+    $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId]);
-    $userStocks = $stmt->fetchAll();
+    $userStocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // 比較用に、ユーザーの在庫名もお掃除（ひらがな化）してリスト化
     $cleanedStocks = [];
     foreach ($userStocks as $stock) {
-        $cleanName = mb_convert_kana(trim($stock['food']), "cVs", "UTF-8");
+        $cleanName = mb_convert_kana(trim($stock['food_name']), "cVs", "UTF-8");
+
+        // フロント（JS）の判定仕様（fridge/freezer）に合わせて変換
+        $locStr = 'fridge';
+        if (isset($stock['location_name']) && (strpos($stock['location_name'], '冷凍') !== false)) {
+            $locStr = 'freezer';
+        }
+
         $cleanedStocks[] = [
             "id" => $stock['id'],
             "clean_name" => $cleanName,
-            "location" => $stock['location'] ?? 'fridge' // 💡 保管場所をキープ（カラムが空なら初期値冷蔵庫）
+            "location" => $locStr
         ];
     }
 
     // --------------------------------------------------------
-    // 4. AIの必要食材とユーザー在庫をマッチング【修正：locationの判定を追加】
+    // 4. AIの必要食材とユーザー在庫をマッチング
     // --------------------------------------------------------
     $matchingResults = [];
 
     foreach ($neededFoods as $neededFood) {
         $inStock = false;
         $stockId = null;
-        $location = null; // 💡 マッチした食材の保管場所を格納する変数
+        $location = null;
         $cleanNeededFood = mb_convert_kana(trim($neededFood), "cVs", "UTF-8");
 
-        // 部分一致で検索
+        // 部分一致による検知
         foreach ($cleanedStocks as $stock) {
             if (strpos($stock['clean_name'], $cleanNeededFood) !== false || strpos($cleanNeededFood, $stock['clean_name']) !== false) {
                 $inStock = true;
-                $stockId = $stock['id']; 
-                $location = $stock['location']; // 💡 見つかった在庫の保管場所（fridge または freezer）を代入
+                $stockId = $stock['id'];
+                $location = $stock['location'];
                 break;
             }
         }
 
         $matchingResults[] = [
-            "id" => $stockId,      
-            "food" => $neededFood,  
+            "id" => $stockId,
+            "food" => $neededFood,
             "in_stock" => $inStock,
-            "location" => $location // 💡 フロント（JS）へ 'fridge' / 'freezer' / null を伝える
+            "location" => $location
         ];
     }
 
     // --------------------------------------------------------
-    // 5. 綺麗なJSONにしてフロントエンドのJSに返す（全在庫も含める！）
+    // 5. モーダル側が要求する形式に「全在庫」を整形
     // --------------------------------------------------------
+    $formattedAllStocks = [];
+    foreach ($userStocks as $stock) {
+        $isFreezer = (isset($stock['location_name']) && strpos($stock['location_name'], '冷凍') !== false);
+        $formattedAllStocks[] = [
+            "id" => $stock['id'],
+            "food" => $stock['food_name'],
+            "location" => $isFreezer ? 'freezer' : 'fridge'
+        ];
+    }
+
+    // 綺麗なJSONにしてフロントエンドのJSに結果を戻す
     echo json_encode([
         "success" => true,
         "ingredients" => $matchingResults,
-        "all_stocks" => $userStocks // 💡 モーダルで使い回すための全在庫
+        "all_stocks" => $formattedAllStocks
     ], JSON_UNESCAPED_UNICODE);
-
 } catch (Exception $e) {
     echo json_encode([
         "success" => false,
         "message" => "処理中にエラーが発生しました: " . $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
 }
-?>

@@ -1,229 +1,173 @@
-// 💡 前回の検索キーワードを記憶する変数（APIの重複リクエストを防ぐ）
-window.lastKeyword = "";
+// ==================================================================================
+// js/search_recipe.js （food_scan.js 設計思想・最新API 適合版）
+// ==================================================================================
 
-// 💡 仮のログインユーザーID（環境に合わせて変更してください）
-const currentUserId = 1; 
+(function () {
+    "use strict";
 
-// 💡 検索時に取得した「全在庫」を一時的にキープしておくためのグローバル変数
-let loadedAllStocks = []; 
+    // ==========================================
+    // 1. 設定の集約
+    // ==========================================
+    const CONFIG = {
+        // 💡 先ほど設定したPHPファイルへのパス
+        API_ENDPOINT: "/team-system2/server/page/get_recipe_ingredients.php",
+    };
 
-/**
- * 1. 検索ボタンをクリックしたときのイベント
- */
-const searchBtn = document.getElementById('recipeSearchBtn');
-if (searchBtn) {
-    searchBtn.addEventListener('click', async () => {
-        console.log("検索ボタンが押されました");
+    // ==========================================
+    // 2. DOM要素の初期化と検証
+    // ==========================================
+    const searchBtn = document.getElementById("search-recipe-btn");     // 検索ボタン
+    const keywordInput = document.getElementById("recipe-keyword");     // 入力欄
+    const resultDiv = document.getElementById("recipe-result-container"); // 結果表示エリア
 
-        const keywordInput = document.getElementById('recipeSearchInput');
+    // 💡 画面にユーザーIDを保持している要素（無ければセッションやinput等から取得してください）
+    const userIdInput = document.getElementById("current-user-id") || { value: 1 };
+
+    if (!searchBtn || !keywordInput || !resultDiv) return;
+
+    searchBtn.addEventListener("click", handleSearch);
+    // エンターキーでも検索できるように設定
+    keywordInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") handleSearch();
+    });
+
+    // ==========================================
+    // 3. イベントハンドラー & メインロジック
+    // ==========================================
+    async function handleSearch() {
         const keyword = keywordInput.value.trim();
-        
-        // 💡 重複リクエストガード：前回と同じキーワードなら処理を中断
-        if (window.lastKeyword === keyword && !searchBtn.disabled) {
-            console.log("前回と同じキーワードなので検索をスキップします");
-            return;
-        }
+        const userId = userIdInput.value;
 
         if (!keyword) {
-            alert('作りたい料理名を入力してください！');
+            alert("料理名やキーワードを入力してください（例：オムライス、カレー）");
             return;
         }
 
-        const resultSection = document.getElementById('resultSection');
-        const resultTitle = document.getElementById('resultTitle');
-        const container = document.getElementById('checkboxContainer');
-        
-        // 💡 通信開始時にボタンを無効化（429エラーやサーバー過負荷を防ぐ）
-        searchBtn.disabled = true;
-        searchBtn.style.opacity = '0.6';
-        searchBtn.style.cursor = 'not-allowed';
-
-        // 状態のリセット
-        resultTitle.textContent = `🔄 「${keyword}」の必要食材をAIが計算中...`;
-        resultSection.style.display = 'block';
-        container.innerHTML = '読み込み中...';
+        showLoading(keyword);
 
         try {
-            const apiUrl = `../../server/page/get_recipe_ingredients.php?user_id=${currentUserId}&keyword=${encodeURIComponent(keyword)}`;
-            console.log("通信開始:", apiUrl);
+            // 🔥 【超重要】ブラウザで動いたURLをベースに、完全に固定の絶対パスで組み立てる！
+            const url = `http://localhost/team-system2/server/page/get_recipe_ingredients.php?user_id=${userId}&keyword=${encodeURIComponent(keyword)}`;
 
-            const response = await fetch(apiUrl);
-            const result = await response.json();
-            console.log("サーバーからの返答:", result);
+            console.log("🚀 実際にフェッチするURLはこれです:", url); // デバッグ用
 
-            if (result.success) {
-                // 💡 成功時のみキーワードを記録
-                window.lastKeyword = keyword;
-                
-                resultTitle.textContent = `🍳 「${keyword}」の必要食材確認`;
-                loadedAllStocks = result.all_stocks || []; 
-                
-                renderCheckboxes(result.ingredients);
-            } else {
-                alert('エラー: ' + result.message);
-                resultSection.style.display = 'none';
+            const response = await fetch(url, { method: "GET" });
+
+            // （以下、既存のコードと同じ）
+            const rawText = await response.text();
+            const data = parseJSON(rawText);
+            if (!data) return;
+
+            if (data.success === false || data.error) {
+                showError(data.message || data.error || "データ取得に失敗しました。");
+                return;
             }
-        } catch (error) {
-            console.error('通信エラー:', error);
-            alert('サーバーとの通信に失敗しました。コンソールを確認してください。');
-        } finally {
-            // 💡 通信が終わったらボタンを復活
-            searchBtn.disabled = false;
-            searchBtn.style.opacity = '1';
-            searchBtn.style.cursor = 'pointer';
+
+            renderRecipeIngredients(data.ingredients, data.all_stocks, keyword);
+
+        } catch (err) {
+            showError(`通信エラーが発生しました: ${err.message}`);
         }
-    });
-} else {
-    console.error("エラー: recipeSearchBtn が見つかりません。HTMLのIDを確認してください。");
-}
-
-/**
- * 2. AIが抽出した食材を「冷蔵庫」「冷凍庫」「在庫なし」の3つに分けて表示する関数
- */
-function renderCheckboxes(ingredients) {
-    const container = document.getElementById('checkboxContainer');
-    container.innerHTML = ''; 
-
-    const fridgeItems = ingredients.filter(item => item.in_stock && item.location === 'fridge');
-    const freezerItems = ingredients.filter(item => item.in_stock && item.location === 'freezer');
-    const outOfStockItems = ingredients.filter(item => !item.in_stock);
-
-    if (fridgeItems.length > 0) {
-        const titleFridge = document.createElement('h4');
-        titleFridge.className = 'group-title title-fridge';
-        titleFridge.style.color = '#2ecc71';
-        titleFridge.innerHTML = '✨ 冷蔵庫にある食材（すぐ使えます）';
-        container.appendChild(titleFridge);
-        fridgeItems.forEach(item => container.appendChild(createIngredientRow(item, true, '冷蔵庫')));
     }
 
-    if (fridgeItems.length > 0 && (freezerItems.length > 0 || outOfStockItems.length > 0)) {
-        container.appendChild(document.createElement('hr'));
+    // ==========================================
+    // 4. ヘルパー関数
+    // ==========================================
+
+    /**
+     * 安全なJSONパース
+     */
+    function parseJSON(text) {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            resultDiv.innerHTML = `
+        <span class="scan-error-text">❌ システムエラー（JSONパース失敗）</span><br>
+        <pre class="scan-error-debug">${text}</pre>
+      `;
+            return null;
+        }
     }
 
-    if (freezerItems.length > 0) {
-        const titleFreezer = document.createElement('h4');
-        titleFreezer.className = 'group-title title-freezer';
-        titleFreezer.style.color = '#3498db';
-        titleFreezer.innerHTML = '❄️ 冷凍庫にある食材（解凍して使えます）';
-        container.appendChild(titleFreezer);
-        freezerItems.forEach(item => container.appendChild(createIngredientRow(item, true, '冷凍庫')));
-    }
+    // ==========================================
+    // 5. UIのレンダリング（HTML生成）
+    // ==========================================
 
-    if (freezerItems.length > 0 && outOfStockItems.length > 0) {
-        container.appendChild(document.createElement('hr'));
-    }
-
-    if (outOfStockItems.length > 0) {
-        const titleOut = document.createElement('h4');
-        titleOut.className = 'group-title title-out';
-        titleOut.style.color = '#e67e22';
-        titleOut.innerHTML = '🛒 買い足しが必要な食材（買い物リスト）';
-        container.appendChild(titleOut);
-        outOfStockItems.forEach(item => container.appendChild(createIngredientRow(item, false, '在庫なし')));
-    }
-}
-
-/**
- * 3. 食材の1行分のHTML要素を生成する関数
- */
-function createIngredientRow(item, isAvailable, statusLabel) {
-    const div = document.createElement('div');
-    div.className = `checkbox-item ${isAvailable ? 'item-available' : 'item-missing'}`;
-    div.style.padding = '8px 0';
-    div.style.borderBottom = '1px solid #eee';
-
-    let badgeColor = statusLabel === '冷蔵庫' ? 'status-in' : (statusLabel === '冷凍庫' ? 'status-freezer' : 'status-out');
-
-    div.innerHTML = `
-        <label style="display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer;">
-            <span>
-                <input type="checkbox" name="food_items" value="${item.id || ''}" data-name="${item.food}" checked>
-                <span class="food-name">${item.food}</span>
-            </span>
-            <span class="stock-status ${badgeColor}" style="font-size: 0.8em; opacity: 0.7; padding: 2px 6px; border-radius: 4px;">
-                ${statusLabel === '在庫なし' ? '❌ 在庫なし' : statusLabel}
-            </span>
-        </label>
+    function showLoading(keyword) {
+        resultDiv.innerHTML = `
+      <div class="scan-loading-box">
+          <b class="scan-loading-title">🍳 AIが「${keyword}」の必要食材を分析中...</b><br>
+          <span class="scan-loading-sub">冷蔵庫・冷凍庫の在庫と一致するか調べています。</span>
+      </div>
     `;
-    return div;
-}
+    }
 
-/**
- * 4. 調理開始ボタン
- */
-const startBtn = document.getElementById('startCookingBtn');
-if (startBtn) {
-    startBtn.addEventListener('click', () => {
-        alert("調理を開始します！画面4へ遷移する処理をここに記述します。");
-    });
-}
+    function showError(message) {
+        resultDiv.innerHTML = `<span class="scan-error-text">❌ ${message}</span>`;
+    }
 
-/**
- * 5. 「他の食材を追加」ボタンとモーダル制御
- */
-const manualAddBtn = document.getElementById('manualAddBtn');
-const stockModal = document.getElementById('stockModal');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+    /**
+     * AIが判定した食材リストと在庫状況を表示
+     */
+    function renderRecipeIngredients(ingredients, allStocks, keyword) {
+        let html = `<h3>💡 「${keyword}」に必要な主要食材（AI提案）</h3>`;
+        html += "<p class='scan-loading-sub' style='margin-bottom: 15px;'>※ あなたの現在の在庫と自動でマッチングを行いました。</p>";
 
-if (manualAddBtn && stockModal) {
-    manualAddBtn.addEventListener('click', () => {
-        const allStockContainer = document.getElementById('allStockContainer');
-        allStockContainer.innerHTML = '';
-        stockModal.style.display = 'block';
+        html += "<table id='recipe-ingredients-table' style='width:100%; border-collapse: collapse;'>";
+        html += "<tr>";
+        html += "<th>必要食材</th>";
+        html += "<th style='text-align: center;'>在庫状況</th>";
+        html += "<th>保管場所</th>";
+        html += "</tr>";
 
-        const existingNames = Array.from(document.querySelectorAll('input[name="food_items"]'))
-                                   .map(input => input.getAttribute('data-name'));
+        ingredients.forEach(item => {
+            // 在庫あり＝チェック、なし＝未チェック
+            const checkedAttr = item.in_stock ? "checked" : "";
+            // 在庫がある場合は行のスタイルを変更できるようにクラス付与
+            const rowClass = item.in_stock ? "ingredient-row in-stock" : "ingredient-row out-of-stock";
 
-        loadedAllStocks.forEach(stock => {
-            if (existingNames.includes(stock.food)) return;
-
-            const isFreezer = stock.location === 'freezer';
-            const locationBadge = isFreezer ? '❄️ 冷凍' : '✨ 冷蔵';
-            const badgeStyle = isFreezer ? 'color: #3498db;' : 'color: #2ecc71;';
-
-            const div = document.createElement('div');
-            div.className = 'modal-stock-item';
-            div.style.padding = '10px';
-            div.style.borderBottom = '1px solid #eee';
-            div.innerHTML = `
-                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; width: 100%;">
-                    <span>
-                        <input type="checkbox" name="modal_food_items" value="${stock.id}" data-name="${stock.food}" data-location="${stock.location}" style="margin-right: 10px;">
-                        <span>${stock.food}</span>
-                    </span>
-                    <span style="font-size: 0.8em; ${badgeStyle}">${locationBadge}</span>
-                </label>
-            `;
-            allStockContainer.appendChild(div);
-        });
-    });
-
-    closeModalBtn.addEventListener('click', () => stockModal.style.display = 'none');
-    window.addEventListener('click', (e) => { if (e.target === stockModal) stockModal.style.display = 'none'; });
-
-    modalSubmitBtn.addEventListener('click', () => {
-        const selectedModalItems = document.querySelectorAll('input[name="modal_food_items"]:checked');
-        const mainContainer = document.getElementById('checkboxContainer');
-
-        selectedModalItems.forEach(cb => {
-            const location = cb.getAttribute('data-location');
-            const item = { id: cb.value, food: cb.getAttribute('data-name'), location: location, in_stock: true };
-            const isFreezer = (location === 'freezer');
-            const targetTitleClass = isFreezer ? '.title-freezer' : '.title-fridge';
-            const newRow = createIngredientRow(item, true, isFreezer ? '冷凍庫' : '冷蔵庫');
-            
-            let targetTitle = mainContainer.querySelector(targetTitleClass);
-            if (!targetTitle) {
-                targetTitle = document.createElement('h4');
-                targetTitle.className = `group-title ${targetTitleClass.replace('.', '')}`;
-                targetTitle.style.color = isFreezer ? '#3498db' : '#2ecc71';
-                targetTitle.innerHTML = isFreezer ? '❄️ 冷凍庫にある食材（解凍して使えます）' : '✨ 冷蔵庫にある食材（すぐ使えます）';
-                mainContainer.prepend(targetTitle);
+            // 保管場所の日本語化表示
+            let locationText = "<span style='color: #999;'>---</span>";
+            if (item.in_stock) {
+                locationText = item.location === 'freezer' ? "🥶 冷凍庫" : "❄️ 冷蔵庫";
             }
-            targetTitle.after(newRow);
+
+            html += `
+        <tr class="${rowClass}" style="border-bottom: 1px solid #ddd; height: 45px;">
+          <td style="font-weight: bold; padding-left: 10px;">
+            ${item.food}
+          </td>
+          <td style="text-align: center;">
+            <input type="checkbox" class="ingredient-match-check" ${checkedAttr} disabled style="transform: scale(1.2);">
+            <span style="margin-left: 5px; font-weight: bold; color: ${item.in_stock ? '#28a745' : '#dc3545'};">
+              ${item.in_stock ? 'あり' : 'なし'}
+            </span>
+          </td>
+          <td>
+            ${locationText}
+          </td>
+        </tr>
+      `;
         });
-        stockModal.style.display = 'none';
-    });
-}
+
+        html += "</table>";
+
+        // 💡 応用：全在庫データ（allStocks）を使い回してモーダル等を表示するためのボタン
+        html += `
+      <div style="margin-top: 20px; text-align: right;">
+        <button class="bulk-save-button" id="openStockModalBtn" style="background-color: #17a2b8;">
+          📦 現在の全在庫リストを確認 (${allStocks.length}件)
+        </button>
+      </div>
+    `;
+
+        resultDiv.innerHTML = html;
+
+        // 全在庫確認用のイベントリスナー結合（もし必要であればモーダル展開処理をここへ）
+        document.getElementById("openStockModalBtn").addEventListener("click", function () {
+            console.log("現在の全在庫データ:", allStocks);
+            alert(`現在、合計 ${allStocks.length} 件の食材がデータベースに登録されています。`);
+        });
+    }
+
+})();
