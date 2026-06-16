@@ -58,19 +58,9 @@ include "template/sidebar.php";
             <div class="setting-row">
                 <span>ダークモード</span>
                 <label class="switch">
-                    <input type="checkbox">
+                    <input type="checkbox" id="darkModeToggle">
                     <span class="slider"></span>
                 </label>
-            </div>
-
-            <div class="form-group">
-                <label>背景テーマ</label>
-                <select>
-                    <option>デフォルト</option>
-                    <option>ブルー</option>
-                    <option>グリーン</option>
-                    <option>ダーク</option>
-                </select>
             </div>
         </div>
 

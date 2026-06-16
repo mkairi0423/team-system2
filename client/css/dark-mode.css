@@ -1,0 +1,621 @@
+/* ==========================================================================
+   目次 (INDEX)
+   1. 【共通】ダークモード基本変数・背景・テキスト
+   2. 【共通パーツ】サイドバー / カード / フォーム / テーブル / ボタン / バッジ
+   3. 【共通パーツ】ホーム / ログイン・登録 / 検索 / スキャン / 設定 / その他
+   4. 【追加分】AI RECIPE DARK MODE (上書き設定含む)
+   5. 【追加分】FOOD SCAN DARK MODE (上書き設定含む)
+   6. 【追加分】COOKING MODAL DARK MODE (上書き設定含む)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. 【共通】ダークモード基本変数・背景・テキスト
+   ========================================================================== */
+
+/* DARK MODE THEME */
+body.dark-mode {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #334155;
+
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+
+  --border: #475569;
+
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+
+  --success: #22c55e;
+  --success-hover: #16a34a;
+
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* COMMON */
+body.dark-mode,
+body.dark-mode .main {
+  background: var(--bg);
+  color: var(--text);
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label {
+  color: var(--text);
+}
+
+
+/* ==========================================================================
+   2. 【共通パーツ】サイドバー / カード / フォーム / テーブル / ボタン / バッジ
+   ========================================================================== */
+
+/* SIDEBAR */
+body.dark-mode .sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  box-shadow: none;
+}
+
+body.dark-mode .logo {
+  background: linear-gradient(135deg, #60a5fa, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.dark-mode .menu a {
+  color: #cbd5e1;
+}
+
+body.dark-mode .menu a:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+body.dark-mode .menu a.active {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-left: 4px solid var(--primary);
+}
+
+/* CARD */
+body.dark-mode .card,
+body.dark-mode .panel,
+body.dark-mode .chart-box,
+body.dark-mode .rank-box,
+body.dark-mode .setting-card,
+body.dark-mode .recipe-card,
+body.dark-mode .food-card,
+body.dark-mode .upload-container,
+body.dark-mode #result,
+body.dark-mode .search-container,
+body.dark-mode .modal-content,
+body.dark-mode .cooking-container {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+/* FORM */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .food-name-input,
+body.dark-mode .food-quantity-input,
+body.dark-mode .food-date-input,
+body.dark-mode .food-select-box,
+body.dark-mode .food-term-select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: var(--text-muted);
+}
+
+body.dark-mode input:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* TABLE */
+body.dark-mode table {
+  background: var(--surface);
+}
+
+body.dark-mode th {
+  background: var(--primary);
+  color: white;
+}
+
+body.dark-mode td {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* BUTTON */
+body.dark-mode .btn,
+body.dark-mode .btn-primary,
+body.dark-mode .move-btn,
+body.dark-mode .action-btn,
+body.dark-mode .save-btn {
+  background: var(--primary);
+  color: white;
+}
+
+body.dark-mode .btn:hover,
+body.dark-mode .btn-primary:hover,
+body.dark-mode .move-btn:hover,
+body.dark-mode .action-btn:hover,
+body.dark-mode .save-btn:hover {
+  background: var(--primary-hover);
+}
+
+body.dark-mode .btn-complete,
+body.dark-mode .bulk-save-button,
+body.dark-mode .btn-adopt {
+  background: var(--success);
+}
+
+body.dark-mode .btn-complete:hover,
+body.dark-mode .bulk-save-button:hover,
+body.dark-mode .btn-adopt:hover {
+  background: var(--success-hover);
+}
+
+body.dark-mode .delete-btn,
+body.dark-mode .btn-danger {
+  background: var(--danger);
+}
+
+body.dark-mode .btn-return {
+  background: var(--warning);
+}
+
+
+/* ==========================================================================
+   3. 【共通パーツ】ホーム / ログイン・登録 / 検索 / スキャン / 設定 / その他
+   ========================================================================== */
+
+/* HOME */
+body.dark-mode .hero {
+  background: linear-gradient(135deg, #1d4ed8, #4338ca);
+}
+
+body.dark-mode .food,
+body.dark-mode .food-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+body.dark-mode details,
+body.dark-mode summary {
+  color: var(--text);
+}
+
+body.dark-mode .search-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+body.dark-mode .search-box::placeholder {
+  color: var(--text-muted);
+}
+
+body.dark-mode .user {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+}
+
+/* BADGE */
+body.dark-mode .badge.red {
+  background: rgba(220, 38, 38, 0.15);
+  color: #f87171;
+}
+
+body.dark-mode .badge.orange {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fb923c;
+}
+
+body.dark-mode .badge.green {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+/* LOGIN REGISTER */
+body.dark-mode .login-card,
+body.dark-mode .register-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+body.dark-mode .register-card p,
+body.dark-mode .login-link,
+body.dark-mode .sub-links,
+body.dark-mode .sub-links a {
+  color: var(--text-muted);
+}
+
+/* SEARCH PAGE */
+body.dark-mode .checkbox-item,
+body.dark-mode .modal-stock-item,
+body.dark-mode .ingredient-item,
+body.dark-mode .rank-item {
+  border-bottom: 1px solid var(--border);
+}
+
+body.dark-mode .status-in {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+body.dark-mode .status-out {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+/* RECIPE */
+body.dark-mode .option-btn {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+
+body.dark-mode .option-btn:hover {
+  background: var(--surface-2);
+}
+
+body.dark-mode .option-btn.selected {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--primary);
+  color: #60a5fa;
+}
+
+body.dark-mode .feature-badge {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+/* FOOD SCAN */
+body.dark-mode .scan-loading-box {
+  background: var(--surface);
+  border-left: 4px solid var(--primary);
+}
+
+body.dark-mode .scan-loading-title {
+  color: #60a5fa;
+}
+
+body.dark-mode .scan-loading-sub {
+  color: var(--text-muted);
+}
+
+body.dark-mode .scan-success-box {
+  background: rgba(34, 197, 94, 0.15);
+  border-left: 4px solid var(--success);
+  color: #4ade80;
+}
+
+body.dark-mode .scan-error-debug {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+body.dark-mode #scan-table th {
+  background: var(--surface-2);
+}
+
+body.dark-mode #scan-table td {
+  border-color: var(--border);
+}
+
+/* SETTINGS */
+body.dark-mode .settings-header p {
+  color: var(--text-muted);
+}
+
+body.dark-mode .btn-secondary {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* HAMBURGER */
+body.dark-mode .hamburger {
+  background: var(--primary);
+}
+
+body.dark-mode .hamburger span {
+  background: white;
+}
+
+/* SCROLLBAR */
+body.dark-mode ::-webkit-scrollbar {
+  width: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+
+/* ==========================================================================
+   4. 【追加分】AI RECIPE DARK MODE (上書き設定含む)
+   ========================================================================== */
+
+body.dark-mode .container {
+  background: #1e293b;
+  color: #f8fafc;
+  box-shadow: none;
+}
+
+body.dark-mode .header {
+  border-bottom: 2px solid #334155;
+}
+
+body.dark-mode .question-title,
+body.dark-mode .recipe-title,
+body.dark-mode .recipe-label {
+  color: #f8fafc;
+}
+
+body.dark-mode .recipe-text {
+  color: #cbd5e1;
+}
+
+body.dark-mode .recipe-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  box-shadow: none;
+}
+
+body.dark-mode .recipe-divider {
+  border-top: 1px solid #334155;
+}
+
+body.dark-mode .option-btn {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 2px solid #334155;
+}
+
+body.dark-mode .option-btn:hover {
+  background: #334155;
+}
+
+body.dark-mode .option-btn.selected {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
+body.dark-mode .feature-badge {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+body.dark-mode .btn-home,
+body.dark-mode .btn-mypage {
+  background: #334155;
+  color: #f8fafc;
+}
+
+body.dark-mode .btn-home:hover,
+body.dark-mode .btn-mypage:hover {
+  background: #475569;
+}
+
+body.dark-mode .submit-container {
+  border-top: 2px solid #334155;
+}
+
+body.dark-mode .search-link {
+  color: #60a5fa;
+}
+
+
+/* ==========================================================================
+   5. 【追加分】FOOD SCAN DARK MODE (上書き設定含む)
+   ========================================================================== */
+
+/* 結果エリア */
+body.dark-mode #result {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+}
+
+/* ローディング */
+body.dark-mode .scan-loading-box {
+  background: #0f172a;
+  border-left: 4px solid #3b82f6;
+}
+
+body.dark-mode .scan-loading-title {
+  color: #60a5fa;
+}
+
+body.dark-mode .scan-loading-sub {
+  color: #cbd5e1;
+}
+
+/* エラー */
+body.dark-mode .scan-error-text {
+  color: #f87171;
+}
+
+body.dark-mode .scan-error-debug {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #334155;
+}
+
+/* 保存中 */
+body.dark-mode .scan-saving-box {
+  color: #fbbf24;
+}
+
+/* 保存成功 */
+body.dark-mode .scan-success-box {
+  background: rgba(34, 197, 94, 0.15);
+  border-left: 4px solid #22c55e;
+  color: #4ade80;
+}
+
+/* テーブル */
+body.dark-mode #scan-table {
+  background: #1e293b;
+}
+
+body.dark-mode #scan-table th {
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+
+body.dark-mode #scan-table td {
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+
+/* 非食品 */
+body.dark-mode .food-item-row.non-food {
+  background: #0f172a;
+  opacity: 0.8;
+}
+
+/* 入力 */
+body.dark-mode .food-name-input,
+body.dark-mode .food-quantity-input,
+body.dark-mode .food-select-box,
+body.dark-mode .food-term-select,
+body.dark-mode .food-date-input {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+
+body.dark-mode .food-name-input:focus,
+body.dark-mode .food-quantity-input:focus,
+body.dark-mode .food-select-box:focus,
+body.dark-mode .food-term-select:focus,
+body.dark-mode .food-date-input:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+/* 単位 */
+body.dark-mode .food-unit-text {
+  color: #cbd5e1;
+}
+
+/* チェックボックス */
+body.dark-mode .food-select-checkbox {
+  accent-color: #3b82f6;
+}
+
+/* 保存ボタン */
+body.dark-mode .bulk-save-button {
+  background: #22c55e;
+  color: #fff;
+}
+
+body.dark-mode .bulk-save-button:hover {
+  background: #16a34a;
+}
+
+body.dark-mode #result {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+
+/* ==========================================================================
+   6. 【追加分】COOKING MODAL DARK MODE (上書き設定含む)
+   ========================================================================== */
+
+body.dark-mode .cooking-modal-content {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+}
+
+body.dark-mode .cooking-subtitle {
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .ingredient-row {
+  border-bottom: 1px solid #334155 !important;
+}
+
+body.dark-mode .ingredient-info {
+  color: #f8fafc !important;
+}
+
+/* 閉じるボタン */
+body.dark-mode .btn-close-modal {
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .btn-close-modal:hover {
+  color: #ffffff !important;
+}
+
+/* 戻すボタン */
+body.dark-mode .btn-return {
+  background: #f59e0b !important;
+  color: #fff !important;
+}
+
+body.dark-mode .btn-return:hover {
+  background: #d97706 !important;
+}
+
+/* 料理完了ボタン */
+body.dark-mode .btn-complete {
+  background: #22c55e !important;
+  color: #fff !important;
+}
+
+body.dark-mode .btn-complete:hover {
+  background: #16a34a !important;
+}
+
+body.dark-mode .btn-complete:disabled {
+  background: #475569 !important;
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .cooking-modal-overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+
