@@ -1,34 +1,27 @@
-const toggle = document.getElementById('darkModeToggle');
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('darkModeToggle');
 
-// 保存済みテーマを読み込み
-if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark-mode');
-    toggle.checked = true;
-}
+    // 現在のテーマを反映（全ページ）
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    };
 
-toggle.addEventListener('change', () => {
-    if (toggle.checked) {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
-    }
-});
+    // 保存テーマを読み込み（全ページ適用）
+    const savedTheme = localStorage.getItem('theme');
+    applyTheme(savedTheme);
 
-const darkToggle = document.getElementById("darkModeToggle");
+    // スイッチがあるページだけ操作を許可
+    if (toggle) {
+        toggle.checked = savedTheme === 'dark';
 
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark-mode");
-    darkToggle.checked = true;
-}
-
-darkToggle.addEventListener("change", () => {
-    if (darkToggle.checked) {
-        document.body.classList.add("dark-mode");
-        localStorage.setItem("theme", "dark");
-    } else {
-        document.body.classList.remove("dark-mode");
-        localStorage.setItem("theme", "light");
+        toggle.addEventListener('change', () => {
+            const theme = toggle.checked ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+            applyTheme(theme);
+        });
     }
 });

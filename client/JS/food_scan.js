@@ -65,33 +65,54 @@
   async function sendToAI(base64Image) {
     showLoading();
 
-    try {
-      const response = await fetch(CONFIG.API_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "scan", image: base64Image }),
-      });
+    /**
+   * Gemini AIに画像を送信してスキャンを実行
+   */
+    async function sendToAI(base64Image) {
+      showLoading();
 
-      const rawText = await response.text();
-      console.log("--- サーバーからの応答データ ---", rawText);
+      try {
+        const response = await fetch(CONFIG.API_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "scan", image: base64Image }),
+        });
 
-      const data = parseJSON(rawText);
-      if (!data) return; // エラー表示はparseJSON内で行う
+        // 💡 429エラー（レートリミット）のハンドリングを追加
+        if (response.status === 429) {
+          showError("AIの利用制限に達しました。1分ほど時間を空けてから再度お試しください。");
+          return;
+        }
 
-      if (data.error) {
-        showError(`エラー: ${data.error}`);
-        return;
+        const rawText = await response.text();
+        console.log("--- サーバーからの応答データ ---", rawText);
+
+        const data = parseJSON(rawText);
+        if (!data) return;
+
+        // 💡 サーバー側がエラーを返した場合（PHP側から 429 メッセージが渡ってきた場合）
+        if (data.error || data.success === false) {
+          const errMsg = data.error || data.message || "未知のエラー";
+
+          // メッセージの中に429が含まれていたら親切な案内に変える
+          if (errMsg.includes("429")) {
+            showError("現在リクエストが集中しています。しばらく待ってからもう一度お試しください。");
+          } else {
+            showError(`エラー: ${errMsg}`);
+          }
+          return;
+        }
+
+        if (!data.items || !Array.isArray(data.items)) {
+          showError("データ構造エラー: items配列が見つかりません。");
+          return;
+        }
+
+        renderScanResultTable(data.items);
+
+      } catch (err) {
+        showError(`通信エラー: ${err.message}`);
       }
-
-      if (!data.items || !Array.isArray(data.items)) {
-        showError("データ構造エラー: items配列が見つかりません。");
-        return;
-      }
-
-      renderScanResultTable(data.items);
-
-    } catch (err) {
-      showError(`通信エラー: ${err.message}`);
     }
   }
 
