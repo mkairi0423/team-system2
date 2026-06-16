@@ -1,60 +1,69 @@
-body {
-    font-family: sans-serif;
-    padding: 20px;
-    background: #f9f9f9;
+@charset "UTF-8";
+
+/* 調理中画面全体のコンテナ */
+.cooking-container { 
+    max-width: 600px; 
+    margin: 20px auto; 
+    padding: 20px; 
+    border: 1px solid #ccc; 
+    border-radius: 8px; 
+    background-color: #fff; 
 }
 
-.container {
-    max-width: 500px;
-    margin: auto;
+/* 食材リストの1行ごとのスタイル */
+.ingredient-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px; 
+    border-bottom: 1px solid #eee; 
 }
 
-.title {
-    font-size: 20px;
-    margin-bottom: 10px;
+/* 右側の操作エリア（セレクトボックスとボタンの並び） */
+.item-controls { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
 }
 
-.item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: white;
-    border-radius: 8px;
-    margin-bottom: 10px;
+/* 戻し先選択のセレクトボックス */
+.select-destination { 
+    padding: 4px; 
+    border-radius: 4px; 
+    border: 1px solid #ccc; 
 }
 
-.food-name {
-    font-size: 16px;
+/* 個別「戻す」ボタン */
+.btn-return { 
+    background-color: #ff9800; 
+    color: white; 
+    border: none; 
+    padding: 5px 10px; 
+    cursor: pointer; 
+    border-radius: 4px; 
+    transition: background-color 0.2s ease;
 }
 
-button {
-    padding: 6px 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+.btn-return:hover { 
+    background-color: #e68a00; 
 }
 
-.return {
-    background: #ddd;
+/* 画面最下部の「料理完了」ボタン */
+.btn-complete { 
+    display: block; 
+    width: 100%; 
+    background-color: #4caf50; 
+    color: white; 
+    border: none; 
+    padding: 15px; 
+    font-size: 1.2rem; 
+    margin-top: 20px; 
+    cursor: pointer; 
+    border-radius: 4px; 
+    font-weight: bold; 
+    transition: background-color 0.2s ease;
 }
 
-.return:hover {
-    background: #ccc;
-}
-
-.complete {
-    width: 100%;
-    background: orange;
-    color: white;
-    font-size: 18px;
-    margin-top: 20px;
-}
-
-.complete:hover {
-    background: #e69500;
-}
-
-.empty {
-    color: #666;
+.btn-complete:hover { 
+    background-color: #43a047; 
 }
