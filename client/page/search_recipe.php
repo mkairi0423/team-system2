@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<?php // include __DIR__ . '/template/header.php'; ?>
+<?php  include __DIR__ . '/template/header.php'; ?>
 
 <div class="search-container">
     <h2>🔍 自分で料理を決める</h2>
