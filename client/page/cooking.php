@@ -9,6 +9,7 @@
     <title>調理中画面</title>
     <link rel="stylesheet" href="../../css/style.css"> 
     <link rel="stylesheet" href="cooking.css">
+        <link rel="stylesheet" href="../css/cooking.css">
 </head>
 <body>
 
@@ -27,6 +28,6 @@
     <button type="button" id="btn-cooking-complete" class="btn-complete">🍳 料理完了！</button>
 </div>
 
-<script src="cooking.js"></script> 
+<script src=""></script> 
 </body>
 </html>
