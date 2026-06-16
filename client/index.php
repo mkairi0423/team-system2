@@ -2,9 +2,9 @@
 require_once __DIR__ . "/../helpers/utils.php";
 
 session_start();
-$name_err = $_SESSION['name_id_err'] ?? "";
+$name_err = $_SESSION['name_err'] ?? "";
 $pass_err = $_SESSION['pass_err'] ?? "";
-unset($_SESSION['name_id_err']);
+unset($_SESSION['name_err']);
 unset($_SESSION['pass_err']);
 
 ?>
@@ -29,13 +29,13 @@ unset($_SESSION['pass_err']);
 
             <form action="../server/index_server.php" method="POST">
                 <div class="form-group">
-                    <input name="name_id" placeholder="ユーザーID">
+                    <input type="text" name="name" placeholder="ユーザーID" autocomplete="off" required>
                     <?php if (!empty($name_err)): ?>
                         <p class="err-msg"><?= h($name_err) ?></p>
                     <?php endif; ?>
                 </div>
                 <div class="form-group">
-                    <input type="password" name="password" placeholder="パスワード" required autocomplete="password">
+                    <input type="password" name="password" placeholder="パスワード" required autocomplete="current-password">
                     <?php if (!empty($pass_err)): ?>
                         <p class="err-msg">
                             <?= h($pass_err) ?>
