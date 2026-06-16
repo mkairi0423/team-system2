@@ -7,6 +7,7 @@
 
 /* 共通パーツ */
 @import url("components.css");
+@import url("dark-mode.css");
 
 /* ページ別 */
 @import url("home.css");
