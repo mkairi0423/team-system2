@@ -361,17 +361,30 @@ async function openCookingModal(userId, items, originButton) {
         completeBtn.disabled = true;
         completeBtn.innerText = "⏳ 在庫を消費確定中...";
 
+        let dishName = "AI考案料理";
+        try {
+            const savedRecipe = JSON.parse(sessionStorage.getItem('selected_recipe') || '{}');
+            if (savedRecipe && savedRecipe.recipe_name) {
+                dishName = savedRecipe.recipe_name;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
         try {
             const completeRes = await fetch('../../server/page/cooking_server.php?action=complete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId })
+                body: JSON.stringify({
+                    user_id: userId,
+                    dish_name: dishName
+                })
             });
 
             const completeResult = await completeRes.json();
             if (!completeResult.success) throw new Error(completeResult.message);
 
-            alert("美味しく出来上がりました！最初の画面に戻ります。");
+            alert("美味しく出来上がりました！料理履歴に保存しました");
             modal.remove();
 
             // 画面1（一番最初の条件選択画面）へ遷移
@@ -389,7 +402,7 @@ async function openCookingModal(userId, items, originButton) {
     const overlay = modal.querySelector('.cooking-modal-overlay');
 
     const closeModalClosure = () => {
-        modal.remove(); 
+        modal.remove();
         if (originButton) {
             originButton.disabled = false;
             originButton.innerText = "🍳 この料理にする！（採用）";
