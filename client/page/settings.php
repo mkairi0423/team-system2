@@ -38,17 +38,27 @@ include "template/sidebar.php";
         <div class="setting-card">
             <h2>🔒 セキュリティ</h2>
 
-            <div class="form-group">
-                <label>現在のパスワード</label>
-                <input type="password">
-            </div>
+            <form id="form-password-change" action="" method="POST">
 
-            <div class="form-group">
-                <label>新しいパスワード</label>
-                <input type="password">
-            </div>
+                <input type="text"
+                    name="username"
+                    value="<?php echo htmlspecialchars($_SESSION['user']['name'] ?? 'guest_user'); ?>"
+                    autocomplete="username"
+                    style="display:none;">
 
-            <button class="btn-primary">変更する</button>
+                <div class="form-group">
+                    <label for="current-password">現在のパスワード</label>
+                    <input type="password" id="current-password" name="current_password" autocomplete="current-password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password">新しいパスワード</label>
+                    <input type="password" id="new-password" name="new_password" autocomplete="new-password" required>
+                </div>
+
+                <button type="submit" class="btn-primary">変更する</button>
+
+            </form>
         </div>
 
         <!-- デザイン -->
@@ -68,7 +78,7 @@ include "template/sidebar.php";
         <div class="setting-card">
             <h2>🔔 通知</h2>
 
-            <div class="setting-row">
+            <div class="setting-row form-group">
                 <span>賞味期限通知</span>
                 <label class="switch">
                     <input type="checkbox" checked>
@@ -76,24 +86,26 @@ include "template/sidebar.php";
                 </label>
             </div>
 
-            <div class="setting-row">
+            <div class="setting-row form-group">
                 <span>在庫不足通知</span>
                 <label class="switch">
                     <input type="checkbox" checked>
                     <span class="slider"></span>
                 </label>
             </div>
+            
         </div>
-
     </div>
 
     <div class="setting-card danger-card">
         <h2>⚠️ その他</h2>
 
         <div class="danger-buttons">
-            <button class="btn-secondary">
-                ログアウト
-            </button>
+            <a href="../../server/page/logout_server.php">
+                <button class="btn-secondary">
+                    ログアウト
+                </button>
+            </a>
 
             <button class="btn-danger">
                 アカウント削除
