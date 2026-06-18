@@ -1,5 +1,6 @@
 <?php
 $current = basename($_SERVER['PHP_SELF']);
+
 ?>
 
 <button class="hamburger" onclick="toggleMenu()" id="hamburger">
