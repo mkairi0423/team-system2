@@ -70,5 +70,5 @@ include "template/sidebar.php";
         <button type="button" class="btn-submit" id="submit-to-ai">🚀 この条件でAIシェフにレシピを聞く！</button>
     </div>
 </div>
-
 <?php include "template/footer.php"; ?>
+

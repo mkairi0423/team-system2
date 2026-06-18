@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<?php  include __DIR__ . '/template/header.php'; ?>
+<?php // include __DIR__ . '/template/header.php'; ?>
 
 <div class="search-container">
     <h2>🔍 自分で料理を決める</h2>
@@ -30,33 +30,19 @@
     </div>
 
     <div id="resultSection" class="result-section" style="display: none;">
-        <h3 id="resultTitle">🍳 必要食材の確認</h3>
         <p class="result-guide">使う食材にチェックを入れたまま【調理開始】を押してください。</p>
         
         <form id="ingredientCheckForm">
             <div id="checkboxContainer"></div>
         </form>
 
-        <div class="action-btns" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+        <div class="action-btns">
             <button id="manualAddBtn" class="btn-add" type="button">➕ リストにない食材を自分の在庫から追加</button>
-            <button id="startCookingBtn" class="btn-submit" type="button">🍳 この食材で料理開始！（画面4へ）</button>
+            <button id="startCookingBtn" class="btn-submit" type="button">🍳 この食材で料理開始！</button>
         </div>
     </div>
 </div>
 
-<div id="stockModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span id="closeModalBtn" class="modal-close">&times;</span>
-        <h3>📦 冷蔵庫のすべての在庫</h3>
-        <p class="modal-guide" style="font-size: 0.9em; color: #666; margin-bottom: 15px;">
-            AIのリストにない食材で、一緒に使いたいものにチェックを入れてください。
-        </p>
-        
-        <div id="allStockContainer" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px; padding: 10px;"></div>
-        
-        <button id="modalSubmitBtn" class="btn-submit" style="width: 100%;">選択した食材をリストに追加</button>
-    </div>
-</div>
 
 <script src="../js/search_recipe.js"></script>
 </body>
