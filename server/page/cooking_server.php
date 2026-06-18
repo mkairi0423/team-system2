@@ -142,8 +142,12 @@ try {
         // --------------------------------------------------------
         // ③ 料理完了（action: complete）
         // --------------------------------------------------------
+        // --------------------------------------------------------
+        // ③ 料理完了（action: complete）
+        // --------------------------------------------------------
         case 'complete':
             $user_id = $input['user_id'] ?? null;
+            $dish_name = $input['dish_name'] ?? 'AI考案料理'; // JavaScriptから届いた料理名
 
             if (!$user_id) {
                 throw new Exception('ユーザーIDが指定されていません。');
@@ -151,21 +155,50 @@ try {
 
             $pdo->beginTransaction();
 
-            // 1. 連動してingredientsのキープデータ（quantity=0のデータ）を完全削除
-            // cooking_nowに登録されているoriginal_ingredient_idを狙い撃ちで消します
+            // 1. 現在調理中の食材リスト（cooking_now）をすべて取得する
+            $stmtGetNow = $pdo->prepare("
+                SELECT food, quantity, unit 
+                FROM cooking_now 
+                WHERE user_id = ?
+            ");
+            $stmtGetNow->execute([$user_id]);
+            $cooking_items = $stmtGetNow->fetchAll();
+
+            // 2. 取得した食材たちを1個ずつ `cooking_history` テーブルにインサートする
+            if (!empty($cooking_items)) {
+                $stmtInsertHistory = $pdo->prepare("
+                    INSERT INTO cooking_history (user_id, dish_name, used_food_name, quantity, unit, cooked_at) 
+                    VALUES (?, ?, ?, ?, ?, NOW())
+                ");
+
+                foreach ($cooking_items as $item) {
+                    $stmtInsertHistory->execute([
+                        $user_id,
+                        $dish_name,
+                        $item['food'],     // used_food_name にマッピング
+                        $item['quantity'], // quantity にマッピング
+                        $item['unit']      // unit にマッピング
+                    ]);
+                }
+            }
+
+            // 3. ⚠️ CASCADE削除対策：ingredientsテーブルのキープデータ（quantity=0）を完全削除
             $stmtDelIngredients = $pdo->prepare("
                 DELETE FROM ingredients 
                 WHERE id IN (SELECT original_ingredient_id FROM cooking_now WHERE user_id = ?)
             ");
             $stmtDelIngredients->execute([$user_id]);
 
-            // 2. cooking_now テーブルからも一括削除
+            // 4. cooking_now テーブルからも一括削除（これでお片付け完了）
             $stmtDelCooking = $pdo->prepare("DELETE FROM cooking_now WHERE user_id = ?");
             $stmtDelCooking->execute([$user_id]);
 
             $pdo->commit();
 
-            $response = ['success' => true, 'message' => '料理が完了しました！在庫が正式に消費されました。'];
+            $response = [
+                'success' => true, 
+                'message' => "「{$dish_name}」の調理記録を保存し、在庫を正式に消費しました！"
+            ];
             break;
 
         // --------------------------------------------------------
