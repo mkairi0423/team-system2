@@ -59,23 +59,22 @@ async function loadCookingHistory() {
         groupedHistory.forEach(recipe => {
             // 食材リストのHTMLを組み立てる
             const ingredientItemsHTML = recipe.ingredients.map(ing => {
-                // 数量がnullでなければ「（2個）」のように表示
-                const qtyText = ing.quantity !== null ? `（${ing.quantity}${ing.unit}）` : '';
+                const qtyText = ing.quantity !== null ? `(${ing.quantity}${ing.unit})` : '';
                 return `<li class="ingredient-item">🔸 ${ing.name}${qtyText}</li>`;
             }).join('');
 
-            // 日時のフォーマットを少し見やすく（例: 2026-06-19 14:00:00 -> 2026/06/19 14:00）
+            // 日時のフォーマットを綺麗に（2026/06/19 14:44）
             const formattedDate = recipe.cooked_at.replace(/-/g, '/').substring(0, 16);
 
-            // カードのラッパーを作成
+            // カードの作成
             const card = document.createElement('div');
-            card.className = 'history-card';
+            card.className = 'history-card'; // CSSと連動
             card.innerHTML = `
                 <div class="history-header">
                     <h3 class="dish-name">料理：${recipe.dish_name}</h3>
                     <span class="cooked-date">📅 ${formattedDate}</span>
                 </div>
-                <h4 style="margin: 0 0 8px 0; color: #666; font-size: 0.9rem;">使った食材：</h4>
+                <h4 class="ingredient-title">使った食材：</h4>
                 <ul class="ingredient-list">
                     ${ingredientItemsHTML}
                 </ul>
