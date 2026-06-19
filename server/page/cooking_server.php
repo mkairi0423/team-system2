@@ -26,7 +26,7 @@ try {
             $pdo->prepare("DELETE FROM cooking_now WHERE user_id = ?")->execute([$user_id]);
  
             foreach ($items as $item) {
-                $stmt = $pdo->prepare("SELECT * FROM ingredients WHERE id = ?");
+                $stmt = $pdo->prepare("SELECT * FROM ingredient WHERE id = ?");
                 $stmt->execute([$item['id']]);
                 $ing = $stmt->fetch();
                 if (!$ing) continue;
@@ -39,7 +39,7 @@ try {
                 $used = min($used, (float)$ing['quantity']);
  
                 // 在庫から差し引き
-                $pdo->prepare("UPDATE ingredients SET quantity = quantity - ? WHERE id = ?")
+                $pdo->prepare("UPDATE ingredient SET quantity = quantity - ? WHERE id = ?")
                     ->execute([$used, $ing['id']]);
                
                 // 調理中テーブルへ記録
@@ -58,7 +58,7 @@ try {
             $item = $stmt->fetch();
             if ($item) {
                 // 在庫に戻す
-                $pdo->prepare("UPDATE ingredients SET quantity = quantity + ? WHERE id = ?")
+                $pdo->prepare("UPDATE ingredient SET quantity = quantity + ? WHERE id = ?")
                     ->execute([$item['quantity'], $item['original_ingredient_id']]);
                 $pdo->prepare("DELETE FROM cooking_now WHERE id = ?")->execute([$cooking_id]);
             }
