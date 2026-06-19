@@ -1,9 +1,7 @@
-// ===================================================
-// js/food_scan.js （手入力登録 addFood 完全対応版）
-// ===================================================
+// ==================================================================================
+// js/food_scan.js （レスポンシブUI・スマホ＆PC両対応版）
+// ==================================================================================
 
-// 💡 外部（HTMLのonclickなど）から関数を呼べるようにするため、
-// addFood だけはグローバル（window）に公開できるようにします。
 window.addFood = null;
 
 (function () {
@@ -102,9 +100,6 @@ window.addFood = null;
     }
   }
 
-  /**
-   * 選択された食材をまとめてDBへ保存
-   */
   async function saveToStorage() {
     const rows = document.querySelectorAll("#scan-table .food-item-row");
     const items = [];
@@ -148,11 +143,8 @@ window.addFood = null;
     }
   }
 
-  // ==========================================
-  // 🔥 新設: 手入力登録用のロジック (addFood)
-  // ==========================================
+  // 手入力登録用ロジック (addFood)
   window.addFood = async function () {
-    // HTMLから手入力の各値を取得
     const foodName = document.getElementById("foodName").value.trim();
     const foodAmount = document.getElementById("foodAmount").value.trim();
     const foodCategory = document.getElementById("foodCategory").value;
@@ -160,7 +152,6 @@ window.addFood = null;
     const termType = document.getElementById("manualTermType").value;
     const expiryDate = document.getElementById("manualExpiryDate").value;
 
-    // バリデーション
     if (!foodName) {
       alert("食材名を入力してください。");
       return;
@@ -170,13 +161,11 @@ window.addFood = null;
       return;
     }
 
-    // 自動で単位を推測（g または 個）
     let unit = "個";
     if (MATCH_PATTERNS.WEIGHT_BASED.test(foodName) || foodCategory === "1") {
-      unit = "g"; // 肉・魚、または重量系キーワードならg
+      unit = "g";
     }
 
-    // スキャン保存用と同じデータ構造に整える
     const itemData = {
       food_name: foodName,
       quantity: parseFloat(foodAmount),
@@ -184,11 +173,10 @@ window.addFood = null;
       storage_place: storagePlace,
       custom_expiry_date: expiryDate,
       term_type: termType,
-      category_id: foodCategory // カテゴリIDも一緒に送信
+      category_id: foodCategory
     };
 
     try {
-      // 既存のスキャン保存API（food_scan_server.php）に配列の形で相乗り送信
       const response = await fetch(CONFIG.API_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -198,7 +186,6 @@ window.addFood = null;
       const resData = await response.json();
       if (resData.success) {
         alert(`🎉「${foodName}」を手入力で登録しました！`);
-        // フォームをリセット
         document.getElementById("foodName").value = "";
         document.getElementById("foodAmount").value = "";
       } else {
@@ -259,7 +246,7 @@ window.addFood = null;
   }
 
   // ==========================================
-  // 5. UIのレンダリング
+  // 5. UIのレンダリング（📱スマホ・💻PC両対応用の最適化）
   // ==========================================
   function showLoading() {
     resultDiv.innerHTML = `<div class="scan-loading-box"><b class="scan-loading-title">🤖 Gemini AIが解析中...</b><br><span class="scan-loading-sub">数量や期限、保存場所を推測しています。最大1分ほどかかります。</span></div>`;
@@ -270,9 +257,10 @@ window.addFood = null;
   }
 
   function renderScanResultTable(items) {
-    let html = "<h3>🎉 解析成功（登録したい食材のみチェックを残してください）</h3><table id='scan-table'><tr><th class='col-check'>登録</th><th>食品名</th><th class='col-quantity'>数量</th><th class='col-storage'>保存場所</th><th class='col-term'>期限の種類</th><th class='col-expiry'>期限日(編集可)</th></tr>";
+    // 🟢 変更点: テーブル全体に「responsive-table」というクラスを付与
+    let html = "<h3>🎉 解析成功（登録したい食材のみチェックを残してください）</h3><div class='table-responsive-wrapper'><table id='scan-table' class='responsive-table'><thead><tr><th class='col-check'>登録</th><th>食品名</th><th class='col-quantity'>数量</th><th class='col-storage'>保存場所</th><th class='col-term'>期限の種類</th><th class='col-expiry'>期限日(編集可)</th></tr></thead><tbody>";
     items.forEach(item => { html += createRowHtml(item); });
-    html += "</table><p class='save-action-area'><button class='bulk-save-button' id='bulkSaveBtn'>選択した食材をまとめて保存</button></p>";
+    html += "</tbody></table></div><p class='save-action-area'><button class='bulk-save-button' id='bulkSaveBtn'>選択した食材をまとめて保存</button></p>";
     resultDiv.innerHTML = html;
     document.getElementById("bulkSaveBtn").addEventListener("click", saveToStorage);
   }
@@ -282,7 +270,40 @@ window.addFood = null;
     const checkedAttr = meta.isNonFood ? "" : "checked";
     const rowClass = meta.isNonFood ? "food-item-row non-food" : "food-item-row";
 
-    return `<tr class="${rowClass}"><td class="col-check"><input type="checkbox" class="food-select-checkbox" ${checkedAttr}></td><td><input type="text" class="food-name-input" value="${item.food_name || ""}"></td><td class="col-quantity" style="white-space: nowrap;"><input type="number" class="food-quantity-input" value="${meta.quantity}" step="0.1"> <span class="food-unit-text">${meta.unit}</span></td><td><select class="food-select-box"><option value="冷蔵庫" ${meta.storage === '冷蔵庫' ? 'selected' : ''}>❄️ 冷蔵庫</option><option value="冷凍庫" ${meta.storage === '冷凍庫' ? 'selected' : ''}>🥶 冷凍庫</option><option value="常温・パントリー" ${meta.storage === '常温・パントリー' ? 'selected' : ''}>📦 常温・パントリー</option><option value="野菜室" ${meta.storage === '野菜室' ? 'selected' : ''}>🥬 野菜室</option></select></td><td><select class="food-term-select"><option value="best_before" ${!meta.isUseBy ? 'selected' : ''} class="best-before">賞味期限</option><option value="use_by" ${meta.isUseBy ? 'selected' : ''} class="use-by">消費期限</option></select></td><td><input type="date" class="food-date-input" value="${meta.expiryDate}"></td></tr>`;
+    // 🟢 変更点: 各 <td> に「data-label」属性を追加。スマホ表示のときにこれがラベルテキストに化けます。
+    // また、各種インプットやセレクトに「form-control-sm」的なレスポンシブ用クラスを付与しやすくしています。
+    return `
+      <tr class="${rowClass}">
+        <td data-label="登録" class="col-check">
+          <input type="checkbox" class="food-select-checkbox" ${checkedAttr}>
+        </td>
+        <td data-label="食品名">
+          <input type="text" class="food-name-input scan-input" value="${item.food_name || ""}">
+        </td>
+        <td data-label="数量" class="col-quantity">
+          <div class="quantity-input-group">
+            <input type="number" class="food-quantity-input scan-input" value="${meta.quantity}" step="0.1">
+            <span class="food-unit-text">${meta.unit}</span>
+          </div>
+        </td>
+        <td data-label="保存場所" class="col-storage">
+          <select class="food-select-box scan-select">
+            <option value="冷蔵庫" ${meta.storage === '冷蔵庫' ? 'selected' : ''}>❄️ 冷蔵庫</option>
+            <option value="冷凍庫" ${meta.storage === '冷凍庫' ? 'selected' : ''}>🥶 冷凍庫</option>
+            <option value="常温・パントリー" ${meta.storage === '常温・パントリー' ? 'selected' : ''}>📦 常温・パントリー</option>
+            <option value="野菜室" ${meta.storage === '野菜室' ? 'selected' : ''}>🥬 野菜室</option>
+          </select>
+        </td>
+        <td data-label="期限の種類" class="col-term">
+          <select class="food-term-select scan-select">
+            <option value="best_before" ${!meta.isUseBy ? 'selected' : ''} class="best-before">賞味期限</option>
+            <option value="use_by" ${meta.isUseBy ? 'selected' : ''} class="use-by">消費期限</option>
+          </select>
+        </td>
+        <td data-label="期限日" class="col-expiry">
+          <input type="date" class="food-date-input scan-input" value="${meta.expiryDate}">
+        </td>
+      </tr>`;
   }
 
 })();
