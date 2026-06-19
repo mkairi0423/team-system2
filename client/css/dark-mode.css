@@ -618,4 +618,163 @@ body.dark-mode .cooking-modal-overlay {
   background: rgba(0, 0, 0, 0.8) !important;
 }
 
+/* ==========================================================================
+   7. 【追加分】FOOD SCAN RESPONSIVE CARD (ダークモード用スマホ最適化)
+   ========================================================================== */
 
+@media screen and (max-width: 850px) {
+
+  /* テーブル要素のレイアウトを強制破壊（ダークモードでも確実にカードにする） */
+  body.dark-mode #scan-table,
+  body.dark-mode #scan-table tbody,
+  body.dark-mode #scan-table td,
+  body.dark-mode #scan-table tr {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* PC用のヘッダー行を非表示にする */
+  body.dark-mode #scan-table thead tr {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+  }
+
+  /* 📦 1枚の食材カード（ダークモード用の深いネイビー） */
+  body.dark-mode #scan-table tr.food-item-row {
+    background: #1e293b !important;
+    border: 1px solid #475569 !important;
+    border-radius: 12px !important;
+    margin-bottom: 20px !important;
+    padding: 12px 14px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  /* ダークモード時の非食品・スキップ対象カード */
+  body.dark-mode #scan-table tr.food-item-row.non-food {
+    background: #0f172a !important;
+    opacity: 0.5 !important;
+    border: 1px dashed #334155 !important;
+    box-shadow: none !important;
+  }
+
+  /* 各入力セルのレイアウト調整（左寄せのフレックス） */
+  body.dark-mode #scan-table td {
+    border: none !important;
+    border-bottom: 1px dashed #334155 !important;
+    padding: 8px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-height: 46px !important;
+  }
+
+  /* 最後の項目だけは点線を消す */
+  body.dark-mode #scan-table td:last-child {
+    border-bottom: none !important;
+  }
+
+  /* 🏷️ 左側の見出しラベル（HTMLの data-label から取得） */
+  body.dark-mode #scan-table td::before {
+    content: attr(data-label) " :";
+    width: 90px !important;
+    min-width: 90px !important;
+    font-weight: bold !important;
+    color: #94a3b8 !important;
+    font-size: 0.9em !important;
+    display: inline-block !important;
+  }
+
+  /* 🔘 登録チェックボックスセルの特殊背景 */
+  body.dark-mode #scan-table td.col-check {
+    background: #0f172a !important;
+    border: 1px solid #334155 !important;
+    border-radius: 6px !important;
+    margin-bottom: 10px !important;
+    padding: 10px !important;
+  }
+
+  /* スマホ用スイッチの土台（OFFのとき） */
+  body.dark-mode .checkbox-custom-ui {
+    width: 52px !important;
+    height: 28px !important;
+    background-color: #475569 !important;
+    border-radius: 20px !important;
+    position: relative !important;
+    display: inline-block !important;
+  }
+
+  /* スイッチの丸いノブ */
+  body.dark-mode .checkbox-custom-ui::after {
+    content: "" !important;
+    position: absolute !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    background-color: #f8fafc !important;
+    top: 2px !important;
+    left: 2px !important;
+    transition: transform 0.2s !important;
+  }
+
+  /* スイッチ（ONのとき：鮮やかなグリーンに切り替え） */
+  body.dark-mode .mobile-checkbox-trigger input[type="checkbox"]:checked+.checkbox-custom-ui {
+    background-color: #22c55e !important;
+  }
+
+  body.dark-mode .mobile-checkbox-trigger input[type="checkbox"]:checked+.checkbox-custom-ui::after {
+    transform: translateX(24px) !important;
+  }
+
+  /* スマホ入力欄のサイズ調整（iPhoneのズーム暴走防止用の文字サイズ16px） */
+  body.dark-mode .scan-input,
+  body.dark-mode .scan-select,
+  body.dark-mode .food-name-input,
+  body.dark-mode .food-select-box,
+  body.dark-mode .food-term-select,
+  body.dark-mode .food-date-input {
+    width: 100% !important;
+    height: 42px !important;
+    font-size: 16px !important;
+    padding: 6px 10px !important;
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+    border-radius: 8px !important;
+  }
+
+  /* フォーカス時（入力中）に青く光らせるエフェクト */
+  body.dark-mode .food-name-input:focus,
+  body.dark-mode .scan-input:focus,
+  body.dark-mode .scan-select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+  }
+
+  /* 数量入力パーツのラップ設定 */
+  body.dark-mode .quantity-input-group {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  body.dark-mode .food-quantity-input {
+    flex: 1 !important;
+  }
+
+  body.dark-mode .food-unit-text {
+    margin-left: 10px !important;
+    color: #f8fafc !important;
+    font-size: 16px !important;
+    min-width: 30px !important;
+  }
+
+  /* まとめて保存ボタンのスマホ最適化 */
+  body.dark-mode .bulk-save-button {
+    padding: 16px !important;
+    font-size: 1.15em !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+  }
+}

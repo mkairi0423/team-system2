@@ -1,5 +1,5 @@
 // ==================================================================================
-// js/food_scan.js （レスポンシブUI・スマホ＆PC両対応版）
+// js/food_scan.js （レスポンシブUI・スマホ＆PC両対応・操作性極大化版）
 // ==================================================================================
 
 window.addFood = null;
@@ -52,9 +52,42 @@ window.addFood = null;
 
     const reader = new FileReader();
     reader.onload = function (event) {
-      sendToAI(event.target.result);
+      compressImage(event.target.result, 1200, 0.7, function (compressedBase64) {
+        sendToAI(compressedBase64);
+      });
     };
     reader.readAsDataURL(file);
+  }
+
+  function compressImage(base64Str, maxWidth, quality, callback) {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = function () {
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxWidth) {
+          width = Math.round((width * maxWidth) / height);
+          height = maxWidth;
+        }
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+      callback(compressedDataUrl);
+    };
   }
 
   async function sendToAI(base64Image) {
@@ -143,7 +176,6 @@ window.addFood = null;
     }
   }
 
-  // 手入力登録用ロジック (addFood)
   window.addFood = async function () {
     const foodName = document.getElementById("foodName").value.trim();
     const foodAmount = document.getElementById("foodAmount").value.trim();
@@ -246,7 +278,7 @@ window.addFood = null;
   }
 
   // ==========================================
-  // 5. UIのレンダリング（📱スマホ・💻PC両対応用の最適化）
+  // 5. UIのレンダリング
   // ==========================================
   function showLoading() {
     resultDiv.innerHTML = `<div class="scan-loading-box"><b class="scan-loading-title">🤖 Gemini AIが解析中...</b><br><span class="scan-loading-sub">数量や期限、保存場所を推測しています。最大1分ほどかかります。</span></div>`;
@@ -257,8 +289,7 @@ window.addFood = null;
   }
 
   function renderScanResultTable(items) {
-    // 🟢 変更点: テーブル全体に「responsive-table」というクラスを付与
-    let html = "<h3>🎉 解析成功（登録したい食材のみチェックを残してください）</h3><div class='table-responsive-wrapper'><table id='scan-table' class='responsive-table'><thead><tr><th class='col-check'>登録</th><th>食品名</th><th class='col-quantity'>数量</th><th class='col-storage'>保存場所</th><th class='col-term'>期限の種類</th><th class='col-expiry'>期限日(編集可)</th></tr></thead><tbody>";
+    let html = "<h3 class='scan-result-title'>登録したい食材を確認してください</h3><div class='table-responsive-wrapper'><table id='scan-table' class='responsive-table'><thead><tr><th class='col-check'>登録</th><th>食品名</th><th class='col-quantity'>数量</th><th class='col-storage'>保存場所</th><th class='col-term'>期限の種類</th><th class='col-expiry'>期限日(編集可)</th></tr></thead><tbody>";
     items.forEach(item => { html += createRowHtml(item); });
     html += "</tbody></table></div><p class='save-action-area'><button class='bulk-save-button' id='bulkSaveBtn'>選択した食材をまとめて保存</button></p>";
     resultDiv.innerHTML = html;
@@ -270,12 +301,13 @@ window.addFood = null;
     const checkedAttr = meta.isNonFood ? "" : "checked";
     const rowClass = meta.isNonFood ? "food-item-row non-food" : "food-item-row";
 
-    // 🟢 変更点: 各 <td> に「data-label」属性を追加。スマホ表示のときにこれがラベルテキストに化けます。
-    // また、各種インプットやセレクトに「form-control-sm」的なレスポンシブ用クラスを付与しやすくしています。
     return `
       <tr class="${rowClass}">
-        <td data-label="登録" class="col-check">
-          <input type="checkbox" class="food-select-checkbox" ${checkedAttr}>
+        <td data-label="登録項目" class="col-check">
+          <label class="mobile-checkbox-trigger">
+            <input type="checkbox" class="food-select-checkbox" ${checkedAttr}>
+            <span class="checkbox-custom-ui"></span>
+          </label>
         </td>
         <td data-label="食品名">
           <input type="text" class="food-name-input scan-input" value="${item.food_name || ""}">
