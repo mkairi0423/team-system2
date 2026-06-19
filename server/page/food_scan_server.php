@@ -14,7 +14,7 @@ require_once __DIR__ . '/../../helpers/gemini_api.php';
 require_once __DIR__ . '/../../helpers/utils.php';
 require_once __DIR__ . '/../AI_info/ai_rule_scan.php';
 // 🟢 新しく作成したDB関数ファイルを読み込む
-require_once __DIR__ . '/../DB_function/food_scan_db.php';
+require_once __DIR__ . '/../DB_function/scan_DB.php';
 
 $envPath = __DIR__ . '/../../.env';
 if (file_exists($envPath)) {

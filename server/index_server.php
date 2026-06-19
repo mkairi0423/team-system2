@@ -5,7 +5,7 @@
 
 require_once __DIR__ . "/../helpers/utils.php";
 // 🟢 作成したDB関数ファイルを読み込む（パスは実際の環境に合わせて調整してください）
-require_once __DIR__ . "/../DB_function/login_DB.php";
+require_once __DIR__ . "/../server/DB_function/login_DB.php";
 
 session_start();
 
