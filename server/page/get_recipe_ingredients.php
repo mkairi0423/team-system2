@@ -67,7 +67,7 @@ try {
     $neededFoods = json_decode(trim($aiResponseText), true);
 
     // 2. 在庫マッチング（表記揺れに強い比較ロジック）
-    $sql = "SELECT food_name FROM ingredients WHERE user_id = ?";
+    $sql = "SELECT food_name FROM ingredient WHERE user_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId]);
     $userStocks = $stmt->fetchAll(PDO::FETCH_COLUMN);
