@@ -72,3 +72,4 @@ include "template/sidebar.php";
 </div>
 
 <?php include "template/footer.php"; ?>
+

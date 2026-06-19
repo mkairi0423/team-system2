@@ -1,27 +1,29 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('darkModeToggle');
+// ==========================================
+// js/mode_switch.js （null安全ガード付き修正版）
+// ==========================================
 
-    // 現在のテーマを反映（全ページ）
-    const applyTheme = (theme) => {
-        if (theme === 'dark') {
+const toggle = document.getElementById('darkModeToggle');
+
+// 1. 過去にダークモードが選択されていた場合の復元処理
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+
+    // 💡 画面にトグルボタンが存在するときだけ、チェックをONにする（nullガード）
+    if (toggle) {
+        toggle.checked = true;
+    }
+}
+
+// 2. トグルボタンがクリックされた時の切り替えイベント登録
+// 💡 「toggle が存在する場合のみ」イベントリスナーを設定する（nullガード）
+if (toggle) {
+    toggle.addEventListener('change', () => {
+        if (toggle.checked) {
             document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
         } else {
             document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
         }
-    };
-
-    // 保存テーマを読み込み（全ページ適用）
-    const savedTheme = localStorage.getItem('theme');
-    applyTheme(savedTheme);
-
-    // スイッチがあるページだけ操作を許可
-    if (toggle) {
-        toggle.checked = savedTheme === 'dark';
-
-        toggle.addEventListener('change', () => {
-            const theme = toggle.checked ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
-            applyTheme(theme);
-        });
-    }
-});
+    });
+}
