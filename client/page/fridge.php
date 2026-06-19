@@ -62,11 +62,11 @@ include("template/sidebar.php");
                 <summary>🍚 炭水化物</summary>
             </details>
 
-            <details>
+            <!-- <details>
                 <summary>🧂 調味料</summary>
-            </details>
+            </details> -->
 
-            <details>
+             <details>
                 <summary>🍫 お菓子</summary>
             </details>
         </div>
