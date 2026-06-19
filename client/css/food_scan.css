@@ -1,28 +1,32 @@
-/* ===================================================
-   css/food_scan.css （スキャン画面専用スタイル）
-   js/food_scan.jsのcss
-   =================================================== */
+/* ==================================================================================
+   css/food_scan.css （PCデザイン維持 ＋ 📱スマホ完全レスポンシブ統合版）
+   ================================================================================== */
 
 /* 解析中のローディングメッセージ */
 .scan-loading-box {
-    padding: 10px;
+    padding: 15px;
     background: #e8f4fd;
     border-left: 4px solid #3498db;
     margin-bottom: 15px;
+    border-radius: 0 8px 8px 0;
 }
 
 .scan-loading-title {
     color: #2980b9;
+    font-size: 1.1em;
+    display: block;
+    margin-bottom: 5px;
 }
 
 .scan-loading-sub {
     font-size: 0.9em;
     color: #555;
+    line-height: 1.4;
 }
 
 /* エラー表示 */
 .scan-error-text {
-    color: red;
+    color: #e74c3c;
     font-weight: bold;
 }
 
@@ -30,11 +34,15 @@
     background: #eee;
     padding: 10px;
     overflow-x: auto;
+    border-radius: 4px;
+    font-size: 0.85em;
 }
 
 /* 一括保存中のメッセージ */
 .scan-saving-box {
     color: #e67e22;
+    display: block;
+    padding: 10px 0;
 }
 
 /* 保存成功時のメッセージ */
@@ -42,60 +50,72 @@
     padding: 15px;
     background: #eef9f1;
     border-left: 4px solid #2ece7d;
-    color: green;
+    color: #27ae60;
     font-weight: bold;
     margin-top: 15px;
+    border-radius: 0 8px 8px 0;
 }
 
-/* 食材リストのテーブル構造 */
-#scan-table {
+/* ラッパー（PCでもスマホでもはみ出しを防ぐ安全ガード） */
+.table-responsive-wrapper {
     width: 100%;
-    border-collapse: collapse;
+    overflow-x: auto;
     margin-top: 10px;
 }
 
+/* 食材リストのテーブル構造（PCベース） */
+#scan-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
 #scan-table th {
-    background: #eee;
+    background: #f5f5f5;
     text-align: left;
-    padding: 8px;
+    padding: 10px 8px;
     border: 1px solid #ddd;
+    color: #333;
+    font-size: 0.95em;
 }
 
 #scan-table td {
     padding: 8px;
     border: 1px solid #ddd;
+    vertical-align: middle;
 }
 
-/* 特定列の幅・配置調整 */
+/* 特定列の幅・配置調整（PC用） */
 .col-check {
     text-align: center;
     width: 50px;
 }
 
 .col-quantity {
-    width: 100px;
-}
-
-.col-storage {
-    width: 140px;
-}
-
-.col-term {
     width: 120px;
 }
 
-.col-expiry {
+.col-storage {
     width: 150px;
+}
+
+.col-term {
+    width: 130px;
+}
+
+.col-expiry {
+    width: 160px;
 }
 
 /* 各行の入力フォーム共通設定 */
 .food-item-row {
     border-bottom: 1px solid #ddd;
+    background: #ffffff;
 }
 
+/* 日用品などのグレーアウト行 */
 .food-item-row.non-food {
-    background: #f9f9f9;
-    opacity: 0.65;
+    background: #fafafa;
+    opacity: 0.6;
 }
 
 .food-select-checkbox {
@@ -103,33 +123,41 @@
     cursor: pointer;
 }
 
+/* PC用：各入力パーツの幅調整 */
 .food-name-input {
-    width: 90%;
-    padding: 4px;
+    width: 95%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
 .food-quantity-input {
-    width: 55px;
-    padding: 4px;
+    width: 65px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
 .food-unit-text {
-    margin-left: 4px;
+    margin-left: 6px;
     font-weight: bold;
     color: #555;
 }
 
-.food-select-box {
-    padding: 4px;
+.food-select-box,
+.food-term-select,
+.food-date-input {
+    padding: 6px;
+    border: 1px solid #ccc;
     border-radius: 4px;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .food-term-select {
-    padding: 4px;
-    border-radius: 4px;
     font-weight: bold;
-    width: 100%;
 }
 
 .food-term-select option.best-before {
@@ -140,30 +168,148 @@
     color: #ff4d4d;
 }
 
-.food-date-input {
-    padding: 4px;
-    border-radius: 4px;
-    width: 90%;
+/* 数量インプットと単位の横並び用グループ */
+.quantity-input-group {
+    display: flex;
+    align-items: center;
 }
 
-/* 保存ボタン */
+/* 保存ボタンエリア */
 .save-action-area {
-    margin-top: 15px;
+    margin-top: 20px;
 }
 
 .bulk-save-button {
     background: #2ece7d;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
     width: 100%;
     font-size: 1.1em;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 3px 6px rgba(46, 206, 125, 0.2);
 }
 
 .bulk-save-button:hover {
     background: #27ae60;
+}
+
+.bulk-save-button:active {
+    transform: scale(0.99);
+}
+
+
+/* ==================================================================================
+   📱 スマホ・タブレット用レスポンス・変形レイアウト（画面幅768px以下で発動）
+   ================================================================================== */
+@media screen and (max-width: 768px) {
+
+    /* テーブル全体の立体構造を崩して縦並び（ブロック）にする */
+    .responsive-table,
+    .responsive-table thead,
+    .responsive-table tbody,
+    .responsive-table th,
+    .responsive-table td,
+    .responsive-table tr {
+        display: block;
+    }
+
+    /* パソコン用の横並びヘッダー（見出し行）を画面外に飛ばして消す */
+    .responsive-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    /* 食材ごとの1行（tr）を独立した1枚の「カード」に変形 */
+    .responsive-table tr {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    /* スマホ時の日用品グレーアウトカード */
+    .responsive-table tr.non-food {
+        background: #f7fafc;
+        opacity: 0.65;
+        border: 1px dashed #cbd5e0;
+    }
+
+    /* 各入力セル（td）を縦並びのフォーム項目に調整 */
+    .responsive-table td {
+        border: none !important;
+        /* PC用の格子線をリセット */
+        position: relative;
+        padding: 6px 0 6px 32% !important;
+        /* 左側に32%のラベル余白を固定確保 */
+        text-align: left;
+        min-height: 38px;
+        display: flex;
+        align-items: middle;
+    }
+
+    /* 💡 JSで仕込んだ「data-label」属性をカードの左側に擬似ラベルとして生成！ */
+    .responsive-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28%;
+        font-weight: bold;
+        color: #4a5568;
+        font-size: 0.9em;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    /* チェックボックス部分（最上部）のカード内デザイン区切り */
+    .responsive-table td.col-check {
+        padding-left: 32% !important;
+        background: #fcfdfd;
+        border-bottom: 1px dashed #edf2f7 !important;
+        margin-bottom: 8px;
+        padding-bottom: 8px !important;
+    }
+
+    /* スマホ画面で指で押しやすくするため、入力パーツを横幅100%いっぱいに広げる */
+    .scan-input,
+    .scan-select,
+    .food-name-input,
+    .food-select-box,
+    .food-term-select,
+    .food-date-input {
+        width: 100% !important;
+        height: 38px;
+        /* タップしやすい絶妙な高さ */
+        font-size: 16px !important;
+        /* 👈 iOS(iPhone)のフォーカス時自動ズーム暴走を防ぐ必須サイズ */
+        padding: 6px 8px;
+    }
+
+    /* 数量セルのスマホ最適化（インプットを伸ばして単位を右端にピタッと寄せる） */
+    .quantity-input-group {
+        width: 100%;
+    }
+
+    .food-quantity-input {
+        flex: 1;
+        /* 入力欄を限界まで広げる */
+        height: 38px;
+        font-size: 16px !important;
+    }
+
+    .food-unit-text {
+        margin-left: 10px;
+        font-size: 1em;
+        color: #333;
+        min-width: 24px;
+    }
 }
