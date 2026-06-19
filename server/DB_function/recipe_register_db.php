@@ -4,8 +4,8 @@
 // ==================================================================================
 
 /**
- * ingredientsテーブルから賞味期限が古い順にすべての食材を取得し、AI用データ構造で返す
- * * @return array 成功時: 在庫配列, 失敗時: ['error' => 'エラーメッセージ']
+ * ingredientテーブルから賞味期限が古い順にすべての食材を取得し、AI用データ構造で返す
+ * @return array 成功時: 在庫配列, 失敗時: ['success' => false, 'error' => 'エラーメッセージ']
  */
 function get_ingredients()
 {
@@ -14,16 +14,18 @@ function get_ingredients()
         // utils.php の共通 PDO を取得
         $pdo = getPDO();
 
-        // ingredients テーブルから賞味期限が古い順（ASC）にすべての食材を取得
+        // 🟢 新しい単数形テーブル名・カラム名に合わせてSQLを完全修正
+        // 💡 新設された「unit（単位）」カラムも取得に対象に追加しています！
         $sql = "SELECT 
-                    i.id, 
+                    i.ingredient_id, 
                     i.food_name, 
                     i.quantity, 
+                    i.unit, 
                     i.expiration_date, 
                     i.term_type, 
                     s.location_name 
-                FROM ingredients i
-                JOIN storage_locations s ON i.storage_location_id = s.id
+                FROM ingredient i
+                JOIN storage_location s ON i.storage_location_id = s.location_id
                 ORDER BY i.expiration_date ASC";
 
         $stmt = $pdo->query($sql);
