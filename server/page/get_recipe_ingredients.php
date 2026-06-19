@@ -1,5 +1,5 @@
 <?php
-// get_recipe_ingredients.php==================================================================================
+// get_recipe_ingredient.php==================================================================================
 // 最終完全版：表記揺れ対策・ID紐付け・エラーハンドリング統合版
 // ==================================================================================
  
@@ -67,7 +67,7 @@ try {
     $neededFoods = json_decode(trim($aiResponseText), true);
  
     // 2. 在庫マッチング（表記揺れに強い比較ロジック）
-    $sql = "SELECT id, food_name FROM ingredients WHERE user_id = ?";
+    $sql = "SELECT id, food_name FROM ingredient WHERE user_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId]);
     $userStocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -111,7 +111,7 @@ try {
         ];
     }
  
-    echo json_encode(["success" => true, "ingredients" => $matchingResults], JSON_UNESCAPED_UNICODE);
+    echo json_encode(["success" => true, "ingredient" => $matchingResults], JSON_UNESCAPED_UNICODE);
  
 } catch (Exception $e) {
     echo json_encode(["success" => false, "message" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
