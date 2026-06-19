@@ -23,38 +23,32 @@ $userId = $_GET['user_id'] ?? null;
 $keyword = $_GET['keyword'] ?? '';
 
 if (empty($api_key) || !$userId || !$keyword) {
-    echo json_encode(["success" => false, "message" => "設定またはパラメータが不足しています。"]);
+    echo json_encode(["success" => false, "message" => "パラメータ不足"]);
     exit;
 }
 
 try {
     $pdo = getPDO();
 
-    // 1. AIリクエスト
+    // AIリクエスト
     $model = 'gemini-2.5-flash';
     $url = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$api_key}";
-    $prompt = "「{$keyword}」に必要な主要食材を3〜5つ、ひらがなでJSON配列のみ返してください。Markdown記法や解説は一切禁止。例: [\"たまねぎ\", \"にんじん\", \"じゃがいも\"]";
+    $prompt = "「{$keyword}」に必要な主要食材を3〜5つ、ひらがなでJSON配列のみ返してください。Markdownや解説は不要。例: [\"たまねぎ\", \"にんじん\", \"じゃがいも\"]";
 
     $data = ['contents' => [['parts' => [['text' => $prompt]]]], 'generationConfig' => ['temperature' => 0.3]];
-
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
     $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-
-    if ($httpCode !== 200) throw new Exception("APIエラー: " . $response);
 
     $result = json_decode($response, true);
     $aiResponseText = preg_replace('/^```json\s*|```$/', '', $result['candidates'][0]['content']['parts'][0]['text'] ?? '[]');
     $neededFoods = json_decode(trim($aiResponseText), true) ?? [];
 
-    // 2. 在庫マッチング（テーブル名: ingredient, カラム: ingredient_id, food_name, quantity, unit）
+    // ★SQLを修正：テーブル名は ingredient、IDは ingredient_id
     $sql = "SELECT ingredient_id, food_name, quantity, unit FROM ingredient WHERE user_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId]);
@@ -63,33 +57,29 @@ try {
     $matchingResults = [];
     foreach ($neededFoods as $foodName) {
         $found = false;
-        $matchData = ["ingredient_id" => null, "quantity" => 0, "unit" => ""];
-        $cleanNeeded = mb_convert_kana($foodName, "cVs", "UTF-8");
-
+        $stockData = ["id" => null, "quantity" => 0, "unit" => ""];
+        
         foreach ($userStocks as $stock) {
-            $cleanStock = mb_convert_kana($stock['food_name'], "cVs", "UTF-8");
-            if (mb_strpos($cleanStock, $cleanNeeded) !== false || mb_strpos($cleanNeeded, $cleanStock) !== false) {
+            // 文字列マッチング
+            if (mb_strpos($stock['food_name'], $foodName) !== false || mb_strpos($foodName, $stock['food_name']) !== false) {
                 $found = true;
-                $matchData = [
-                    "ingredient_id" => $stock['ingredient_id'],
+                $stockData = [
+                    "id" => $stock['ingredient_id'],
                     "quantity" => $stock['quantity'],
                     "unit" => $stock['unit']
                 ];
                 break;
             }
         }
-        
         $matchingResults[] = [
-            "id" => $matchData["ingredient_id"],
-            "food" => $foodName,
+            "id" => $stockData["id"],
+            "food_name" => $foodName,
             "in_stock" => $found,
-            "quantity" => $matchData["quantity"],
-            "unit" => $matchData["unit"]
+            "quantity" => (float)$stockData["quantity"],
+            "unit" => $stockData["unit"]
         ];
     }
-
     echo json_encode(["success" => true, "ingredients" => $matchingResults], JSON_UNESCAPED_UNICODE);
-
 } catch (Exception $e) {
-    echo json_encode(["success" => false, "message" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    echo json_encode(["success" => false, "message" => $e->getMessage()]);
 }
