@@ -132,4 +132,4 @@ include("template/sidebar.php");
 
 <?php include("template/footer.php"); ?>
 
-<script src="../js/analysis.js"></script>
+<!-- <script src="../js/analysis.js"></script> -->

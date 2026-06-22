@@ -142,16 +142,19 @@ EOD;
             'recipes' => $recipe_array
         ], JSON_UNESCAPED_UNICODE);
     } catch (Exception $e) {
-    $errorMessage = $e->getMessage();
-    // 429エラーなら親切なメッセージを返す
-    $displayMessage = (strpos($errorMessage, '429') !== false) 
-        ? "AIの利用制限に達しました。1分ほど待ってから再度お試しください。"
-        : "AI通信エラー: " . $errorMessage;
+        // 💡 try-catch の境界線を綺麗に分けました
+        $errorMessage = $e->getMessage();
 
-    echo json_encode([
-        'success' => false,
-        'error' => $displayMessage
-    ], JSON_UNESCAPED_UNICODE);
-}
-    exit;
+        // 429エラーなら親切なメッセージを返す
+        $displayMessage = (strpos($errorMessage, '429') !== false)
+            ? "AIの利用制限に達しました。1分ほど待ってから再度お試しください。"
+            : "AI通信エラー: " . $errorMessage;
+
+        echo json_encode([
+            'success' => false,
+            'error' => $displayMessage
+        ], JSON_UNESCAPED_UNICODE);
+    } // 💡 catch の閉じカッコをしっかり閉じる
+
+    exit; // 💡 最後に必ず処理を終了させる
 }
