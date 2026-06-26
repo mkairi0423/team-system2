@@ -66,10 +66,27 @@ include "template/sidebar.php";
         </div>
     </div>
 
+    <div id="loading-area" style="display: none; text-align: center; margin: 20px 0;">
+        <p id="loading-status">AIシェフが冷蔵庫を確認中...</p>
+
+        <div style="width: 100%; max-width: 400px; background-color: #e0e0e0; border-radius: 10px; margin: 10px auto; overflow: hidden;">
+            <div id="recipe-progress-bar" style="width: 0%; height: 20px; background-color: #4caf50; transition: width 0.3s ease;"></div>
+        </div>
+    </div>
+
     <div class="submit-container">
         <button type="button" class="btn-submit" id="submit-to-ai">🚀 この条件でAIシェフにレシピを聞く！</button>
     </div>
 </div>
 
-<?php include "template/footer.php"; ?>
+<script>
+    // ボタン選択（selectedクラス）の切り替え用JavaScript
+    document.querySelectorAll('.grid-options .option-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            this.parentElement.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+</script>
 
+<?php include "template/footer.php"; ?>
