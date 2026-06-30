@@ -8,7 +8,6 @@
    6. 【追加分】COOKING MODAL DARK MODE (上書き設定含む)
    ========================================================================== */
 
-
 /* ==========================================================================
    1. 【共通】ダークモード基本変数・背景・テキスト
    ========================================================================== */
@@ -55,7 +54,6 @@ body.dark-mode span,
 body.dark-mode label {
   color: var(--text);
 }
-
 
 /* ==========================================================================
    2. 【共通パーツ】サイドバー / カード / フォーム / テーブル / ボタン / バッジ
@@ -187,7 +185,6 @@ body.dark-mode .btn-danger {
 body.dark-mode .btn-return {
   background: var(--warning);
 }
-
 
 /* ==========================================================================
    3. 【共通パーツ】ホーム / ログイン・登録 / 検索 / スキャン / 設定 / その他
@@ -364,7 +361,6 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
 
-
 /* ==========================================================================
    4. 【追加分】AI RECIPE DARK MODE (上書き設定含む)
    ========================================================================== */
@@ -438,7 +434,6 @@ body.dark-mode .submit-container {
 body.dark-mode .search-link {
   color: #60a5fa;
 }
-
 
 /* ==========================================================================
    5. 【追加分】FOOD SCAN DARK MODE (上書き設定含む)
@@ -557,7 +552,6 @@ body.dark-mode #result {
   padding: 0 !important;
 }
 
-
 /* ==========================================================================
    6. 【追加分】COOKING MODAL DARK MODE (上書き設定含む)
    ========================================================================== */
@@ -623,7 +617,6 @@ body.dark-mode .cooking-modal-overlay {
    ========================================================================== */
 
 @media screen and (max-width: 850px) {
-
   /* テーブル要素のレイアウトを強制破壊（ダークモードでも確実にカードにする） */
   body.dark-mode #scan-table,
   body.dark-mode #scan-table tbody,
@@ -719,11 +712,17 @@ body.dark-mode .cooking-modal-overlay {
   }
 
   /* スイッチ（ONのとき：鮮やかなグリーンに切り替え） */
-  body.dark-mode .mobile-checkbox-trigger input[type="checkbox"]:checked+.checkbox-custom-ui {
+  body.dark-mode
+    .mobile-checkbox-trigger
+    input[type="checkbox"]:checked
+    + .checkbox-custom-ui {
     background-color: #22c55e !important;
   }
 
-  body.dark-mode .mobile-checkbox-trigger input[type="checkbox"]:checked+.checkbox-custom-ui::after {
+  body.dark-mode
+    .mobile-checkbox-trigger
+    input[type="checkbox"]:checked
+    + .checkbox-custom-ui::after {
     transform: translateX(24px) !important;
   }
 
@@ -777,4 +776,91 @@ body.dark-mode .cooking-modal-overlay {
     border-radius: 12px !important;
     width: 100% !important;
   }
+}
+
+/* AI提案ページ */
+
+body.dark-mode h2 {
+  color: #fff;
+}
+
+body.dark-mode p[style*="color: #666"] {
+  color: #ccc !important;
+}
+
+body.dark-mode p[style*="color: #999"] {
+  color: #bbb !important;
+}
+
+body.dark-mode .recipe-card {
+  background: #2d2d2d !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .recipe-card h3 {
+  color: #fff !important;
+  border-bottom-color: #555 !important;
+}
+
+body.dark-mode .recipe-card h4 {
+  color: #fff !important;
+}
+
+body.dark-mode .recipe-card p {
+  color: #ddd !important;
+}
+
+body.dark-mode .recipe-card ul,
+body.dark-mode .recipe-card li {
+  color: #ddd !important;
+}
+
+body.dark-mode .recipe-card strong {
+  color: #fff !important;
+}
+
+body.dark-mode .recipe-card span {
+  background: #2e7d32 !important;
+  color: #fff !important;
+}
+
+/* ===============================
+   ダークモード（レシピカード）
+   =============================== */
+body.dark-mode .recipe-card {
+  background-color: #2b2b2b !important;
+  border: 1px solid #555 !important;
+  color: #f5f5f5 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .recipe-card h3 {
+  color: #ffffff !important;
+  border-bottom: 2px solid #555 !important;
+}
+
+body.dark-mode .recipe-card h4 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .recipe-card p {
+  color: #dddddd !important;
+}
+
+body.dark-mode .recipe-card ul {
+  color: #dddddd !important;
+}
+
+body.dark-mode .recipe-card li {
+  color: #dddddd !important;
+}
+
+body.dark-mode .recipe-card strong {
+  color: #ffffff !important;
+}
+
+/* タグ */
+body.dark-mode .recipe-card .tags span {
+  background: #2e7d32 !important;
+  color: #ffffff !important;
 }
