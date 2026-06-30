@@ -3,7 +3,7 @@
 // auth/user_register_server.php （コントローラー側・修正版）
 // ==================================================================================
 require_once __DIR__ . "/../../helpers/utils.php";
-require_once __DIR__ . "/../DB_function/user_register_db.php";
+require_once __DIR__ . "/../DB_function/user_register_DB.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
