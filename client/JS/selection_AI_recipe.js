@@ -26,7 +26,7 @@ async function handleGenerateRecipe(event) {
 
     loadingArea.style.display = 'block';
     progressBar.style.width = '0%';
-    progressBar.style.backgroundColor = '#4caf50';
+    progressBar.style.backgroundColor = '#0077ff';
     statusText.innerText = "AIシェフが冷蔵庫を確認中...";
 
     // 3. 画面の選択値（カスタムボタンでselectedになっているもの）を取得
