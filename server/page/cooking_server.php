@@ -13,71 +13,45 @@ try {
 
 $action = $_GET['action'] ?? '';
 $input = json_decode(file_get_contents('php://input'), true) ?? [];
+$user_id = isset($input['user_id']) ? (int)$input['user_id'] : null;
 
 try {
     switch ($action) {
-        case 'start':
-            $user_id = $input['user_id'] ?? null;
-            $items = $input['items'] ?? [];
-            
-            $pdo->beginTransaction();
-            $pdo->prepare("DELETE FROM cooking_now WHERE user_id = ?")->execute([$user_id]);
+        case 'get_list':
+            $stmt = $pdo->prepare("SELECT * FROM cooking_now WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+            echo json_encode(['success' => true, 'data' => $stmt->fetchAll()]);
+            break;
 
-            foreach ($items as $item) {
-                // 修正: テーブル名は 'ingredient', IDは 'ingredient_id' を使用
-                $stmt = $pdo->prepare("SELECT * FROM ingredient WHERE ingredient_id = ?");
-                $stmt->execute([$item['id']]);
-                $ing = $stmt->fetch();
-                if (!$ing) continue;
-
-                $used = (float)($item['quantity'] ?? 0);
-                $used = min($used, (float)$ing['quantity']);
-
-                // 修正: UPDATEのWHERE句とカラム名を正しく指定
-                $pdo->prepare("UPDATE ingredient SET quantity = quantity - ? WHERE ingredient_id = ?")
-                    ->execute([$used, $ing['ingredient_id']]);
-                
-                // 修正: INSERTのカラム名に合わせる
-                $pdo->prepare("INSERT INTO cooking_now (user_id, original_ingredient_id, food, quantity, unit, original_storage_location_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())")
-                    ->execute([$user_id, $ing['ingredient_id'], $ing['food_name'], $used, $ing['unit'], $ing['storage_location_id']]);
-            }
-            $pdo->commit();
+        case 'update_qty':
+            $stmt = $pdo->prepare("UPDATE cooking_now SET quantity = ? WHERE id = ?");
+            $stmt->execute([(float)$input['quantity'], (int)$input['cooking_id']]);
             echo json_encode(['success' => true]);
             break;
 
         case 'return_item':
-            $cooking_id = $input['cooking_id'] ?? null;
-            $pdo->beginTransaction();
             $stmt = $pdo->prepare("SELECT * FROM cooking_now WHERE id = ?");
-            $stmt->execute([$cooking_id]);
+            $stmt->execute([(int)$input['cooking_id']]);
             $item = $stmt->fetch();
             if ($item) {
-                // 修正: 在庫テーブル名とIDカラムを修正
                 $pdo->prepare("UPDATE ingredient SET quantity = quantity + ? WHERE ingredient_id = ?")
                     ->execute([$item['quantity'], $item['original_ingredient_id']]);
-                $pdo->prepare("DELETE FROM cooking_now WHERE id = ?")->execute([$cooking_id]);
+                $pdo->prepare("DELETE FROM cooking_now WHERE id = ?")->execute([$item['id']]);
             }
-            $pdo->commit();
             echo json_encode(['success' => true]);
             break;
 
         case 'complete':
-            $user_id = $input['user_id'] ?? null;
-            $pdo->beginTransaction();
             $stmt = $pdo->prepare("SELECT * FROM cooking_now WHERE user_id = ?");
             $stmt->execute([$user_id]);
-            $items = $stmt->fetchAll();
-            
-            $stmtHist = $pdo->prepare("INSERT INTO cooking_history (user_id, dish_name, used_food_name, quantity, unit, cooked_at) VALUES (?, ?, ?, ?, ?, NOW())");
-            foreach ($items as $item) {
-                $stmtHist->execute([$user_id, '料理', $item['food'], $item['quantity'], $item['unit']]);
+            foreach ($stmt->fetchAll() as $item) {
+                $pdo->prepare("INSERT INTO cooking_history (user_id, dish_name, used_food_name, quantity, unit, cooked_at) VALUES (?, '料理', ?, ?, ?, NOW())")
+                    ->execute([$user_id, $item['food'], $item['quantity'], $item['unit']]);
             }
             $pdo->prepare("DELETE FROM cooking_now WHERE user_id = ?")->execute([$user_id]);
-            $pdo->commit();
             echo json_encode(['success' => true]);
             break;
     }
 } catch (Exception $e) {
-    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
