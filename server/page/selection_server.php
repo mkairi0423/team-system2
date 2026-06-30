@@ -58,20 +58,6 @@ try {
         throw new Exception("消費する食材の解析に失敗したか、食材が空っぽです。");
     }
 
-    // // 5. SQL用のプレースホルダ（?）を作成 (例: '?, ?')
-    // $placeholders = implode(',', array_fill(0, count($ingredients), '?'));
-
-    // // 6. カラム名「food_name」に合わせ、使った食材を在庫から完全に削除（DELETE）
-    // $sql = "DELETE FROM ingredients
-    //         WHERE user_id = ?
-    //         AND food_name IN ($placeholders)";
-
-    // $stmt = $pdo->prepare($sql);
-    
-    // // SQL実行のためのパラメーター配列を作成（[user_id, 食材1, 食材2, ...]）
-    // $params = array_merge([$user_id], $ingredients);
-    // $stmt->execute($params);
-
     // 7. 成功レスポンスをJSONとして返却
     echo json_encode([
         "success" => true,

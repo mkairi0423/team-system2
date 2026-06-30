@@ -1,119 +1,70 @@
 <?php
-// get_recipe_ingredient.php==================================================================================
-// 最終完全版：表記揺れ対策・ID紐付け・エラーハンドリング統合版
-// ==================================================================================
- 
-set_time_limit(60);
 header('Content-Type: application/json; charset=utf-8');
- 
 require_once __DIR__ . '/../../helpers/gemini_api.php';
 require_once __DIR__ . '/../../helpers/utils.php';
- 
-// .env ロード
-$envPath = __DIR__ . '/../../.env';
-if (file_exists($envPath)) {
-    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) continue;
-        if (strpos($line, '=') !== false) {
-            list($key, $value) = explode('=', $line, 2);
-            $_ENV[trim($key)] = trim(trim($value), '"\'');
-        }
-    }
-}
- 
-$api_key = $_ENV['GEMINI_API_KEY'] ?? '';
-$userId = $_GET['user_id'] ?? null;
-$keyword = $_GET['keyword'] ?? '';
- 
-if (empty($api_key) || !$userId || !$keyword) {
-    echo json_encode(["success" => false, "message" => "設定またはパラメータが不足しています。"]);
-    exit;
-}
- 
+
 try {
+    $userId = $_GET['user_id'] ?? 1;
+    $keyword = $_GET['keyword'] ?? '';
+
+    if (empty($keyword)) {
+        throw new Exception("キーワードが指定されていません。");
+    }
+
+    // 1. AIからレシピに必要な食材リストを取得
+    // ※ ここでAPI制限(429)などの例外が発生すると catch に飛びます
+    $neededFoods = getNeededIngredientsFromAI($keyword);
+
+    // 2. DBから現在の在庫を取得
     $pdo = getPDO();
- 
-    // 1. AIリクエスト (最新モデル gemini-2.5-flash を使用)
-    $model = 'gemini-2.5-flash';
-    $url = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$api_key}";
- 
-    $prompt = "「{$keyword}」に必要な主要食材を3〜5つ、ひらがなでJSON配列のみ返してください。Markdown記法や解説は一切禁止。例: [\"たまねぎ\", \"にんじん\", \"じゃがいも\"]";
- 
-    $data = [
-        'contents' => [['parts' => [['text' => $prompt]]]],
-        'generationConfig' => ['temperature' => 0.3]
-    ];
- 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
- 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
- 
-    if ($httpCode !== 200) throw new Exception("APIエラー(コード{$httpCode}): " . $response);
- 
-    $result = json_decode($response, true);
-    $aiResponseText = $result['candidates'][0]['content']['parts'][0]['text'] ?? '[]';
-   
-    // JSON整形（Markdown除去）
-    $aiResponseText = preg_replace('/^```json\s*/', '', $aiResponseText);
-    $aiResponseText = preg_replace('/```$/', '', $aiResponseText);
-    $neededFoods = json_decode(trim($aiResponseText), true);
- 
-    // 2. 在庫マッチング（表記揺れに強い比較ロジック）
-    $sql = "SELECT id, food_name FROM ingredient WHERE user_id = ?";
-    $stmt = $pdo->prepare($sql);
+    $stmt = $pdo->prepare("SELECT food_name, quantity, unit FROM ingredient WHERE user_id = ?");
     $stmt->execute([$userId]);
     $userStocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
- 
-    // 表記揺れ対応辞書
-    $synonyms = ['たまご' => ['たまご', 'らん', 'たまごやき', 'だしまたまご', '卵']];
- 
-    $matchingResults = [];
+
+    $stockMap = [];
+    foreach ($userStocks as $s) {
+        $stockMap[$s['food_name']] = $s;
+    }
+
+    $results = [];
+
+    // 3. AIの食材リストをベースに、在庫状況を付与
     foreach ($neededFoods as $foodName) {
-        $found = false;
-        $foundId = null;
-        $cleanNeeded = mb_convert_kana($foodName, "cVs", "UTF-8");
- 
-        foreach ($userStocks as $stock) {
-            $cleanStock = mb_convert_kana($stock['food_name'], "cVs", "UTF-8");
-           
-            // 相互包含チェック
-            $isMatch = (mb_strpos($cleanStock, $cleanNeeded) !== false || mb_strpos($cleanNeeded, $cleanStock) !== false);
-           
-            // 辞書判定
-            if (!$isMatch && isset($synonyms[$cleanNeeded])) {
-                foreach ($synonyms[$cleanNeeded] as $syn) {
-                    if (mb_strpos($cleanStock, $syn) !== false) {
-                        $isMatch = true;
-                        break;
-                    }
-                }
-            }
- 
-            if ($isMatch) {
-                $found = true;
-                $foundId = $stock['id'];
+        $inStock = false;
+        $quantity = 0;
+        $unit = "";
+
+        foreach ($stockMap as $name => $data) {
+            if (mb_strpos($name, $foodName) !== false || mb_strpos($foodName, $name) !== false) {
+                $inStock = true;
+                $quantity = $data['quantity'];
+                $unit = $data['unit'];
                 break;
             }
         }
-       
-        $matchingResults[] = [
-            "id" => $foundId,
-            "food" => $foodName,
-            "in_stock" => $found
+
+        $results[] = [
+            "id" => $foodName, // フロント側のキー合わせ
+            "food_name" => $foodName,
+            "in_stock" => $inStock,
+            "quantity" => (float) $quantity,
+            "unit" => $unit
         ];
     }
- 
-    echo json_encode(["success" => true, "ingredient" => $matchingResults], JSON_UNESCAPED_UNICODE);
- 
+
+    echo json_encode(["success" => true, "ingredients" => $results], JSON_UNESCAPED_UNICODE);
+
 } catch (Exception $e) {
-    echo json_encode(["success" => false, "message" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    // 429エラーかどうかをメッセージで判定（API側で投げられる例外の種類に合わせて調整してください）
+    $errorMessage = $e->getMessage();
+    if (strpos($errorMessage, '429') !== false) {
+        http_response_code(429);
+    } else {
+        http_response_code(500);
+    }
+
+    echo json_encode([
+        "success" => false,
+        "message" => $errorMessage
+    ], JSON_UNESCAPED_UNICODE);
 }
- 

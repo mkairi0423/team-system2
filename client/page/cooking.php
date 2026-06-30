@@ -26,7 +26,6 @@
     
     <button type="button" id="btn-cooking-complete" class="btn-complete">🍳 料理完了！</button>
 </div>
-
 <script src="../js/cooking.js"></script> 
 </body>
 </html>

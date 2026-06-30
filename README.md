@@ -11,7 +11,7 @@ git pull origin main
 
 １．今いるブランチの表示
 git branch
-例：feature/backend ,feature/frontenが出てくると思う
+例：feature/backend ,feature/frontendが出てくると思う
 
 
 ２．ブランチに自分が書いたソースコードを追加 

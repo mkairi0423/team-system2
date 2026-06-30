@@ -6,6 +6,7 @@
 // ==========================================
 // 🛠️ 【超シンプル】自前で .env を読み込む関数
 // ==========================================
+
 function loadSimpleEnv($envPath)
 {
     if (!file_exists($envPath)) {
@@ -113,4 +114,49 @@ if (!function_exists('call_gemini_api')) {
 
         return false;
     }
+}
+
+
+/**
+ * テキストのキーワードから食材をJSON配列で取得する関数
+ */
+function getNeededIngredientsFromAI($keyword) {
+    // 1. 在庫食材の名前リストを取得してプロンプトに埋め込む
+    $pdo = getPDO();
+    $stmt = $pdo->query("SELECT food_name FROM ingredient");
+    $stockNames = implode("、", $stmt->fetchAll(PDO::FETCH_COLUMN));
+
+    $api_key = $_ENV['GEMINI_API_KEY'] ?? '';
+    $model = "gemini-2.5-flash"; // もしくは 2.0-flash など
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$api_key}";
+
+    // プロンプトを強化：在庫リストを渡して、そこに含まれる名称で出力させる
+    $prompt = "「{$keyword}」を作るのに必要な食材を答えてください。
+    ただし、以下の【在庫リスト】に存在する食材は、その名前のまま出力してください。
+    在庫リスト: {$stockNames}
+    JSON配列形式（例: [\"豚ひき肉\", \"卵\"]）で回答し、それ以外の文字は一切禁止。";
+
+    $payload = ['contents' => [['parts' => [['text' => $prompt]]]]];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode !== 200) {
+        return ["API_ERROR: HTTP $httpCode, 応答: $response"];
+    }
+
+    $res_array = json_decode($response, true);
+    $text = $res_array['candidates'][0]['content']['parts'][0]['text'] ?? '';
+    $text = preg_replace('/^```json\s*|\s*```$/', '', trim($text));
+    
+    $decoded = json_decode($text, true);
+    return is_array($decoded) ? $decoded : ["PARSE_ERROR: " . $text];
 }

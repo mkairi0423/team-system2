@@ -16,6 +16,7 @@ unset($_SESSION['pass_err']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログインページ</title>
+    <link rel="shortcut icon" href="data:image/x-icon;,">
     <link rel="stylesheet" href="css/index.css">
 </head>
 
@@ -24,7 +25,7 @@ unset($_SESSION['pass_err']);
         <div class="login-card">
             <div class="icon-area">
                 <!-- <img src="images/Image.jpg" alt="Frigge Icon" class="icon"> -->
-                <h1>FridgeAI</h1>
+                <h1>AIシェフ</h1>
             </div>
 
             <form action="../server/index_server.php" method="POST">
