@@ -48,6 +48,13 @@ include "template/sidebar.php";
             let html = '<div class="recipe-list">';
 
             result.recipes.forEach((recipe, index) => {
+
+                // 💡 【超高速化のポイント】
+                // AIにURLを作らせず、AIが作った「料理名」をそのまま大手レシピサイトの検索窓に放り込むURLをJSで生成
+                // 例：クックパッドのキーワード検索URL
+                const encodedName = encodeURIComponent(recipe.recipe_name);
+                const recipeUrl = `https://cookpad.com/search/${encodedName}`;
+
                 html += `
         <div class="recipe-card">
             <h3 class="recipe-title">
@@ -79,11 +86,11 @@ include "template/sidebar.php";
             </ul>
 
             <div class="recipe-buttons">
-                <button class="recipe-btn1" onclick="viewRecipe(${index})">
+                <button class="recipe-btn1" onclick="viewRecipe('${escapeHtml(recipeUrl)}')">
                     レシピを見る
                 </button>
 
-                <button class="recipe-btn2" onclick="viewRecipe(${index})">
+                <button class="recipe-btn2" onclick="actionConfirm(${index})">
                     確定する
                 </button>
             </div>
@@ -114,8 +121,16 @@ include "template/sidebar.php";
             .replace(/'/g, '&#039;');
     }
 
-    function viewRecipe(index) {
-        alert(`レシピ${index + 1}が選択されました`);
+    /**
+     * レシピを見るボタンの処理
+     */
+    function viewRecipe(url) {
+        if (!url) return;
+        window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    function actionConfirm(index) {
+        alert(`レシピ${index + 1}が選択されました。調理を開始します。`);
     }
 </script>
 

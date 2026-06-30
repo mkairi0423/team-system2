@@ -1,3 +1,7 @@
+
+//自分でレシピを検索
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const searchBtn = document.getElementById("recipeSearchBtn");
     const keywordInput = document.getElementById("recipeSearchInput");
