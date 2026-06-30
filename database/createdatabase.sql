@@ -4,6 +4,8 @@ SET NAMES utf8mb4;
 -- 1. 古いテーブルの削除（初期化用：新しい単数形名に統一）
 -- ====================================================================
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS favorite_recipe_ingredient;
+DROP TABLE IF EXISTS favorite_recipe;
 DROP TABLE IF EXISTS cooking_history;
 DROP TABLE IF EXISTS cooking_now;
 DROP TABLE IF EXISTS ingredient;
@@ -36,7 +38,7 @@ CREATE TABLE category (
 -- 保管場所マスタ
 CREATE TABLE storage_location (
     location_id INT AUTO_INCREMENT PRIMARY KEY,
-    location_name VARCHAR(50) NOT NULL COMMENT '冷蔵庫、冷凍庫、常温、野菜室 など' -- 💡 末尾の不要なカンマを削除
+    location_name VARCHAR(50) NOT NULL COMMENT '冷蔵庫、冷凍庫、常温、野菜室 など'
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- 🛒 在庫食材管理テーブル（一括管理）
@@ -52,7 +54,6 @@ CREATE TABLE ingredient (
     term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- 💡 外部キーの参照先を新しい単数形テーブル名・カラム名に修正
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT,
     FOREIGN KEY (storage_location_id) REFERENCES storage_location(location_id) ON DELETE RESTRICT
@@ -69,7 +70,6 @@ CREATE TABLE cooking_now (
     original_storage_location_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- 💡 外部キーの参照先を新しい単数形テーブル名・カラム名に修正
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
     FOREIGN KEY (original_ingredient_id) REFERENCES ingredient(ingredient_id) ON DELETE CASCADE,
     FOREIGN KEY (original_storage_location_id) REFERENCES storage_location(location_id) ON DELETE RESTRICT
@@ -85,6 +85,36 @@ CREATE TABLE cooking_history (
     unit VARCHAR(20) NOT NULL DEFAULT '個' COMMENT '削除対策のためVARCHARにしています',
     cooked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- 💡 外部キーの参照先を user(user_id) に修正
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+-- ====================================================================
+-- 3. 新規追加：お気に入りレシピ関連テーブル
+-- ====================================================================
+
+-- ⭐️ お気に入りレシピ基本情報テーブル
+CREATE TABLE favorite_recipe (
+    recipe_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT '登録したユーザー',
+    recipe_name VARCHAR(255) NOT NULL COMMENT 'レシピ名（例：肉じゃが、ハンバーグ）',
+    recipe_url VARCHAR(2048) NULL COMMENT '参考にしたWebサイトやアプリのURL',
+    memo TEXT NULL COMMENT '作り方のコツやメモ、一言コメント',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- 🥕 レシピ必要食材テーブル（レシピと食材マスタの紐付け）
+CREATE TABLE favorite_recipe_ingredient (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    recipe_id BIGINT NOT NULL COMMENT '対象のレシピID',
+    category_id INT NOT NULL COMMENT '必要な食材のカテゴリ（例：豚肉、玉ねぎ）',
+    food_name_hint VARCHAR(100) NULL COMMENT '具体的な食材名の補足（例：豚バラ肉、新玉ねぎ）',
+    quantity INT NULL COMMENT '目安の数量',
+    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個' COMMENT '食材の単位',
+    
+    FOREIGN KEY (recipe_id) REFERENCES favorite_recipe(recipe_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
