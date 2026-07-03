@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (storedData) {
         try {
             const parsedData = JSON.parse(storedData);
-            // 複数アイテムが配列で来ても、単一オブジェクトが来ても両方に対応する処理
             const items = Array.isArray(parsedData) ? parsedData : [parsedData];
             
+            // 初回のみ start で登録し、その後は通常のリスト取得へ
             startCooking(items);
             localStorage.removeItem("cooking_items");
         } catch (e) { 
@@ -45,8 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
         else alert("開始エラー: " + result.message);
     }
 
+    // 変更点: 'start' ではなく 'get_list' アクションを呼び出すように修正
     async function refreshList() {
-        const result = await apiRequest('start', { items: [] });
+        const result = await apiRequest('get_list'); 
         if (result.success) renderIngredients(result.data);
     }
 
