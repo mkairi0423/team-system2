@@ -69,7 +69,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>メール認証完了</title>
     <link rel="shortcut icon" href="data:image/x-icon;,">
-    <link rel="stylesheet" href="../../client/css/i">
+    <link rel="stylesheet" href="../../client/css/index.css">
 
     
     <!-- ③ 自動リダイレクト（3秒後にログインへ） -->
