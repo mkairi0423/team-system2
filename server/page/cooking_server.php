@@ -13,7 +13,7 @@ try {
     $user_id = isset($input['user_id']) ? (int) $input['user_id'] : 1;
 
     switch ($action) {
-case 'start':
+        case 'start':
             $pdo->beginTransaction(); // トランザクション開始
             try {
                 if (!empty($input['items'])) {
@@ -76,36 +76,46 @@ case 'start':
             echo json_encode(['success' => true, 'data' => $stmt->fetchAll()]);
             break;
 
-     case 'return_item':
-    $pdo->beginTransaction();
-    try {
-        // 1. 調理中のデータを取得
-        $stmt = $pdo->prepare("SELECT * FROM cooking_now WHERE id = ?");
-        $stmt->execute([(int)$input['cooking_id']]);
-        $item = $stmt->fetch();
+      case 'return_item':
+            $pdo->beginTransaction();
+            try {
+                // 1. 調理中のデータを取得
+                $stmt = $pdo->prepare("SELECT * FROM cooking_now WHERE id = ?");
+                $stmt->execute([(int)$input['cooking_id']]);
+                $item = $stmt->fetch();
 
-        if ($item) {
-            // 2. 戻す場所のIDを決定
-            // destinationが "original" なら元の場所IDを使用、そうでなければ指定された場所IDを使用
-            $target_loc_id = ($input['destination'] === 'original') 
-                             ? $item['original_storage_location_id'] 
-                             : (int)$input['destination'];
+                if ($item) {
+                    // 2. 戻す場所のIDを決定
+                    $target_loc_id = ($input['destination'] === 'original') 
+                                     ? $item['original_storage_location_id'] 
+                                     : (int)$input['destination'];
 
-            // 3. 在庫（ingredient）に数量を戻す（新規追加ではなくUPDATEを優先する場合の例）
-            // ※同じ食材があれば数量を加算、なければ新規登録するロジックが理想的です
-            $ins = $pdo->prepare("INSERT INTO ingredient (user_id, category_id, storage_location_id, food_name, quantity, unit) VALUES (?, 6, ?, ?, ?, ?)");
-            $ins->execute([$user_id, $target_loc_id, $item['food'], $item['quantity'], $item['unit']]);
+                    // 3. 同じ食材がすでにあるか確認（あればUPDATE、なければINSERT）
+                    $stmt = $pdo->prepare("SELECT ingredient_id, quantity FROM ingredient 
+                                           WHERE user_id = ? AND food_name = ? AND storage_location_id = ? LIMIT 1");
+                    $stmt->execute([$user_id, $item['food'], $target_loc_id]);
+                    $existing = $stmt->fetch();
 
-            // 4. 調理中から削除
-            $pdo->prepare("DELETE FROM cooking_now WHERE id = ?")->execute([$item['id']]);
-        }
-        $pdo->commit();
-        echo json_encode(['success' => true]);
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        throw $e;
-    }
-    break;
+                    if ($existing) {
+                        // 既存の食材があれば数量を足す
+                        $pdo->prepare("UPDATE ingredient SET quantity = quantity + ? WHERE ingredient_id = ?")
+                            ->execute([$item['quantity'], $existing['ingredient_id']]);
+                    } else {
+                        // なければ新規登録
+                        $ins = $pdo->prepare("INSERT INTO ingredient (user_id, category_id, storage_location_id, food_name, quantity, unit) VALUES (?, 6, ?, ?, ?, ?)");
+                        $ins->execute([$user_id, $target_loc_id, $item['food'], $item['quantity'], $item['unit']]);
+                    }
+
+                    // 4. 調理中から削除
+                    $pdo->prepare("DELETE FROM cooking_now WHERE id = ?")->execute([$item['id']]);
+                }
+                $pdo->commit();
+                echo json_encode(['success' => true]);
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                throw $e;
+            }
+            break;
 
         case 'complete':
             // 履歴への移動処理は維持
