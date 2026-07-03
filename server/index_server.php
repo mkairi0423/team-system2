@@ -62,9 +62,8 @@ if (!password_verify($pass, $user['password'])) {
 }
 
 // 6. ログイン成功処理
-// 🟢 セッションの「uid」に格納する値を、新しいスキーマ名「user_id」に完全修正！
 $_SESSION['user'] = [
-    'user_id'  => $user['user_id'], // 👈 旧 $user['uid'] から修正
+    'user_id'  => $user['user_id'],
     'name' => $user['name']
 ];
 
