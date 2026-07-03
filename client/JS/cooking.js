@@ -24,9 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const storedData = localStorage.getItem("cooking_items");
     if (storedData) {
         try {
-            startCooking(JSON.parse(storedData));
+            const parsedData = JSON.parse(storedData);
+            const items = Array.isArray(parsedData) ? parsedData : [parsedData];
+            
+            // 初回のみ start で登録し、その後は通常のリスト取得へ
+            startCooking(items);
             localStorage.removeItem("cooking_items");
-        } catch (e) { refreshList(); }
+        } catch (e) { 
+            console.error("データ解析エラー:", e);
+            refreshList(); 
+        }
     } else {
         refreshList();
     }
@@ -38,12 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
         else alert("開始エラー: " + result.message);
     }
 
+    // 変更点: 'start' ではなく 'get_list' アクションを呼び出すように修正
     async function refreshList() {
-        const result = await apiRequest('start', { items: [] });
+        const result = await apiRequest('get_list'); 
         if (result.success) renderIngredients(result.data);
     }
 
-    // ★修正：destination（場所）を引数に追加
     async function returnItem(cookingId, destination) {
         const result = await apiRequest('return_item', { 
             cooking_id: cookingId, 
@@ -56,45 +63,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- 描画ロジック ---
- // ... (前略)
+    function renderIngredients(items) {
+        if (!ingredientsListContainer) return;
+        ingredientsListContainer.innerHTML = "";
+        
+        if (!items || items.length === 0) {
+            ingredientsListContainer.innerHTML = "<p>調理中の食材はありません。</p>";
+            if (btnComplete) btnComplete.disabled = true;
+            return;
+        }
 
-// --- 描画ロジック ---
-function renderIngredients(items) {
-    if (!ingredientsListContainer) return;
-    ingredientsListContainer.innerHTML = "";
-    
-    if (!items || items.length === 0) {
-        ingredientsListContainer.innerHTML = "<p>調理中の食材はありません。</p>";
-        if (btnComplete) btnComplete.disabled = true;
-        return;
+        if (btnComplete) btnComplete.disabled = false;
+
+        items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "ingredient-item";
+            div.innerHTML = `
+                <span><strong>${item.food}</strong> (${item.quantity}${item.unit})</span>
+                <select id="dest-${item.id}">
+                    <option value="original">元の場所に戻す</option>
+                    <option value="1">冷蔵庫</option>
+                    <option value="2">冷凍庫</option>
+                </select>
+                <button class="btn-return" data-id="${item.id}">戻す</button>
+            `;
+            ingredientsListContainer.appendChild(div);
+        });
+
+        document.querySelectorAll(".btn-return").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const id = e.target.dataset.id;
+                const dest = document.getElementById(`dest-${id}`).value;
+                if (confirm("在庫に戻しますか？")) returnItem(id, dest);
+            });
+        });
     }
 
-    if (btnComplete) btnComplete.disabled = false;
-
-    items.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "ingredient-item";
-        // ★修正：item.quantity は調理中の分量なのでこれをそのまま表示
-        div.innerHTML = `
-            <span><strong>${item.food}</strong> (${item.quantity}${item.unit})</span>
-            <select id="dest-${item.id}">
-                <option value="original">元の場所に戻す</option>
-                <option value="1">冷蔵庫</option>
-                <option value="2">冷凍庫</option>
-            </select>
-            <button class="btn-return" data-id="${item.id}">戻す</button>
-        `;
-        ingredientsListContainer.appendChild(div);
-    });
-
-    document.querySelectorAll(".btn-return").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            const id = e.target.dataset.id;
-            const dest = document.getElementById(`dest-${id}`).value;
-            if (confirm("在庫に戻しますか？")) returnItem(id, dest);
-        });
-    });
-}
     // --- 料理完了処理 ---
     if (btnComplete) {
         btnComplete.addEventListener("click", async () => {
