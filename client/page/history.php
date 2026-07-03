@@ -21,6 +21,6 @@ include "template/sidebar.php";
 
 </div>
 
-<script src="../js/history.js"></script>
+<!-- <script src="../js/history.js"></script> -->
 
 <?php include "template/footer.php"; ?>

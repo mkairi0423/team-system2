@@ -4,6 +4,7 @@
 <script src="../js/hamburger-menu.js"></script>
 <script src="../js/selection_AI_recipe.js"></script>
 <script src="../js/mode_switch.js"></script>
+<script src="../js/history.js"></script>
 <script src="../js/search_recipe.js"></script>
 
 </body>
