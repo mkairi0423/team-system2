@@ -44,6 +44,11 @@ $current = basename($_SERVER['PHP_SELF']);
             📊 食品ロス分析
         </a>
 
+        <a href="favorite.php"
+            class="<?= ($page ?? '') === 'favorite' ? 'active' : '' ?>">
+            💙 お気に入りレシピ
+        </a>
+
         <a href="history.php"
             class="<?= ($page ?? '') === 'history' ? 'active' : '' ?>">
             🕒 料理履歴

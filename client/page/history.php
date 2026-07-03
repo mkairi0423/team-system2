@@ -10,7 +10,7 @@ include "template/sidebar.php";
 <div class="main">
 
     <div class="topbar">
-        <h1>🕒 料理履歴</h1>
+        <h1>料理履歴</h1>
     </div>
 
     <div id="history-list-container" class="history-grid">
