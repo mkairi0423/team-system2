@@ -8,15 +8,18 @@ include "template/sidebar.php";
 
 session_start();
 
+$_SESSION['user']['user_id'] = 1; //TODO:ここは消す
 
 // データベース接続と関数の読み込み
-// ※パスは実際の環境（getPDOがあるファイルなど）に合わせて調整してください
+require_once __DIR__ . "/../../helpers/def.php";
 require_once __DIR__ . "/../../helpers/utils.php";
 require_once __DIR__ . "/../../server/page/get_alert_server.php";
 
+// ユーザーIDの存在を確認
+hasUserId();
+
 $pdo = getPDO();
-// $userId = $_SESSION['user_id']; //TODO:本番環境ではこっちにする 
-$userId = 1; 
+$userId = $_SESSION['user']['user_id'] ?? null;
 
 // 🟢 期限が迫っている食材データをフル取得 (最大6件)
 $urgent_ingredients = getUrgentIngredients($pdo, $userId, 6);
@@ -24,10 +27,9 @@ $urgent_ingredients = getUrgentIngredients($pdo, $userId, 6);
 // 統計用の総登録数を取得
 $total_count = getTotalIngredientCount($pdo, $userId);
 
-// すでにある total_count や alert_count の下あたりに追加
+// 冷凍ストック・お気に入りレシピ数を取得
 $frozen_count = getFrozenStockCount($pdo, $userId);
 $fav_recipe_count = getFavoriteRecipeCount($pdo, $userId);
-
 
 // アラート対象（残り3日以内、またはすでに期限切れの食材）の件数をカウント
 $alert_count = 0;
@@ -152,57 +154,6 @@ foreach ($urgent_ingredients as $food) {
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // ブラウザのキャッシュから直近のAI提案結果をサルベージ
-        const savedRecipeData = localStorage.getItem('ai_recipe_result');
-
-        if (savedRecipeData) {
-            try {
-                const result = JSON.parse(savedRecipeData);
-
-                // 送っていただいたプロンプト（タスクA）のJSON構造をパース
-                if (result.success && result.recipes && result.recipes.length > 0) {
-                    const recipe = result.recipes[0];
-
-                    // 画面上のAIおすすめ枠を最新状態へ上書き
-                    document.getElementById('ai-recipe-name').innerText = recipe.recipe_name;
-                    document.getElementById('ai-recipe-desc').innerText = recipe.description;
-
-                    // 特徴タグ（features）のバッジ生成
-                    const featuresContainer = document.getElementById('ai-recipe-features');
-                    featuresContainer.innerHTML = '';
-                    if (recipe.features && recipe.features.length > 0) {
-                        recipe.features.forEach(feature => {
-                            const span = document.createElement('span');
-                            span.className = 'badge green';
-                            span.style.marginRight = '5px';
-                            span.style.fontSize = '12px';
-                            span.innerText = feature;
-                            featuresContainer.appendChild(span);
-                        });
-                    }
-
-                    // 「レシピを見る」の挙動を結果画面（selection.php）への遷移にする
-                    const recipeBtn = document.getElementById('ai-recipe-btn');
-                    recipeBtn.innerText = "レシピを見る";
-                    recipeBtn.addEventListener('click', () => {
-                        window.location.href = 'selection.php';
-                    });
-                }
-            } catch (e) {
-                console.error("localStorageのレシピデータ解析に失敗しました:", e);
-            }
-        } else {
-            // まだ一度もAIレシピを作っていない場合の初期挙動
-            const recipeBtn = document.getElementById('ai-recipe-btn');
-            recipeBtn.innerText = "新しくレシピを生成する";
-            recipeBtn.addEventListener('click', () => {
-                // 条件選択画面（仮）へリダイレクト
-                window.location.href = 'recipe_conditions.php';
-            });
-        }
-    });
-</script>
+<script src="js/home_recipe_loader.js"></script>
 
 <?php include "template/footer.php"; ?>

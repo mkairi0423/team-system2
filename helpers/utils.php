@@ -42,6 +42,16 @@ function nextpage(string $page)
  * 
  */
 
+//user_idがあるかどうかをチェックする関数
+function hasUserId(): bool
+{
+    if (!isset($_SESSION['user']['user_id'])) {
+        login();
+        exit;
+    }
+    return true;
+}
+
 
 
 /**
