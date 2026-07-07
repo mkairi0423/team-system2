@@ -75,16 +75,22 @@ CREATE TABLE ingredient (
 CREATE TABLE cooking_now (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    original_ingredient_id BIGINT NOT NULL,
+    -- 💡 NULL を許可（NOT NULL を削除）
+    original_ingredient_id BIGINT NULL, 
     food VARCHAR(100) NOT NULL,
     quantity INT NULL COMMENT '使用する数量',
     unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個',
-    original_storage_location_id INT NOT NULL,
+    -- 💡 NULL を許可（NOT NULL を削除）
+    original_storage_location_id INT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
+    -- 👤 ユーザーIDの紐付け（これは必須のまま）
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (original_ingredient_id) REFERENCES ingredient(ingredient_id) ON DELETE CASCADE,
-    FOREIGN KEY (original_storage_location_id) REFERENCES storage_location(location_id) ON DELETE RESTRICT
+    
+    -- 💡 外部キー制約の削除、または「ON DELETE SET NULL」への変更
+    -- ※ 在庫が削除されても、調理中リスト（cooking_now）のレコードごと消えないように SET NULL にするのが安全です。
+    FOREIGN KEY (original_ingredient_id) REFERENCES ingredient(ingredient_id) ON DELETE SET NULL,
+    FOREIGN KEY (original_storage_location_id) REFERENCES storage_location(location_id) ON DELETE SET NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 
