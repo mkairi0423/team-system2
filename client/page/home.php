@@ -15,6 +15,7 @@ require_once __DIR__ . "/../../helpers/def.php";
 require_once __DIR__ . "/../../helpers/utils.php";
 require_once __DIR__ . "/../../server/page/get_alert_server.php";
 
+
 // ユーザーIDの存在を確認
 hasUserId();
 
@@ -154,6 +155,6 @@ foreach ($urgent_ingredients as $food) {
 
 </div>
 
-<script src="js/home_recipe_loader.js"></script>
+<script src="../js/home_recipe.js"></script>
 
 <?php include "template/footer.php"; ?>
