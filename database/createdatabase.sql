@@ -147,5 +147,10 @@ CREATE TABLE favorite_recipe_ingredient (
 -- ====================================================================
 -- 6. パフォーマンス向上のためのインデックス（追加推奨）
 -- ====================================================================
--- 冷凍焼け食材の検索は「場所」「日付」を頻繁にスキャンするため、インデックスがあると高速化します
 ALTER TABLE ingredient ADD INDEX idx_ingredient_frozen (storage_location_id, frozen_at);
+
+-- ====================================================================
+-- 7. 小数点対応のための型変更（追加）
+-- ====================================================================
+ALTER TABLE ingredient MODIFY quantity DECIMAL(10,2) NULL;
+ALTER TABLE cooking_now MODIFY quantity DECIMAL(10,2) NULL;

@@ -4,6 +4,7 @@
 // ==================================================================================
 require_once __DIR__ . "/../../helpers/utils.php";
 require_once __DIR__ . "/../DB_function/user_register_DB.php";
+require_once __DIR__ . "/../helpers/mail.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -76,13 +77,26 @@ if ($has_error) {
     exit;
 }
 
+// ----------------------------------------------------------------------------------
+// 📧 メール認証用トークンを生成
+// ----------------------------------------------------------------------------------
+$token = bin2hex(random_bytes(32));
+$expires = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
 // 🟢 すべての入力が有効な場合は、DB登録処理を実行
-$result = register_user($name, $email, $pass);
+$result = register_user($name, $email, $pass, $token, $expires);
 
 if ($result === true) {
-    // 🚀 登録成功：ログイン処理（またはログイン画面へ遷移）
-    login();
+
+    // 📧 認証メールを送信
+    sendVerifyMail($email, $name, $token);
+
+    $_SESSION["log"] = "認証メールを送信しました。メールをご確認ください。";
+
+    // thankyou.php
+    header("Location: ../../client/page/thankyou.php");
     exit;
+
 } else {
     // ❌ DB接続エラーや重複エラーが発生した場合（戻り値の文字列をセッションに詰める）
     $_SESSION["db_register_err"] = $result;
