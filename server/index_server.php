@@ -4,7 +4,6 @@
 // ==================================================================================
 
 require_once __DIR__ . "/../helpers/utils.php";
-// 🟢 作成したDB関数ファイルを読み込む（パスは実際の環境に合わせて調整してください）
 require_once __DIR__ . "/../server/DB_function/login_DB.php";
 
 session_start();
@@ -29,13 +28,11 @@ $_SESSION['old'] = [
 
 // 3. バリデーション（入力チェック）
 if (empty($name)) {
-    $_SESSION['name_err'] = "ユーザーIDが空です";
+    $_SESSION['name_err'] = "ユーザー名が空です"; // テーブルの「name」に合わせ表記をユーザー名に統一
 }
 
 if (empty($pass)) {
     $_SESSION['pass_err'] = "パスワードが空です";
-} elseif (strlen($pass) <= 7) {
-    $_SESSION['pass_err'] = "パスワードを8文字以上で入力してください";
 }
 
 // 1つでもエラーがあれば、この時点でフロントへ戻す
@@ -44,24 +41,22 @@ if (!empty($_SESSION['name_err']) || !empty($_SESSION['pass_err'])) {
     exit;
 }
 
-// 4. データベース処理（🟢 関数を呼び出すだけのシンプルな形に！）
+// 4. データベース処理
 $user = user_login($name);
 
 // ユーザーが存在しない場合
 if (!$user) {
-    $_SESSION['pass_err'] = "ユーザーIDまたはパスワードが間違っています。";
+    $_SESSION['pass_err'] = "ユーザー名またはパスワードが間違っています。";
     header("Location: ../client/index.php");
     exit;
 }
 
-// 5. パスワードの照合（DB内のハッシュ値と、入力された生パスワードを比較）
+// 5. パスワードの照合
 if (!password_verify($pass, $user['password'])) {
-    $_SESSION['pass_err'] = "ユーザーIDまたはパスワードが間違っています。";
+    $_SESSION['pass_err'] = "ユーザー名またはパスワードが間違っています。";
     header("Location: ../client/index.php");
     exit;
 }
-
-// 6. ログイン成功処理
 $_SESSION['user'] = [
     'user_id'  => $user['user_id'],
     'name' => $user['name']
