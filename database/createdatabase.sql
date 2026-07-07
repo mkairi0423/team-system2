@@ -26,6 +26,9 @@ CREATE TABLE user (
     name VARCHAR(50) NOT NULL COMMENT 'ユーザー名',
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL,
+    verification_token VARCHAR(64) NULL COMMENT 'メール認証用トークン',
+    token_expires DATETIME NULL COMMENT 'トークン有効期限',
+    is_verified TINYINT(1) DEFAULT 0 COMMENT '認証ステータス(0:未認証, 1:認証済)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
