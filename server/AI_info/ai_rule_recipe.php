@@ -45,7 +45,7 @@ function recipe_rule()
 =========================================
 【出力フォーマット（タスクC）】
 {
-  "food": "入力された食材名のひらがな読み",
+  "food": "食材名",
   "storage_type": "fridge または freezer",
   "category": "上記の固定6ジャンルから選択",
   "estimated_days": 7,
