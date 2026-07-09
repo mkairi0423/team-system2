@@ -17,7 +17,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../helpers/gemini_api.php';
 require_once __DIR__ . '/../../helpers/utils.php';
 require_once __DIR__ . '/../AI_info/ai_rule_scan.php';
-require_once __DIR__ . '/../DB_function/scan_DB.php';
+require_once __DIR__ . '/../DB_function/scan_db.php';
 
 // シャットダウン時（Fatal Error発生時）に無理やりJSONでエラーを吐き出す仕掛け
 register_shutdown_function(function () {

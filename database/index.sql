@@ -28,10 +28,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- 3. 初期・マスタデータの投入
 -- ====================================================================
 
--- ユーザー管理
-INSERT INTO user (user_id, name, email, password) VALUES 
-(1, 'test2026', 'test@example.com', 'hashed_password_here');
-
 -- 食材カテゴリマスタ ★冷凍限界日数（目安）を設定
 INSERT INTO category (category_id, category_name, frozen_expiry_days) VALUES 
 (1, '肉類', 30),        -- 肉類は冷凍で約1ヶ月

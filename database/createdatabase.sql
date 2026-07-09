@@ -23,7 +23,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ユーザー管理テーブル
 CREATE TABLE user (
     user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL COMMENT 'ユーザー名',
+    name VARCHAR(50) NOT NULL UNIQUE COMMENT 'ユーザー名',
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL,
     verification_token VARCHAR(64) NULL COMMENT 'メール認証用トークン',
