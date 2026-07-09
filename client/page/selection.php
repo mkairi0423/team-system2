@@ -70,7 +70,14 @@ include "template/sidebar.php";
     <div id="recipe-list-container"></div>
 </div>
 
-<input type="hidden" id="current-user-id" value="1">
+/*--------------------------------------------------------------------
+ここでセッションからuser_idを取得してきてサーバー側に渡している
+--------------------------------------------------------------------*/
+
+<input type="hidden" id="current-user-id" value="<?= htmlspecialchars($_SESSION['user_id'], ENT_QUOTES) ?>">
+
+/*----------------------------------------------------------------
+------------------------------------------------------------------*/
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

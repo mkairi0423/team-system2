@@ -39,6 +39,8 @@ foreach ($urgent_ingredients as $food) {
         $alert_count++;
     }
 }
+//debug：セッションにuser_idが保存されているかの確認
+// echo $_SESSION['user_id'];
 ?>
 
 <div class="main">
