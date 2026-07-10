@@ -1,4 +1,22 @@
-<!DOCTYPE html>
+<?php
+
+session_start();
+require_once __DIR__ . "/../../helpers/utils.php";
+require_once __DIR__ . "/../../helpers/def.php";
+hasUserId();
+
+include "template/header.php";
+include "template/sidebar.php";
+
+$title = "調理中・確認画面";
+$page = "cooking";
+
+//TODO:このcss反映させたい
+// <link rel="stylesheet" href="../css/cooking.css">
+
+
+?>
+<!-- <!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -7,7 +25,7 @@
     <title>調理中・確認画面</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/cooking.css">
-</head>
+</head> -->
 
 <body>
 

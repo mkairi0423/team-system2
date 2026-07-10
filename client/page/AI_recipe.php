@@ -9,6 +9,10 @@ $page = "AI_recipe";
 include "template/header.php";
 include "template/sidebar.php";
 
+require_once __DIR__ . "/../../helpers/utils.php";
+require_once __DIR__ . "/../../helpers/def.php";
+hasUserId();
+
 ?>
 
 <div class="container">
