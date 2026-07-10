@@ -264,7 +264,8 @@ hasUserId();
             }
 
             // 登録が成功したら次の「調理中・確認画面」へ遷移
-            window.location.href = 'cooking.php';
+            const encodedDish = encodeURIComponent(recipe.recipe_name); // 料理名をエンコード
+            window.location.href = `cooking.php?dish=${encodedDish}`; // パラメータを付与して遷移
 
         } catch (error) {
             console.error('調理開始エラー:', error);

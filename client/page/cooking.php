@@ -11,21 +11,9 @@ include "template/sidebar.php";
 $title = "調理中・確認画面";
 $page = "cooking";
 
-//TODO:このcss反映させたい
-// <link rel="stylesheet" href="../css/cooking.css">
-
+$dish_name = isset($_GET['dish']) ? $_GET['dish'] : '料理確認中...';
 
 ?>
-<!-- <!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>調理中・確認画面</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/cooking.css">
-</head> -->
 
 <body>
 
@@ -33,8 +21,8 @@ $page = "cooking";
 
     <div class="cooking-container">
 
-        <h2 id="cooking-recipe-name">🍳 料理確認中...</h2>
-        <p class="description-text">AIが提案した食材リストです。分量の変更wを追加をして調理を開始しましょう！</p>
+        <h2 id="cooking-recipe-name">🍳 <?php echo htmlspecialchars($dish_name); ?></h2>
+        <p class="description-text">AIが提案した食材リストです。分量の変更を追加をして調理を開始しましょう！</p>
 
         <section class="ingredient-section">
             <h3>🛒 使用する食材リスト</h3>
@@ -83,7 +71,7 @@ $page = "cooking";
         <hr class="section-divider">
 
         <button type="button" id="btn-cooking-complete" class="btn-complete">
-            🍳 料理完了！履歴に保存
+            🍳 料理完了
         </button>
     </div>
 
