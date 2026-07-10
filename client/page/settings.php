@@ -40,15 +40,14 @@ include "template/sidebar.php";
 
             <form id="form-password-change" action="" method="POST">
 
-                <input type="text"
-                    name="username"
+                <input type="text" name="username"
                     value="<?php echo htmlspecialchars($_SESSION['user']['name'] ?? 'guest_user'); ?>"
-                    autocomplete="username"
-                    style="display:none;">
+                    autocomplete="username" style="display:none;">
 
                 <div class="form-group">
                     <label for="current-password">現在のパスワード</label>
-                    <input type="password" id="current-password" name="current_password" autocomplete="current-password" required>
+                    <input type="password" id="current-password" name="current_password" autocomplete="current-password"
+                        required>
                 </div>
 
                 <div class="form-group">
@@ -93,7 +92,7 @@ include "template/sidebar.php";
                     <span class="slider"></span>
                 </label>
             </div>
-            
+
         </div>
     </div>
 
@@ -102,16 +101,32 @@ include "template/sidebar.php";
 
         <div class="danger-buttons">
             <a href="../../server/page/logout_server.php">
-                <button class="btn-secondary">
-                    ログアウト
-                </button>
+                <button class="btn-secondary">ログアウト</button>
             </a>
 
-            <button class="btn-danger">
-                アカウント削除
-            </button>
+            <button type="button" class="btn-danger"
+                onclick="document.getElementById('deleteDialog').showModal()">アカウント削除</button>
         </div>
     </div>
+
+    <dialog id="deleteDialog">
+    <h3>⚠️ 最終確認 ⚠️</h3>
+    <p>本当にアカウントを削除しますか？<br>この操作は取り消せません。</p>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+        <button type="button" class="btn-secondary"
+            onclick="document.getElementById('deleteDialog').close()">キャンセル</button>
+
+        <form action="../../server/page/user_delete_server.php" method="POST">
+            <?php
+            // フロント側のセッションからユーザーIDを取得して、隠し入力にセット
+            $current_user_id = $_SESSION['user']['user_id'] ?? $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? '';
+            ?>
+            <input type="hidden" name="delete_user_id" value="<?php echo htmlspecialchars($current_user_id, ENT_QUOTES, 'UTF-8'); ?>">
+            
+            <button type="submit" class="btn-danger">本当に削除する</button>
+        </form>
+    </div>
+</dialog>
 
 </div>
 

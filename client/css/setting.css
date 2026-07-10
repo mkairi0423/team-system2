@@ -151,6 +151,30 @@
   transform: translateX(24px);
 }
 
+/* アカウント削除ボタン押後のデザイン */
+dialog {
+    /*  干渉対策：強制的に上下左右中央に配置する設定 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0; /* 既存のmarginをリセット */
+
+    /*  見た目のデザイン */
+    border: none;
+    border-radius: 10px;
+    padding: 25px;
+    max-width: 400px;
+    width: 90%; /* スマホ対策：画面からはみ出さないように */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+/* ポップアップが出たときの、後ろの黒い背景（お好みで） */
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+}
+
 /* =========================
    TABLET
 ========================= */
