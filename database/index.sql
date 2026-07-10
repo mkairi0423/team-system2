@@ -28,10 +28,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- 3. 初期・マスタデータの投入
 -- ====================================================================
 
--- ユーザー管理
-INSERT INTO user (user_id, name, email, password) VALUES 
-(1, 'test2026', 'test@example.com', 'hashed_password_here');
-
 -- 食材カテゴリマスタ ★冷凍限界日数（目安）を設定
 INSERT INTO category (category_id, category_name, frozen_expiry_days) VALUES 
 (1, '肉類', 30),        -- 肉類は冷凍で約1ヶ月
@@ -48,19 +44,3 @@ INSERT INTO storage_location (location_id, location_name, is_frozen) VALUES
 (3, '野菜室', 0), 
 (4, '常温', 0);
 
-
--- ====================================================================
--- 4. 🛒 在庫食材テストデータの投入
--- ====================================================================
--- テスト用に「すでに冷凍焼けしている食材」と「大丈夫な食材」を混ぜています
-INSERT INTO ingredient (user_id, category_id, storage_location_id, food_name, quantity, unit, expiration_date, term_type, frozen_at) VALUES 
--- ① 冷蔵庫にあるもの（冷凍日 frozen_at は NULL）
-(1, 1, 1, '豚ひき肉', 200, 'g',   '2026-07-05', '消費期限', NULL), 
-(1, 4, 1, 'キャベツ', 1,   '玉',  '2026-07-10', '賞味期限', NULL), 
-(1, 3, 1, '卵',       10,  '個',  '2026-07-15', '賞味期限', NULL), 
-
--- ② 冷凍庫にあるもの（冷凍焼け【危険】データ：1ヶ月以上前に冷凍した肉）
-(1, 1, 2, '冷凍牛ステーキ肉', 1, '枚', NULL, '消費期限', '2026-05-15'), 
-
--- ③ 冷凍庫にあるもの（冷凍焼け【安全】データ：最近冷凍した魚）
-(1, 2, 2, '冷凍サーモン塩麹漬け', 2, '枚', NULL, '消費期限', '2026-06-28');

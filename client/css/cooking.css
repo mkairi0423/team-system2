@@ -1,69 +1,395 @@
-/* @charset "UTF-8"; */
+@charset "UTF-8";
+
+/* ==================================================================================
+   1. 共通ベーススタイル（スマホファースト設定）
+   ================================================================================== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8fafc;
+    /* 透明感のある明るい背景 */
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    -webkit-tap-highlight-color: transparent;
+    /* スマホタップ時の青い影を消す */
+}
 
 /* 調理中画面全体のコンテナ */
-.cooking-container { 
-    max-width: 600px; 
-    margin: 20px auto; 
-    padding: 20px; 
-    border: 1px solid #ccc; 
-    border-radius: 8px; 
-    background-color: #fff; 
+.cooking-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    background-color: #ffffff;
 }
 
-/* 食材リストの1行ごとのスタイル */
-.ingredient-item { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 10px; 
-    border-bottom: 1px solid #eee; 
+/* 見出し（青ベースの引き締め色） */
+#cooking-recipe-name {
+    color: #1e3a8a;
+    font-size: 1.4rem;
+    margin-top: 0;
 }
 
-/* 右側の操作エリア（セレクトボックスとボタンの並び） */
-.item-controls { 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
+/* テキスト装飾 */
+.description-text {
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
-/* 戻し先選択のセレクトボックス */
-.select-destination { 
-    padding: 4px; 
-    border-radius: 4px; 
-    border: 1px solid #ccc; 
+.sub-description {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 12px;
+    line-height: 1.4;
 }
 
-/* 個別「戻す」ボタン */
-.btn-return { 
-    background-color: #ff9800; 
-    color: white; 
-    border: none; 
-    padding: 5px 10px; 
-    cursor: pointer; 
-    border-radius: 4px; 
-    transition: background-color 0.2s ease;
+/* 区切り線（爽やかな極薄ブルー） */
+.section-divider {
+    border: 0;
+    height: 1px;
+    background: #e2e8f0;
+    margin: 24px 0;
 }
 
-.btn-return:hover { 
-    background-color: #e68a00; 
+/* ==================================================================================
+   2. 食材リストエリア（モダンアプリ風・完全最適化版）
+   =====================================================================*/
+
+.ingredient-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    /* 💡 余紙を少し広げてゆったりと */
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    /* 💡 角丸を1枚目のボタンに合わせて少し丸く */
+    margin-bottom: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    /* ほんのり高級感のある影 */
 }
 
-/* 画面最下部の「料理完了」ボタン */
-.btn-complete { 
-    display: block; 
-    width: 100%; 
-    background-color: #4caf50; 
-    color: white; 
-    border: none; 
-    padding: 15px; 
-    font-size: 1.2rem; 
-    margin-top: 20px; 
-    cursor: pointer; 
-    border-radius: 4px; 
-    font-weight: bold; 
-    transition: background-color 0.2s ease;
+/* 左側のテキストエリア */
+.ingredient-info-wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    /* 💡 パーツ間の隙間を少し広げる */
+    text-align: left;
+    flex: 1;
+    /* テキストエリアを広げる */
+    padding-right: 8px;
 }
 
-.btn-complete:hover { 
-    background-color: #43a047; 
+/* 食材名（優しく引き締まったネイビーグレー＆太字に） */
+.ingredient-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    /* 💡 1枚目の文字に合わせた程よい太さ */
+    color: #334155;
+    /* 💡 真っ黒ではなく、少し青みのあるグレーに */
+}
+
+/* 数量 */
+.ingredient-qty {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #64748b;
+    /* 💡 数量は少し控えめなグレーにして主役を引き立てる */
+}
+
+/* ⚠️要買い足しバッジ（改行を防ぎ、1枚目のトーンに合わせる） */
+.missing-badge {
+    color: #ef4444;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background-color: #fef2f2;
+    padding: 3px 8px;
+    border-radius: 6px;
+    /* バッジの角丸も優しく */
+    white-space: nowrap;
+    /* 💡 絶対に途中で改行させない */
+    display: inline-block;
+}
+
+/* 右側のボタンエリア */
+.item-controls-simple {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+/* ↩️ 戻すボタン（1枚目の未選択ボタン「朝ごはん」等と質感を完全に統一） */
+.btn-return-direct {
+    height: 38px;
+    padding: 0 14px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    /* 💡 枠線を薄くして、画面に馴染ませる */
+    color: #475569;
+    /* 💡 文字色を優しく */
+    cursor: pointer;
+    border-radius: 10px;
+    /* 💡 ボタンの角丸を少し強めて可愛い印象に */
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* スマホでタップした瞬間（1枚目の選択時エフェクトと完全同期） */
+.btn-return-direct:active {
+    background-color: #eff6ff;
+    border-color: #2563eb;
+    color: #1d4ed8;
+    transform: scale(0.95);
+    /* 💡 触った時のクッとした沈み込みを少し強めに */
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+
+/* ==================================================================================
+   3. アコーディオン式・隠し味/追加食材エリア
+   ================================================================================== */
+.add-extra-section {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+/* 開いている時は青枠＆極薄ブルー背景にする */
+.add-extra-section.is-open {
+    background-color: #eff6ff;
+    border: 2px solid #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+/* アコーディオンのヘッダー */
+.accordion-header {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2563eb;
+    /* 文字色を鮮やかな青に */
+    cursor: pointer;
+    text-align: left;
+}
+
+/* 右側の矢印アイコン */
+.accordion-icon {
+    font-size: 0.8rem;
+    color: #2563eb;
+    transition: transform 0.2s ease;
+}
+
+.add-extra-section.is-open .accordion-header {
+    color: #1d4ed8;
+}
+
+.add-extra-section.is-open .accordion-icon {
+    transform: rotate(180deg);
+    color: #1d4ed8;
+}
+
+/* アコーディオンの中身（デフォルト非表示、JSで物理切り替え） */
+.accordion-content {
+    display: none;
+    opacity: 0;
+    padding: 0 16px 16px 16px;
+    transition: opacity 0.2s ease;
+}
+
+.add-extra-section.is-open .accordion-content {
+    display: block;
+    opacity: 1;
+}
+
+.add-extra-tip {
+    margin: 0 0 12px 0;
+    font-size: 0.8rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
+.add-extra-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-row-sub {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.form-input,
+.form-select {
+    height: 44px;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #334155;
+}
+
+.text-input {
+    width: 100%;
+}
+
+
+/* ==================================================================================
+   4. ＋/－ ステップカウンター
+   ================================================================================== */
+.counter-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    flex: 1;
+    overflow: hidden;
+}
+
+.btn-counter {
+    width: 44px;
+    height: 44px;
+    background: #f1f5f9;
+    border: none;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #2563eb;
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-counter:active {
+    background: #e2e8f0;
+}
+
+.counter-container .qty-input {
+    border: none;
+    height: 44px;
+    text-align: center;
+    font-weight: bold;
+    flex: 1;
+    width: 100%;
+    background: transparent;
+    padding: 0;
+    color: #1d4ed8;
+    font-size: 1.05rem;
+}
+
+.unit-display {
+    align-self: center;
+    font-weight: 600;
+    color: #475569;
+    margin-left: 8px;
+    min-width: 24px;
+    font-size: 1rem;
+}
+
+
+/* ==================================================================================
+   5. アクションボタン（メインテーマカラー：ブルー）
+   ================================================================================== */
+.btn-add {
+    height: 44px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.btn-add:hover {
+    background: #1d4ed8;
+}
+
+.btn-add:active {
+    transform: scale(0.97);
+}
+
+/* 料理完了巨大ボタン */
+.btn-complete {
+    display: block;
+    width: 100%;
+    height: 54px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-complete:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-complete:active {
+    transform: scale(0.96);
+}
+
+.btn-complete:disabled {
+    background-color: #cbd5e1;
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+/* ==================================================================================
+   6. 💻 レスポンシブ調整（大画面用の余白微調整）
+   ================================================================================== */
+@media (min-width: 480px) {
+    .cooking-container {
+        margin: 20px auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .add-extra-form {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .text-input {
+        flex: 2;
+    }
+
+    .form-row-sub {
+        flex: 1.5;
+    }
+
+    .btn-add {
+        padding: 0 24px;
+    }
 }

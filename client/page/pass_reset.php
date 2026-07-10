@@ -1,6 +1,11 @@
 <?php
+
 // HTMLを表示する前にセッションからメッセージを取得
 session_start();
+require_once __DIR__ . "/../../helpers/utils.php";
+require_once __DIR__ . "/../../helpers/def.php";
+hasUserId();
+
 $email_err = $_SESSION['email_err'] ?? '';
 $reset_success = $_SESSION['reset_success'] ?? '';
 $db_err = $_SESSION['db_err'] ?? '';
@@ -9,6 +14,7 @@ $db_err = $_SESSION['db_err'] ?? '';
 unset($_SESSION['email_err']);
 unset($_SESSION['reset_success']);
 unset($_SESSION['db_err']);
+
 
 ?>
 

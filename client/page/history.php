@@ -5,6 +5,11 @@ $page = "history";
 
 include "template/header.php";
 include "template/sidebar.php";
+
+session_start();
+require_once __DIR__ . "/../../helpers/utils.php";
+require_once __DIR__ . "/../../helpers/def.php";
+hasUserId();
 ?>
 
 <div class="main">
