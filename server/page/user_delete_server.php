@@ -10,14 +10,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 🛑 1. POSTリクエスト以外は弾く
+//  1. POSTリクエスト以外は弾く
 if ($_SERVER['REQUEST_METHOD'] !== "POST") {
     echo "エラー: 正しくボタンが押されていません。";
     exit;
 }
 
-// 👤 2. セッションからあらゆる可能性を考慮してユーザーIDを取得
-$user_id = $_SESSION['user']['user_id'] ?? $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? $_POST['delete_user_id'] ?? null;
+//  2. セッションからあらゆる可能性を考慮してユーザーIDを取得
+$user_id = $_SESSION['user_id'] ?? $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? $_POST['delete_user_id'] ?? null;
 
 if (!$user_id) {
     echo "<h2>❌ エラー: 削除対象のユーザーIDが特定できませんでした</h2>";
@@ -28,7 +28,7 @@ if (!$user_id) {
 }
 
 try {
-    // 🌟 3. データベース接続の確保
+    //  3. データベース接続の確保
     if (!isset($pdo) && isset($db)) {
         $pdo = $db;
     }
@@ -48,11 +48,11 @@ try {
     // トランザクション開始
     $pdo->beginTransaction();
 
-    // 🛑 4. 子テーブル（関連データ）の削除
+    //  4. 子テーブル（関連データ）の削除
     $stmt_ing = $pdo->prepare("DELETE FROM ingredient WHERE user_id = :user_id");
     $stmt_ing->execute([':user_id' => $user_id]);
 
-    // 👤 5. 親テーブル（ユーザー自身）の削除
+    //  5. 親テーブル（ユーザー自身）の削除
     // エラーの原因だった「OR id = :user_id」を削除し、正しい「user_id」だけにします
     $stmt_user = $pdo->prepare("DELETE FROM user WHERE user_id = :user_id");
     $stmt_user->execute([':user_id' => $user_id]);
@@ -71,7 +71,7 @@ try {
     // コミットして確定
     $pdo->commit();
 
-    // 🧼 6. セッションを完全に破壊
+    //  6. セッションを完全に破壊
     $_SESSION = array();
     if (ini_get("session.use_cookies")) {
         $params = session_get_cookie_params();
@@ -87,7 +87,7 @@ try {
     }
     session_destroy();
 
-    // 🚀 7. 削除成功後、ログイン画面へ
+    //  7. 削除成功後、ログイン画面へ
     header("Location: ../../client/index.php");
     exit;
 
