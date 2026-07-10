@@ -29,7 +29,7 @@ $today = date('Y-m-d');
             <h3>📷 レシート食材重量逆算スキャナー</h3>
             <br>
             <p>
-                レシートの写真を撮影するか、画像を選択すると、<br>
+                レシートの写真または画像を選択すると、<br>
                 自動的にAIによる解析がスタートします。
             </p>
             <br>
@@ -43,11 +43,9 @@ $today = date('Y-m-d');
                 id="receipt-file"
                 style="display: none;">
 
-            <span id="file-name" style="margin-left: 10px; color: #666; font-size: 0.9em;">選択されていません</span>
-            <br><br>
 
             <div id="result" style="margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; min-height: 60px;">
-                ここに解析結果（食材名・重量・期限・保存場所など）が表示されます。上に画像を設定すると自動で解析が始まります。
+                ここに解析結果（食材名・重量・期限・保存場所など）が表示されます。
             </div>
         </div>
 
@@ -125,7 +123,7 @@ $today = date('Y-m-d');
 
     <div class="hero">
         <h2>📦 バーコード読み取り</h2>
-        <p>商品のバーコードを読み取って食材を登録します。</p>
+        <p>商品バーコードを読み取って食材を登録します。</p>
     </div>
 
     <div class="panel">

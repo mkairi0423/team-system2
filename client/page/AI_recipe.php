@@ -9,6 +9,7 @@ $page = "AI_recipe";
 include "template/header.php";
 include "template/sidebar.php";
 
+session_start();
 require_once __DIR__ . "/../../helpers/utils.php";
 require_once __DIR__ . "/../../helpers/def.php";
 hasUserId();
@@ -38,7 +39,7 @@ hasUserId();
         <div class="grid-options" data-group="cuisine">
             <button type="button" class="option-btn" data-value="和食">🍙 和食</button>
             <button type="button" class="option-btn" data-value="洋食">🍝 洋食</button>
-            <button type="button" class="option-btn selected" data-value="中華">🇨🇳 中華</button>
+            <button type="button" class="option-btn selected" data-value="中華">中華</button>
             <button type="button" class="option-btn" data-value="ヘルシー">🥗 ヘルシー</button>
         </div>
     </div>
