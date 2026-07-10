@@ -17,6 +17,7 @@ function h(string $str): string
 function login()
 {
     header("Location: " . TEAM_SYSTEM2 . "/client/index.php");
+    exit;
 }
 
 //クライアントの$pageに遷移
@@ -45,9 +46,13 @@ function nextpage(string $page)
 //user_idがあるかどうかをチェックする関数
 function hasUserId(): bool
 {
-    if (!isset($_SESSION['user']['user_id'])) {
+    
+    // セッションに user_id があるか確認
+    if (empty($_SESSION['user_id'])) {
+        echo $_SESSION['user_id'];
+        // IDがなければログイン関数を呼び出す
         login();
-        exit;
+        // ここで exit してもいいですが、login() 内で exit しているので不要です
     }
     return true;
 }

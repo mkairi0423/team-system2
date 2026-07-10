@@ -9,6 +9,11 @@ $page = "food";
 include("template/header.php");
 include("template/sidebar.php");
 
+session_start();
+require_once __DIR__ . "/../../helpers/utils.php";
+require_once __DIR__ . "/../../helpers/def.php";
+hasUserId();
+
 // 手入力の初期値として「今日の日付」を設定
 $today = date('Y-m-d');
 ?>

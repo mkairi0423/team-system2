@@ -8,6 +8,8 @@
  * @param string $name ユーザーが入力したネームID
  * @return array|false 成功時: ユーザー情報の連想配列, 失敗・不在時: false
  */
+
+//index_serever.phpで使われている
 function user_login($name)
 {
     require_once __DIR__ . "/../../helpers/utils.php";

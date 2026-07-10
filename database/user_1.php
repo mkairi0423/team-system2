@@ -2,9 +2,9 @@
 <?php
 require_once __DIR__ . "/../server/DB_function/user_register_db.php";
 
-$name = "test2026";
-$email = "test@example.com";
-$password = "test2026";
+$name = "test2026"; // 1番目のユーザーのユーザーID
+$email = "test@example.com"; //  1番目のユーザーのemail
+$password = "test2026"; //  1番目のユーザーのpassword
 
 
-register($name, $email, $password);
+register($name, $email, $password);//認証なしでアカウント登録

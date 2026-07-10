@@ -8,7 +8,7 @@ include "template/sidebar.php";
 
 session_start();
 
-$_SESSION['user']['user_id'] = 1; //TODO:ここは消す
+// $_SESSION['user'] = 1; //TODO:ここは消す
 
 // データベース接続と関数の読み込み
 require_once __DIR__ . "/../../helpers/def.php";
@@ -18,9 +18,10 @@ require_once __DIR__ . "/../../server/page/get_alert_server.php";
 
 // ユーザーIDの存在を確認
 hasUserId();
+echo $_SESSION['user_id'];
 
 $pdo = getPDO();
-$userId = $_SESSION['user']['user_id'] ?? null;
+$userId = $_SESSION['user_id'] ?? null;
 
 // 🟢 期限が迫っている食材データをフル取得 (最大6件)
 $urgent_ingredients = getUrgentIngredients($pdo, $userId, 6);
