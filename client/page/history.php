@@ -26,6 +26,5 @@ hasUserId();
 
 </div>
 
-<!-- <script src="../js/history.js"></script> -->
 
 <?php include "template/footer.php"; ?>
