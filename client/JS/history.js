@@ -5,7 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadCookingHistory() {
     const container = document.getElementById('history-list-container');
-    const userId = 1; // 実際の環境に合わせてセッション等から取得してください
+
+    if (!container) {
+        console.warn("履歴表示用コンテナ (#history-list-container) が見つかりませんでした。");
+        return;
+    }
+    
+    // TODO:userIdをセッションからとってくる
+    const userId = 1; //実際の環境に合わせてセッション等から取得してください
 
     try {
         // 💡 履歴取得APIを叩く
