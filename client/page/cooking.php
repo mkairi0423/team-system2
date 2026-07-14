@@ -61,7 +61,8 @@ $dish_name = isset($_GET['dish']) ? $_GET['dish'] : '料理確認中...';
                         <span id="new-food-unit-display" class="unit-display">個</span>
                     </div>
 
-                    <button type="button" id="btn-add-ingredient" class="btn-add">
+                    <button type="button" id="btn-add-ingredient" 
+                    class="btn-add">
                         リストに追加
                     </button>
                 </div>

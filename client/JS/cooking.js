@@ -4,22 +4,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const userIdEl = document.getElementById("current-user-id");
     const userId = userIdEl ? userIdEl.value : 1;
 
-    // 要素の取得
     const ingredientsListContainer = document.getElementById("ingredients-target-list");
     const btnComplete = document.getElementById("btn-cooking-complete");
-    const confirmBtn = document.getElementById("btn-recipe-confirm"); // 調理開始ボタン
-
+    const confirmBtn = document.getElementById("btn-recipe-confirm");
     const newFoodSelect = document.getElementById("new-food-select");
     const newFoodQty = document.getElementById("new-food-qty");
     const newFoodUnitDisplay = document.getElementById("new-food-unit-display");
     const btnAddIngredient = document.getElementById("btn-add-ingredient");
 
+    // アコーディオン・数量ボタン系（ここで定義！）
     const accordionSection = document.querySelector(".add-extra-section");
     const accordionToggle = document.getElementById("accordion-toggle");
     const btnQtyMinus = document.getElementById("btn-qty-minus");
     const btnQtyPlus = document.getElementById("btn-qty-plus");
 
-    // 共通通信関数
     async function apiRequest(action, payload = {}) {
         const response = await fetch(`${API_URL}?action=${action}`, {
             method: 'POST',
@@ -35,34 +33,88 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ==========================================
-    // 1. 調理開始（提案確定）処理
-    // ==========================================
-    if (confirmBtn) {
-        confirmBtn.addEventListener("click", async (e) => {
-            const dish = e.currentTarget.dataset.dish;
-            if (!dish) return alert("エラー: 料理名が取得できません。");
-            if (!confirm(`「${dish}」の調理を開始しますか？`)) return;
+    // 調理開始処理
+    async function startCooking(items = []) {
+        const result = await apiRequest('start', { items: items });
+        if (result.success) renderIngredients(result.data);
+        else alert("開始エラー: " + result.message);
+    }
+
+    // リストの描画（item.unitを正しく使う）
+    function renderIngredients(items) {
+        if (!ingredientsListContainer) return;
+        ingredientsListContainer.innerHTML = "";
+
+        if (!items || items.length === 0) {
+            ingredientsListContainer.innerHTML = "<p style='color:#999;'>調理中の食材はありません。</p>";
+            if (btnComplete) btnComplete.disabled = true;
+            return;
+        }
+
+        if (btnComplete) btnComplete.disabled = false;
+
+        items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "ingredient-item";
+            // ★サーバーから送られた unit をそのまま表示
+            div.innerHTML = `
+                <div class="ingredient-info-wrapper">
+                    <span class="ingredient-name">${item.food}</span>
+                    <span class="ingredient-qty">(${Number(item.quantity)}${item.unit})</span>
+                </div>
+                <button class="btn-return-direct" data-id="${item.id}">↩️ 戻す</button>
+            `;
+            ingredientsListContainer.appendChild(div);
+        });
+    }
+
+    // 料理完了ボタン（遷移先パスを適宜修正してください）
+    if (btnComplete) {
+        btnComplete.addEventListener("click", async () => {
+            if (!confirm("料理を完了して履歴に保存しますか？")) return;
+            const recipeNameEl = document.getElementById("cooking-recipe-name");
+            const dishName = recipeNameEl ? recipeNameEl.innerText.replace("🍳 ", "").trim() : "不明な料理";
 
             try {
-                confirmBtn.disabled = true;
-                confirmBtn.innerText = "⏳ 準備中...";
-
-                const result = await apiRequest('get_needed_ingredients', { keyword: dish });
-                if (!result.success) throw new Error(result.message);
-
-                const cookingItems = result.data.map(foodName => ({
-                    id: null, food: foodName, use_quantity: null
-                }));
-
-                await startCooking(cookingItems);
+                btnComplete.disabled = true;
+                const result = await apiRequest('complete', { dish_name: dishName });
+                if (result.success) {
+                    window.location.href = '../../index.php'; // ★ここを正しい遷移先に
+                } else {
+                    throw new Error(result.message);
+                }
             } catch (error) {
-                alert("確定処理エラー: " + error.message);
-            } finally {
-                confirmBtn.disabled = false;
-                confirmBtn.innerText = `🍳 提案された「${dish}」で作る！`;
+                alert("保存エラー: " + error.message);
+                btnComplete.disabled = false;
             }
         });
+    }
+
+    // リスト追加処理（単位の取得を修正）
+    if (btnAddIngredient) {
+        btnAddIngredient.addEventListener("click", async () => {
+            const selectedOption = newFoodSelect.options[newFoodSelect.selectedIndex];
+            const foodName = newFoodSelect.value;
+            const qty = parseFloat(newFoodQty.value);
+            const unit = selectedOption ? (selectedOption.dataset.unit || '個') : '個';
+
+            if (!foodName || isNaN(qty)) return alert("食材と数量を入力してください");
+
+            const addItem = [{
+                food: foodName,
+                use_quantity: qty,
+                unit: unit // ★ここで選択された単位を渡す
+            }];
+
+            await startCooking(addItem);
+            await refreshList();
+        });
+    }
+
+    async function refreshList() {
+        if (!ingredientsListContainer) return;
+        const result = await apiRequest('get_list');
+        if (result.success) renderIngredients(result.data);
     }
 
     // ==========================================
@@ -126,15 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
         items.forEach(item => {
             const div = document.createElement("div");
             div.className = "ingredient-item";
-            const isMissing = item.original_storage_location_id === null;
+            
             div.innerHTML = `
-                <div class="ingredient-info-wrapper">
-                    <span class="ingredient-name">${item.food}</span>
-                    <span class="ingredient-qty">(${Number(item.quantity)}${item.unit})</span>
-                    ${isMissing ? "<span class='missing-badge'>⚠️ 不足</span>" : ""}
-                </div>
-                <button class="btn-return-direct" data-id="${item.id}">↩️ 戻す</button>
-            `;
+            <div class="ingredient-info-wrapper">
+                <span class="ingredient-name">${item.food}</span>
+                <span class="ingredient-qty">(${Number(item.quantity)}${item.unit})</span>
+            </div>
+            <button class="btn-return-direct" data-id="${item.id}">↩️ 戻す</button>
+        `;
             ingredientsListContainer.appendChild(div);
         });
     }
@@ -148,9 +199,13 @@ document.addEventListener("DOMContentLoaded", () => {
         accordionToggle.addEventListener("click", () => {
             accordionSection.classList.toggle("is-open");
         });
+    } else {
+        // コンソールに警告だけ出して、処理を中断しないようにします
+        console.warn("アコーディオン用の要素が見つかりませんでした。HTMLを確認してください。");
     }
 
     // ② 数量の「＋/－」ステップ計算制御
+    // 例：数量ボタン処理
     if (btnQtyMinus && btnQtyPlus && newFoodQty) {
         btnQtyMinus.addEventListener("click", () => {
             let currentVal = parseFloat(newFoodQty.value) || 0;
@@ -161,11 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         btnQtyPlus.addEventListener("click", () => {
             let currentVal = parseFloat(newFoodQty.value) || 0;
-            if (currentVal === 0.5) {
-                newFoodQty.value = 1;
-            } else {
-                newFoodQty.value = currentVal + 1;
-            }
+            newFoodQty.value = (currentVal === 0.5) ? 1 : (currentVal + 1);
         });
     }
 
