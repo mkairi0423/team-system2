@@ -17,7 +17,7 @@ require_once __DIR__ . "/../../server/page/get_alert_server.php";
 
 
 // ユーザーIDの存在を確認
-hasUserId();
+// hasUserId();
 // echo $_SESSION['user_id'];
 
 $pdo = getPDO();
