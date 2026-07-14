@@ -60,8 +60,11 @@ CREATE TABLE ingredient (
     unit VARCHAR(20) NOT NULL DEFAULT '個', -- 自由入力に変更
     expiration_date DATE NULL,
     term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
-    frozen_at DATE NULL,
+    status ENUM('未消費', '消費済', '廃棄') NOT NULL DEFAULT '未消費' COMMENT '食品ロス分析用ステータス',
+    frozen_at DATE NULL COMMENT '冷凍庫に保管（または移動）した日付。冷凍焼け計算の起点。',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT,
     FOREIGN KEY (storage_location_id) REFERENCES storage_location(location_id) ON DELETE RESTRICT
