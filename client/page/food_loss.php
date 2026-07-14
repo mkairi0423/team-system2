@@ -50,10 +50,8 @@ hasUserId();
 
     <div class="panel">
 
-        <h2>📊 食品カテゴリ別ロス率</h2>
-
+        <h2>📊 食品カテゴリ別ロス率</h2>\
         <br>
-
         <div class="analysis-item">
             <span>野菜・果物類</span>
             <div class="progress">

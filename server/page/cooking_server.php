@@ -54,6 +54,11 @@ switch ($action) {
         $user_id = isset($input['user_id']) ? intval($input['user_id']) : 0;
         $items = isset($input['items']) ? $input['items'] : [];
 
+        // 💡 ここに追加：新しい調理を開始する前に、そのユーザーの「調理中データ」を一旦全消去する
+        $stmt_clear = $pdo->prepare("DELETE FROM cooking_now WHERE user_id = :user_id");
+        $stmt_clear->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt_clear->execute();
+
         if ($user_id <= 0) {
             echo json_encode(['success' => false, 'message' => 'ユーザーIDが不正です。']);
             exit;
@@ -142,20 +147,60 @@ switch ($action) {
     // 調理完了処理
     case 'complete':
         $input = json_decode(file_get_contents('php://input'), true);
-        $user_id = isset($input['user_id']) ? intval($input['user_id']) : 0;
+        $user_id = $input['user_id'];
+        $dish_name = $input['dish_name'];
 
         try {
-            // 在庫連動等の後に一時データを削除
-            $sql = "DELETE FROM cooking_now WHERE user_id = :user_id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $stmt->execute();
+            $pdo->beginTransaction();
 
-            echo json_encode(['success' => true, 'message' => '調理完了、データを更新しました。']);
-        } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => '完了処理失敗: ' . $e->getMessage()]);
+            // 1. 親テーブルへ保存
+            $sql_h = "INSERT INTO cooking_history (user_id, dish_name) VALUES (:user_id, :dish_name)";
+            $stmt_h = $pdo->prepare($sql_h);
+            $stmt_h->execute([':user_id' => $user_id, ':dish_name' => $dish_name]);
+            $history_id = $pdo->lastInsertId();
+
+            // 2. 子テーブルへ保存（★ここが最も重要）
+            // テーブル定義通り 'used_food_name' を指定しています
+            $sql_i = "INSERT INTO cooking_history_ingredient (history_id, category_id, used_food_name, quantity, unit)
+                  SELECT :history_id, IFNULL(i.category_id, 1), cn.food, cn.quantity, cn.unit
+                  FROM cooking_now cn
+                  LEFT JOIN ingredient i ON cn.original_ingredient_id = i.ingredient_id
+                  WHERE cn.user_id = :user_id";
+
+            $stmt_i = $pdo->prepare($sql_i);
+            $stmt_i->execute([':history_id' => $history_id, ':user_id' => $user_id]);
+
+            // 3. 調理中リストを削除
+            $stmt_d = $pdo->prepare("DELETE FROM cooking_now WHERE user_id = :user_id");
+            $stmt_d->execute([':user_id' => $user_id]);
+
+            $pdo->commit();
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
-        exit;
+        break;
+        
+    // 料理の履歴
+    case 'get_history':
+        $input = json_decode(file_get_contents('php://input'), true);
+        // GETパラメータから取得する場合
+        $user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+
+        // 💡 親と子を結合して、全データを取得するSQL
+        $sql = "SELECT h.dish_name, h.cooked_at, hi.used_food_name, hi.quantity, hi.unit
+            FROM cooking_history h
+            JOIN cooking_history_ingredient hi ON h.history_id = hi.history_id
+            WHERE h.user_id = :user_id
+            ORDER BY h.cooked_at DESC";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode(['success' => true, 'data' => $data]);
         break;
 
     default:
