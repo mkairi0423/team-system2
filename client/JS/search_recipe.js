@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- 検索処理（既存の処理） ---
+    // 検索処理を簡略化
     searchBtn.addEventListener("click", async () => {
         const keyword = keywordInput.value.trim();
         if (!keyword) return alert("キーワードを入力してください");
@@ -43,56 +43,81 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const response = await fetch(`../../server/page/get_recipe_ingredients.php?user_id=1&keyword=${encodeURIComponent(keyword)}`);
-            let ingredientData = [];
+            const data = await response.json();
 
-            if (response.status === 429) {
-                ingredientData = [
-                    { id: 991, food_name: "テストキャベツ", quantity: 1, unit: "個", in_stock: true },
-                    { id: 992, food_name: "テスト豚ひき肉", quantity: 200, unit: "g", in_stock: true }
-                ];
-            } else {
-                const data = await response.json();
-                if (!data.success) throw new Error(data.message);
-                ingredientData = data.ingredients;
-            }
+            if (!data.success) throw new Error(data.message || "検索に失敗しました");
+
+            const ingredientData = data.ingredients;
 
             container.innerHTML = ingredientData.map(item => `
-                <div class="ingredient-row" style="margin: 15px 0; border-bottom: 1px solid #eee;">
-                    <input type="checkbox" name="ingredients[]" value="${item.id}" ${item.in_stock ? "checked" : ""}>
-                    <label><strong>${item.food_name}</strong> (在庫: ${item.quantity}${item.unit})</label>
-                    <input type="number" name="qty_val[]" value="${item.quantity}" max="${item.quantity}" step="0.1" oninput="validateQty(this)">
-                    <span>${item.unit}</span>
-                    <button type="button" class="ratio-btn" data-ratio="1">MAX</button>
-                    <button type="button" class="ratio-btn" data-ratio="0.5">半分</button>
-                    <button type="button" class="ratio-btn" data-ratio="0.33">1/3</button>
-                </div>
-            `).join('');
+            <div class="ingredient-row" style="margin: 15px 0; border-bottom: 1px solid #eee;">
+                <input type="checkbox" name="ingredients[]" value="${item.id}" ${item.in_stock ? "checked" : ""}>
+                <label><strong>${item.food_name}</strong> (在庫: ${item.quantity}${item.unit})</label>
+                <input type="number" name="qty_val[]" value="${item.quantity}" max="${item.quantity}" step="0.1" oninput="validateQty(this)">
+                <span>${item.unit}</span>
+                <button type="button" class="ratio-btn" data-ratio="1">MAX</button>
+                <button type="button" class="ratio-btn" data-ratio="0.5">半分</button>
+            </div>
+        `).join('');
         } catch (err) {
             container.innerHTML = `<p style="color:red;">エラー: ${err.message}</p>`;
         }
     });
 
-    // --- 【重要】料理開始ボタン：他システム連携用データの構築 ---
-    if (startCookingBtn) {
-        startCookingBtn.addEventListener("click", () => {
-            const checkedInputs = document.querySelectorAll('input[name="ingredients[]"]:checked');
-            if (checkedInputs.length === 0) return alert("食材を選択してください");
+    
+    // search_recipe.js 内の startCookingBtn の送信処理
+    startCookingBtn.addEventListener("click", async () => {
+        const checkedInputs = document.querySelectorAll('input[name="ingredients[]"]:checked');
+        if (checkedInputs.length === 0) return alert("食材を選択してください");
 
-            const selectedItems = Array.from(checkedInputs).map(input => {
-                const row = input.closest(".ingredient-row");
-                const qtyInput = row.querySelector('input[name="qty_val[]"]');
-                return {
-                    id: input.value,
-                    // food_nameは強固に取得（他のシステムがIDでなく名前を参照する場合のため）
-                    food_name: row.querySelector('label strong').textContent,
-                    quantity: parseFloat(qtyInput.value) || 0,
-                    unit: row.querySelector('span').textContent.trim()
-                };
+        const selectedItems = Array.from(checkedInputs).map(input => {
+            const row = input.closest(".ingredient-row");
+            const qtyInput = row.querySelector('input[name="qty_val[]"]');
+
+            // 【修正点】ここで「本当に有効なIDかどうか」を確認する
+            // もしIDが "null" という文字列や、テスト用の怪しい値なら null に変換して送信する
+            let ingId = input.value;
+            if (ingId === "null" || ingId === "" || isNaN(ingId)) {
+                ingId = null;
+            }
+
+            return {
+                original_ingredient_id: ingId, // IDが無効なら null になる
+                food: row.querySelector('label strong').textContent,
+                use_quantity: parseFloat(qtyInput.value) || 0,
+                unit: row.querySelector('span').textContent.trim()
+            };
+        });
+
+        // サーバーへ送信
+        const response = await fetch('../../server/page/cooking_server.php?action=start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: 1,
+                items: selectedItems
+            })
+        });
+
+        // 💡 このあと、fetch を使って cooking_server.php に送信する処理を追加します
+        try {
+            const response = await fetch('../../server/page/cooking_server.php?action=start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: 1, // ★ログインユーザーIDに書き換えてください
+                    items: selectedItems
+                })
             });
 
-            // システム全体で参照するキー名: cooking_items
-            localStorage.setItem("cooking_items", JSON.stringify(selectedItems));
-            window.location.href = "cooking.php";
-        });
-    }
+            const result = await response.json();
+            if (result.success) {
+                window.location.href = "cooking.php"; // 成功したら遷移
+            } else {
+                alert("開始エラー: " + result.message);
+            }
+        } catch (err) {
+            alert("通信エラー: " + err.message);
+        }
+    });
 });
