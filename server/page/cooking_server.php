@@ -170,7 +170,28 @@ switch ($action) {
             $stmt_i = $pdo->prepare($sql_i);
             $stmt_i->execute([':history_id' => $history_id, ':user_id' => $user_id]);
 
-            // 3. 調理中リストを削除
+            // 3. (順序変更) 使用した食材の在庫を減らす
+            // 調理中リストを削除する前に、そのデータを使って在庫を更新する必要があります
+            $stmt_list = $pdo->prepare("SELECT original_ingredient_id, quantity FROM cooking_now 
+                                        WHERE user_id = :user_id AND original_ingredient_id IS NOT NULL");
+            $stmt_list->execute([':user_id' => $user_id]);
+            $used_items = $stmt_list->fetchAll();
+
+            //食材の数量がマイナスを下回ることない
+            $sql_update = "UPDATE ingredient 
+               SET quantity = GREATEST(0, quantity - :qty) 
+               WHERE ingredient_id = :id AND user_id = :user_id";
+            $stmt_update = $pdo->prepare($sql_update);
+
+            foreach ($used_items as $item) {
+                $stmt_update->execute([
+                    ':qty' => $item['quantity'],
+                    ':id' => $item['original_ingredient_id'],
+                    ':user_id' => $user_id
+                ]);
+            }
+
+            // 4. (順序変更) 調理中リストを削除
             $stmt_d = $pdo->prepare("DELETE FROM cooking_now WHERE user_id = :user_id");
             $stmt_d->execute([':user_id' => $user_id]);
 
