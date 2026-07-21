@@ -13,7 +13,7 @@ require_once __DIR__ . "/../../helpers/def.php";
 hasUserId();
 
 // セッションからログイン中のユーザーIDを取得
-$user_id = $_SESSION['user']['user_id'] ?? $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? null;
+$user_id = $_SESSION['user_id'];
 
 // ====================================================
 // 1. 変数の初期化（DB接続失敗や空データでもWarningを出さない防波堤）

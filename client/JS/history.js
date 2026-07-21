@@ -7,7 +7,6 @@ async function loadCookingHistory() {
     const container = document.getElementById('history-list-container');
 
     if (!container) {
-        console.warn("履歴表示用コンテナ (#history-list-container) が見つかりませんでした。");
         return;
     }
     

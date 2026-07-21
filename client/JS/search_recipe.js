@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- 検索処理（既存の処理） ---
+    // 検索処理を簡略化
     searchBtn.addEventListener("click", async () => {
         const keyword = keywordInput.value.trim();
         if (!keyword) return alert("キーワードを入力してください");
@@ -42,18 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const response = await fetch(`../../server/page/get_recipe_ingredients.php?user_id=1&keyword=${encodeURIComponent(keyword)}`);
-            let ingredientData = [];
+            const data = await response.json();
 
-            if (response.status === 429) {
-                ingredientData = [
-                    { id: 991, food_name: "テストキャベツ", quantity: 1, unit: "個", in_stock: true },
-                    { id: 992, food_name: "テスト豚ひき肉", quantity: 200, unit: "g", in_stock: true }
-                ];
-            } else {
-                const data = await response.json();
-                if (!data.success) throw new Error(data.message);
-                ingredientData = data.ingredients;
-            }
+            if (!data.success) throw new Error(data.message || "検索に失敗しました");
+
+            const ingredientData = data.ingredients;
 
             container.innerHTML = ingredientData.map(item => {
                 const qty = parseFloat(item.quantity) || 0;
@@ -126,5 +119,26 @@ if (startCookingBtn) {
             // 💡 修正：URLのクエリパラメータに料理名（キーワード）を付けて渡す
             window.location.href = `cooking.php?dish=${encodeURIComponent(searchKeyword)}`;
         });
-    }
+
+        // 💡 このあと、fetch を使って cooking_server.php に送信する処理を追加します
+        try {
+            const response = await fetch('../../server/page/cooking_server.php?action=start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: 1, // ★ログインユーザーIDに書き換えてください
+                    items: selectedItems
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                window.location.href = "cooking.php"; // 成功したら遷移
+            } else {
+                alert("開始エラー: " + result.message);
+            }
+        } catch (err) {
+            alert("通信エラー: " + err.message);
+        }
+    });
 });

@@ -2,6 +2,7 @@
 // ===================================================
 // page/food_register.php （完全版UI・自動解析化に合わせたスッキリ修正版）
 // ===================================================
+session_start();
 
 $title = "食材登録";
 $page = "food";
@@ -9,7 +10,6 @@ $page = "food";
 include("template/header.php");
 include("template/sidebar.php");
 
-session_start();
 require_once __DIR__ . "/../../helpers/utils.php";
 require_once __DIR__ . "/../../helpers/def.php";
 hasUserId();
@@ -123,22 +123,68 @@ $today = date('Y-m-d');
 
     <div class="hero">
         <h2>📦 バーコード読み取り</h2>
-        <p>商品バーコードを読み取って食材を登録します。</p>
+        <p>商品のバーコードをカメラで読み取り、食材を登録します。</p>
     </div>
 
     <div class="panel">
 
         <h2>バーコードスキャン</h2>
 
-        <br>
+        <!-- カメラ映像 -->
+        <div class="camera-area">
+            <video id="video" autoplay playsinline></video>
+        </div>
 
-        <input type="file" accept="image/*">
+        <p class="guide">
+            バーコードを枠内に合わせてください。
+        </p>
 
-        <button class="btn">
-            バーコードを読み取る
+        <button type="button" class="btn" id="startScan">
+            📷 スキャン開始
         </button>
 
-    </div>
-</div>
+        <button type="button" class="btn btn-secondary" id="stopScan">
+            停止
+        </button>
 
-<?php include("template/footer.php"); ?>
+        <div class="result">
+
+            <h3>読み取り結果</h3>
+
+            <p id="barcodeResult">
+                まだ読み取っていません
+            </p>
+
+
+            <!-- 商品情報表示 -->
+            <div id="productResult">
+
+            </div>
+
+
+            <!-- PHPへ送るJANコード -->
+            <input type="hidden" id="barcode" name="barcode">
+
+
+            <br>
+
+
+            <button type="button" class="btn" id="registerBarcode">
+                登録する
+            </button>
+
+
+        </div>
+
+    </div>
+
+    <!-- ZXing -->
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+
+    <!-- バーコード読み取り -->
+    <script src="../js/barcode.js"></script>
+
+    <!-- DB登録処理 -->
+    <script src="../js/food_register.js"></script>
+
+    <?php include("template/footer.php"); ?>

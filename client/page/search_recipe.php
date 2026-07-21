@@ -47,8 +47,8 @@ hasUserId();
             </form>
 
             <div class="action-btns">
-                <button id="manualAddBtn" class="btn-add" type="button">➕ リストにない食材を自分の在庫から追加</button>
-                <button id="startCookingBtn" class="btn-submit" type="button">🍳 この食材で料理開始！</button>
+                <button id="manualAddBtn" class="btn-add" type="button">➕ 食材を在庫から追加</button>
+                <button id="startCookingBtn" class="btn-submit" type="button">🍳 この食材で調理！</button>
             </div>
         </div>
     </div>
