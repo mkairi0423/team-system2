@@ -152,7 +152,7 @@ hasUserId();
                     const isNeeded = ing.status === '要買い足し' || ing.id === null;
                     const labelClass = isNeeded ? 'status-needed' : 'status-stock';
                     const labelText = isNeeded ? '⚠️不足' : '庫内あり';
-                    
+
                     return `
                     <li style="${isNeeded ? 'color: #c2410c; font-weight: 500;' : ''}">
                         <strong>${escapeHtml(ing.name)}</strong>：
@@ -236,8 +236,8 @@ hasUserId();
             const cookingItems = recipe.used_ingredients.map(ing => {
                 return {
                     id: ing.id, // 在庫ありなら数値、買い足しなら null
-                    food: ing.name, // 食材名
-                    use_quantity: ing.quantity // 必要な数量
+                    food_name: ing.name, // 食材名
+                    quantity: ing.quantity // 数量
                 };
             });
 

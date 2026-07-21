@@ -16,7 +16,7 @@ async function loadCookingHistory() {
 
     try {
         // 💡 履歴取得APIを叩く
-        const response = await fetch(`../../server/page/cooking_server.php?action=get_history&user_id=${userId}`);
+      const response = await fetch(`../../server/page/cooking_server.php?action=get_history&user_id=${userId}`);
         if (!response.ok) throw new Error('履歴の取得に失敗しました。');
 
         const result = await response.json();
