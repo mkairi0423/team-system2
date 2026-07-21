@@ -17,8 +17,12 @@
 @import url("setting.css");
 @import url("selection_AI_recipe.css");
 @import url("history.css");
+<<<<<<< HEAD
+@import url("fridge.css");
+=======
 @import url("cooking.css");
 @import url("barcode.css");
+>>>>>>> f52e4ec395b3d4506fb4d3427424b9ff5b607c6d
 
 /* 共通エリア */
 @import url("footer.css");
