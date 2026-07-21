@@ -1,5 +1,4 @@
-//自分でレシピを検索
-
+//自分でレシピ来を検索
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchBtn = document.getElementById("recipeSearchBtn");
@@ -92,7 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- 【重要】料理開始ボタン：他システム連携用データの構築 ---
-// --- 【重要】料理開始ボタン：他システム連携用データの構築 ---
 if (startCookingBtn) {
         startCookingBtn.addEventListener("click", () => {
             const checkedInputs = document.querySelectorAll('input[name="ingredients[]"]:checked');
@@ -119,26 +117,5 @@ if (startCookingBtn) {
             // 💡 修正：URLのクエリパラメータに料理名（キーワード）を付けて渡す
             window.location.href = `cooking.php?dish=${encodeURIComponent(searchKeyword)}`;
         });
-
-        // 💡 このあと、fetch を使って cooking_server.php に送信する処理を追加します
-        try {
-            const response = await fetch('../../server/page/cooking_server.php?action=start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: 1, // ★ログインユーザーIDに書き換えてください
-                    items: selectedItems
-                })
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                window.location.href = "cooking.php"; // 成功したら遷移
-            } else {
-                alert("開始エラー: " + result.message);
-            }
-        } catch (err) {
-            alert("通信エラー: " + err.message);
-        }
-    });
+    }
 });
