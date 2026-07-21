@@ -1,7 +1,7 @@
 SET NAMES utf8mb4;
 
 -- ====================================================================
--- 1. 古いテーブルの削除（初期化用）
+-- 1. 古いテーブルの削除（完全リセット）
 -- ====================================================================
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS favorite_recipe_ingredient;
@@ -15,53 +15,50 @@ DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user;
 SET FOREIGN_KEY_CHECKS = 1;
 
-
 -- ====================================================================
 -- 2. 基本・マスタテーブル作成
 -- ====================================================================
 
--- ユーザー管理テーブル
+-- ユーザー管理
 CREATE TABLE user (
     user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE COMMENT 'ユーザー名',
+    name VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    verification_token VARCHAR(64) NULL COMMENT 'メール認証用トークン',
-    token_expires DATETIME NULL COMMENT 'トークン有効期限',
-    is_verified TINYINT(1) DEFAULT 0 COMMENT '認証ステータス(0:未認証, 1:認証済)',
+    verification_token VARCHAR(64) NULL,
+    token_expires DATETIME NULL,
+    is_verified TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 食材カテゴリマスタ ★冷凍限界日数を追加
+-- 食材カテゴリ
 CREATE TABLE category (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(50) NOT NULL,
-    frozen_expiry_days INT NULL COMMENT '冷凍保存時の品質保持目安日数（例:ひき肉なら14日、豚肉なら30日など）',
+    frozen_expiry_days INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 保管場所マスタ ★冷凍環境フラグを追加
+-- 保管場所
 CREATE TABLE storage_location (
     location_id INT AUTO_INCREMENT PRIMARY KEY,
-    location_name VARCHAR(50) NOT NULL COMMENT '冷蔵庫、冷凍庫、常温、野菜室 など',
-    is_frozen TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1:冷凍環境（冷凍焼け計算対象）、0:非冷凍環境'
+    location_name VARCHAR(50) NOT NULL,
+    is_frozen TINYINT(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
 -- ====================================================================
--- 3. 在庫・調理中管理テーブル
+-- 3. 在庫・調理中管理（DECIMAL(10,2)とVARCHAR(20)で柔軟に対応）
 -- ====================================================================
 
--- 🛒 在庫食材管理テーブル ★冷凍開始日を追加
 CREATE TABLE ingredient (
     ingredient_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     category_id INT NOT NULL,
     storage_location_id INT NOT NULL, 
     food_name VARCHAR(100) NOT NULL,
-    quantity INT NULL COMMENT '数量',
-    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個',
-    expiration_date DATE NULL COMMENT '通常の賞味・消費期限（主に冷蔵・常温用）',
+    quantity DECIMAL(10,2) NULL, -- 小数点対応
+    unit VARCHAR(20) NOT NULL DEFAULT '個', -- 自由入力に変更
+    expiration_date DATE NULL,
     term_type ENUM('賞味期限', '消費期限') NOT NULL DEFAULT '賞味期限',
     status ENUM('未消費', '消費済', '廃棄') NOT NULL DEFAULT '未消費' COMMENT '食品ロス分析用ステータス',
     frozen_at DATE NULL COMMENT '冷凍庫に保管（または移動）した日付。冷凍焼け計算の起点。',
@@ -73,62 +70,47 @@ CREATE TABLE ingredient (
     FOREIGN KEY (storage_location_id) REFERENCES storage_location(location_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 🍳 調理中一時管理テーブル
 CREATE TABLE cooking_now (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    -- 💡 NULL を許可（NOT NULL を削除）
     original_ingredient_id BIGINT NULL, 
     food VARCHAR(100) NOT NULL,
-    quantity INT NULL COMMENT '使用する数量',
-    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個',
-    -- 💡 NULL を許可（NOT NULL を削除）
+    quantity DECIMAL(10,2) NULL, -- 小数点対応
+    unit VARCHAR(20) NOT NULL DEFAULT '個', -- 自由入力に変更
     original_storage_location_id INT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    -- 👤 ユーザーIDの紐付け（これは必須のまま）
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
-    
-    -- 💡 外部キー制約の削除、または「ON DELETE SET NULL」への変更
-    -- ※ 在庫が削除されても、調理中リスト（cooking_now）のレコードごと消えないように SET NULL にするのが安全です。
     FOREIGN KEY (original_ingredient_id) REFERENCES ingredient(ingredient_id) ON DELETE SET NULL,
     FOREIGN KEY (original_storage_location_id) REFERENCES storage_location(location_id) ON DELETE SET NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
 -- ====================================================================
--- 4. 📜 調理履歴テーブル
+-- 4. 📜 調理履歴
 -- ====================================================================
 
--- 履歴（親）
 CREATE TABLE cooking_history (
     history_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    dish_name VARCHAR(255) NOT NULL COMMENT '作った料理名',
+    dish_name VARCHAR(255) NOT NULL,
     cooked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 履歴（子）
 CREATE TABLE cooking_history_ingredient (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     history_id BIGINT NOT NULL,
     category_id INT NOT NULL,
-    used_food_name VARCHAR(100) NOT NULL COMMENT '実際に使った具体的な食材名',
-    quantity INT NULL,
-    unit VARCHAR(20) NOT NULL DEFAULT '個',
-    
+    used_food_name VARCHAR(100) NOT NULL,
+    quantity DECIMAL(10,2) NULL, -- 小数点対応
+    unit VARCHAR(20) NOT NULL DEFAULT '個', -- 自由入力に変更
     FOREIGN KEY (history_id) REFERENCES cooking_history(history_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
 -- ====================================================================
--- 5. ⭐️ お気に入りレシピテーブル
+-- 5. ⭐️ お気に入りレシピ
 -- ====================================================================
 
--- お気に入り（親）
 CREATE TABLE favorite_recipe (
     recipe_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -137,31 +119,19 @@ CREATE TABLE favorite_recipe (
     memo TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- お気に入り（子）
 CREATE TABLE favorite_recipe_ingredient (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     recipe_id BIGINT NOT NULL,
     category_id INT NOT NULL,
     food_name_hint VARCHAR(100) NULL,
-    quantity INT NULL,
-    unit ENUM('g', '個', '本', '玉', 'パック', '枚', 'ml') NOT NULL DEFAULT '個',
-    
+    quantity DECIMAL(10,2) NULL, -- 小数点対応
+    unit VARCHAR(20) NOT NULL DEFAULT '個', -- 自由入力に変更
     FOREIGN KEY (recipe_id) REFERENCES favorite_recipe(recipe_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-
--- ====================================================================
--- 6. パフォーマンス向上のためのインデックス（追加推奨）
--- ====================================================================
+-- パフォーマンス向上のインデックス
 ALTER TABLE ingredient ADD INDEX idx_ingredient_frozen (storage_location_id, frozen_at);
-
--- ====================================================================
--- 7. 小数点対応のための型変更（追加）
--- ====================================================================
-ALTER TABLE ingredient MODIFY quantity DECIMAL(10,2) NULL;
-ALTER TABLE cooking_now MODIFY quantity DECIMAL(10,2) NULL;

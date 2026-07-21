@@ -2,6 +2,7 @@
 // ===================================================
 // page/food_register.php （完全版UI・自動解析化に合わせたスッキリ修正版）
 // ===================================================
+session_start();
 
 $title = "食材登録";
 $page = "food";
@@ -9,7 +10,6 @@ $page = "food";
 include("template/header.php");
 include("template/sidebar.php");
 
-session_start();
 require_once __DIR__ . "/../../helpers/utils.php";
 require_once __DIR__ . "/../../helpers/def.php";
 hasUserId();
@@ -29,7 +29,7 @@ $today = date('Y-m-d');
             <h3>📷 レシート食材重量逆算スキャナー</h3>
             <br>
             <p>
-                レシートの写真を撮影するか、画像を選択すると、<br>
+                レシートの写真または画像を選択すると、<br>
                 自動的にAIによる解析がスタートします。
             </p>
             <br>
@@ -43,11 +43,9 @@ $today = date('Y-m-d');
                 id="receipt-file"
                 style="display: none;">
 
-            <span id="file-name" style="margin-left: 10px; color: #666; font-size: 0.9em;">選択されていません</span>
-            <br><br>
 
             <div id="result" style="margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; min-height: 60px;">
-                ここに解析結果（食材名・重量・期限・保存場所など）が表示されます。上に画像を設定すると自動で解析が始まります。
+                ここに解析結果（食材名・重量・期限・保存場所など）が表示されます。
             </div>
         </div>
 
@@ -125,22 +123,68 @@ $today = date('Y-m-d');
 
     <div class="hero">
         <h2>📦 バーコード読み取り</h2>
-        <p>商品のバーコードを読み取って食材を登録します。</p>
+        <p>商品のバーコードをカメラで読み取り、食材を登録します。</p>
     </div>
 
     <div class="panel">
 
         <h2>バーコードスキャン</h2>
 
-        <br>
+        <!-- カメラ映像 -->
+        <div class="camera-area">
+            <video id="video" autoplay playsinline></video>
+        </div>
 
-        <input type="file" accept="image/*">
+        <p class="guide">
+            バーコードを枠内に合わせてください。
+        </p>
 
-        <button class="btn">
-            バーコードを読み取る
+        <button type="button" class="btn" id="startScan">
+            📷 スキャン開始
         </button>
 
-    </div>
-</div>
+        <button type="button" class="btn btn-secondary" id="stopScan">
+            停止
+        </button>
 
-<?php include("template/footer.php"); ?>
+        <div class="result">
+
+            <h3>読み取り結果</h3>
+
+            <p id="barcodeResult">
+                まだ読み取っていません
+            </p>
+
+
+            <!-- 商品情報表示 -->
+            <div id="productResult">
+
+            </div>
+
+
+            <!-- PHPへ送るJANコード -->
+            <input type="hidden" id="barcode" name="barcode">
+
+
+            <br>
+
+
+            <button type="button" class="btn" id="registerBarcode">
+                登録する
+            </button>
+
+
+        </div>
+
+    </div>
+
+    <!-- ZXing -->
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+
+    <!-- バーコード読み取り -->
+    <script src="../js/barcode.js"></script>
+
+    <!-- DB登録処理 -->
+    <script src="../js/food_register.js"></script>
+
+    <?php include("template/footer.php"); ?>

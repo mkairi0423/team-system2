@@ -5,11 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadCookingHistory() {
     const container = document.getElementById('history-list-container');
-    const userId = 1; // 実際の環境に合わせてセッション等から取得してください
+
+    if (!container) {
+        return;
+    }
+    
+    // TODO:userIdをセッションからとってくる
+    const userId = 1; //実際の環境に合わせてセッション等から取得してください
 
     try {
         // 💡 履歴取得APIを叩く
-        const response = await fetch(`../../server/page/cooking_server.php?action=get_history&user_id=${userId}`);
+      const response = await fetch(`../../server/page/cooking_server.php?action=get_history&user_id=${userId}`);
         if (!response.ok) throw new Error('履歴の取得に失敗しました。');
 
         const result = await response.json();

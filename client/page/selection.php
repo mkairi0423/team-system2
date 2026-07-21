@@ -75,14 +75,14 @@ hasUserId();
     <div id="recipe-list-container"></div>
 </div>
 
-/*--------------------------------------------------------------------
+<!---------------------------------------------------------------------
 ここでセッションからuser_idを取得してきてサーバー側に渡している
---------------------------------------------------------------------*/
+--------------------------------------------------------------------->
 
 <input type="hidden" id="current-user-id" value="<?= htmlspecialchars($_SESSION['user_id'], ENT_QUOTES) ?>">
 
-/*----------------------------------------------------------------
-------------------------------------------------------------------*/
+<!-- ---------------------------------------------------------------- 
+-------------------------------------------------------------------->
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -152,7 +152,7 @@ hasUserId();
                     const isNeeded = ing.status === '要買い足し' || ing.id === null;
                     const labelClass = isNeeded ? 'status-needed' : 'status-stock';
                     const labelText = isNeeded ? '⚠️不足' : '庫内あり';
-                    
+
                     return `
                     <li style="${isNeeded ? 'color: #c2410c; font-weight: 500;' : ''}">
                         <strong>${escapeHtml(ing.name)}</strong>：
@@ -236,8 +236,8 @@ hasUserId();
             const cookingItems = recipe.used_ingredients.map(ing => {
                 return {
                     id: ing.id, // 在庫ありなら数値、買い足しなら null
-                    food: ing.name, // 食材名
-                    use_quantity: ing.quantity // 必要な数量
+                    food_name: ing.name, // 食材名
+                    quantity: ing.quantity // 数量
                 };
             });
 
@@ -264,7 +264,8 @@ hasUserId();
             }
 
             // 登録が成功したら次の「調理中・確認画面」へ遷移
-            window.location.href = 'cooking.php';
+            const encodedDish = encodeURIComponent(recipe.recipe_name); // 料理名をエンコード
+            window.location.href = `cooking.php?dish=${encodedDish}`; // パラメータを付与して遷移
 
         } catch (error) {
             console.error('調理開始エラー:', error);
