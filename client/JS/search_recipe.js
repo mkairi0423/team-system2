@@ -1,4 +1,3 @@
-
 //自分でレシピを検索
 
 
@@ -26,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const ratio = parseFloat(btn.dataset.ratio);
             const row = btn.closest(".ingredient-row");
             const input = row.querySelector('input[name="qty_val[]"]');
-            if (input) {
+            if (input && !input.disabled) {
                 const max = parseFloat(input.getAttribute('max')) || 0;
                 input.value = (max * ratio).toFixed(2).replace(/\.?0+$/, "");
             }
@@ -49,54 +48,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const ingredientData = data.ingredients;
 
-            container.innerHTML = ingredientData.map(item => `
-            <div class="ingredient-row" style="margin: 15px 0; border-bottom: 1px solid #eee;">
-                <input type="checkbox" name="ingredients[]" value="${item.id}" ${item.in_stock ? "checked" : ""}>
-                <label><strong>${item.food_name}</strong> (在庫: ${item.quantity}${item.unit})</label>
-                <input type="number" name="qty_val[]" value="${item.quantity}" max="${item.quantity}" step="0.1" oninput="validateQty(this)">
-                <span>${item.unit}</span>
-                <button type="button" class="ratio-btn" data-ratio="1">MAX</button>
-                <button type="button" class="ratio-btn" data-ratio="0.5">半分</button>
-            </div>
-        `).join('');
+            container.innerHTML = ingredientData.map(item => {
+                const qty = parseFloat(item.quantity) || 0;
+                
+                // 💡 在庫が0以下の場合は絶対に選択させないためのフラグ
+                const isDisabled = qty <= 0;
+                const checkedAttr = (!isDisabled && item.in_stock) ? "checked" : "";
+                const disabledAttr = isDisabled ? "disabled" : "";
+                
+                // 💡 スタイルでクリック自体を完全に無効化する (pointer-events: none)
+                const rowStyle = isDisabled 
+                    ? "margin: 15px 0; border-bottom: 1px solid #eee; opacity: 0.5; pointer-events: none;" 
+                    : "margin: 15px 0; border-bottom: 1px solid #eee;";
+
+                return `
+                    <div class="ingredient-row" style="${rowStyle}">
+                        <input type="checkbox" name="ingredients[]" value="${item.id}" ${checkedAttr} ${disabledAttr} ${isDisabled ? 'checked="false"' : ''}>
+                        <label><strong>${item.food_name}</strong> (在庫: ${item.quantity}${item.unit})</label>
+                        <input type="number" name="qty_val[]" value="${item.quantity}" max="${item.quantity}" step="0.1" oninput="validateQty(this)" ${disabledAttr}>
+                        <span>${item.unit}</span>
+                        <button type="button" class="ratio-btn" data-ratio="1" ${disabledAttr}>MAX</button>
+                        <button type="button" class="ratio-btn" data-ratio="0.5" ${disabledAttr}>半分</button>
+                        <button type="button" class="ratio-btn" data-ratio="0.33" ${disabledAttr}>1/3</button>
+                    </div>
+                `;
+            }).join('');
+
+            // 💡 さらに念のため、生成された要素の中から在庫0のチェックボックスの .checked を強制的に false に書き換える
+            container.querySelectorAll('.ingredient-row').forEach(row => {
+                const checkbox = row.querySelector('input[name="ingredients[]"]');
+                const qtyInput = row.querySelector('input[name="qty_val[]"]');
+                if (qtyInput && parseFloat(qtyInput.value) <= 0) {
+                    if (checkbox) {
+                        checkbox.checked = false;
+                        checkbox.disabled = true;
+                    }
+                }
+            });
+
         } catch (err) {
             container.innerHTML = `<p style="color:red;">エラー: ${err.message}</p>`;
         }
     });
 
-    
-    // search_recipe.js 内の startCookingBtn の送信処理
-    startCookingBtn.addEventListener("click", async () => {
-        const checkedInputs = document.querySelectorAll('input[name="ingredients[]"]:checked');
-        if (checkedInputs.length === 0) return alert("食材を選択してください");
+    // --- 【重要】料理開始ボタン：他システム連携用データの構築 ---
+// --- 【重要】料理開始ボタン：他システム連携用データの構築 ---
+if (startCookingBtn) {
+        startCookingBtn.addEventListener("click", () => {
+            const checkedInputs = document.querySelectorAll('input[name="ingredients[]"]:checked');
+            if (checkedInputs.length === 0) return alert("食材を選択してください");
 
-        const selectedItems = Array.from(checkedInputs).map(input => {
-            const row = input.closest(".ingredient-row");
-            const qtyInput = row.querySelector('input[name="qty_val[]"]');
+            const searchKeyword = keywordInput ? keywordInput.value.trim() : '手作り料理';
 
-            // 【修正点】ここで「本当に有効なIDかどうか」を確認する
-            // もしIDが "null" という文字列や、テスト用の怪しい値なら null に変換して送信する
-            let ingId = input.value;
-            if (ingId === "null" || ingId === "" || isNaN(ingId)) {
-                ingId = null;
-            }
+            const selectedItems = Array.from(checkedInputs).map(input => {
+                const row = input.closest(".ingredient-row");
+                const qtyInput = row.querySelector('input[name="qty_val[]"]');
+                return {
+                    id: input.value,
+                    food_name: row.querySelector('label strong').textContent,
+                    quantity: parseFloat(qtyInput.value) || 0,
+                    unit: row.querySelector('span').textContent.trim()
+                };
+            });
 
-            return {
-                original_ingredient_id: ingId, // IDが無効なら null になる
-                food: row.querySelector('label strong').textContent,
-                use_quantity: parseFloat(qtyInput.value) || 0,
-                unit: row.querySelector('span').textContent.trim()
-            };
-        });
-
-        // サーバーへ送信
-        const response = await fetch('../../server/page/cooking_server.php?action=start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_id: 1,
+            localStorage.setItem("cooking_items", JSON.stringify({
+                dish_name: searchKeyword,
                 items: selectedItems
-            })
+            }));
+            
+            // 💡 修正：URLのクエリパラメータに料理名（キーワード）を付けて渡す
+            window.location.href = `cooking.php?dish=${encodeURIComponent(searchKeyword)}`;
         });
 
         // 💡 このあと、fetch を使って cooking_server.php に送信する処理を追加します
