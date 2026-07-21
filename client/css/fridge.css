@@ -1,0 +1,197 @@
+/* fridge.css - refined */
+
+body{
+    background:#F8FAFC;
+    color:#1E293B;
+    font-family:"Yu Gothic","Meiryo",sans-serif;
+}
+
+/* Top */
+.topbar{
+    display:flex;
+    justify-content:flex-start;
+    align-items:left !important;
+
+    background:#fff;
+    border:1px solid #E2E8F0;
+    border-left:6px solid #3B82F6;
+
+    border-radius:18px;
+    padding:20px 24px;
+    margin-bottom:24px;
+}
+.topbar h1{
+    margin:0;
+    font-size:1.6rem;
+    font-weight:700;
+    align-items: left !important;
+}
+.topbar-subtitle{color:#64748B;}
+
+/* Filter area */
+.filter-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin:24px 0 20px;
+}
+.filter-tab{
+    border:1px solid #CBD5E1;
+    background:#fff;
+    color:#475569;
+    border-radius:999px;
+    padding:10px 18px;
+    cursor:pointer;
+    transition:.2s;
+}
+.filter-tab:hover{background:#F8FAFC;}
+.filter-tab.active{
+    background:#3B82F6;
+    border-color:#3B82F6;
+    color:#fff;
+}
+
+.display-control-panel{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    margin-bottom:20px;
+
+    background:none;
+    border:none;
+    box-shadow:none;
+    padding:0;
+}
+
+.control-group{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    gap:10px;
+}
+
+.control-label{
+    margin:0;
+    font-weight:600;
+    color:#64748B;
+}
+
+.toggle-buttons{display:flex;gap:10px;flex-wrap:wrap;}
+.toggle-btn{
+    border:none;
+    background:#EFF6FF;
+    color:#2563EB;
+    border-radius:10px;
+    padding:10px 18px;
+    cursor:pointer;
+}
+.toggle-btn.active{background:#3B82F6;color:#fff;}
+.control-select,.move-select{
+    height:40px;
+    border:1px solid #CBD5E1;
+    border-radius:10px;
+    padding:0 10px;
+}
+.move-select{width:110px;}
+
+.search-panel{margin-bottom:22px;}
+.search-input-wrapper{position:relative;}
+.search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);}
+.search-box{
+    width:100%;
+    height:52px;
+    border:1px solid #E2E8F0;
+    border-radius:14px;
+    padding:0 18px 0 48px;
+    box-sizing:border-box;
+}
+
+.status-badge-container{
+    display:inline-flex;
+    background:#EFF6FF;
+    padding:12px 18px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+.highlight-count{color:#2563EB;}
+
+.category-details{
+    background:#fff;
+    border:1px solid #E2E8F0;
+    border-radius:18px;
+    margin-bottom:20px;
+    overflow:hidden;
+}
+.category-details summary{
+    list-style:none;
+    cursor:pointer;
+    background:#F8FAFC;
+    padding:18px 24px;
+}
+.category-details summary::-webkit-details-marker{display:none;}
+.summary-content{display:flex;justify-content:space-between;}
+.category-content{padding:20px;}
+
+.food-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    padding:22px;
+    border:1px solid #E2E8F0;
+    border-radius:16px;
+    margin-bottom:16px;
+    background:#fff;
+}
+.food-row:hover{
+    border-color:#93C5FD;
+    box-shadow:0 6px 18px rgba(59,130,246,.08);
+}
+.food-main-line{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.food-name{font-size:1.3rem;font-weight:700;}
+.badges-wrapper{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+
+.badge{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;}
+.badge-cat{background:#EFF6FF;color:#2563EB;}
+.badge-loc{background:#F1F5F9;color:#475569;}
+.date-normal{background:#DBEAFE;color:#1D4ED8;}
+.date-warning{background:#FEF3C7;color:#B45309;}
+.date-expired{background:#FEE2E2;color:#B91C1C;}
+
+.food-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:nowrap;
+}
+.consume-btn,.delete-btn{
+    min-width:72px;
+    height:40px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    white-space:nowrap;
+    border:none;
+    border-radius:10px;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+}
+.consume-btn{background:#3B82F6;}
+.delete-btn{background:#64748B;}
+
+.no-data{
+    background:#fff;
+    border:1px solid #E2E8F0;
+    border-radius:18px;
+    padding:80px 20px;
+    text-align:center;
+}
+.no-data-icon{font-size:56px;display:block;margin-bottom:16px;}
+
+@media(max-width:900px){
+.food-row{flex-direction:column;align-items:flex-start;}
+.food-actions{width:100%;flex-wrap:wrap;}
+.move-select{width:100%;}
+}
