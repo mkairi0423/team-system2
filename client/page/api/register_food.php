@@ -26,52 +26,60 @@ try {
 
     $data = json_decode(file_get_contents("php://input"), true);
 
+    // 数量を取得（空なら1）
+    $quantity = preg_replace('/[^0-9]/', '', $data["quantity"] ?? '');
+
+    if ($quantity === '') {
+        $quantity = 1;
+    }
+
     $sql = "
-INSERT INTO ingredients
-(
-    user_id,
-    category_id,
-    storage_location_id,
-    food_name,
-    quantity,
-    unit,
-    expiration_date,
-    term_type
-)
-VALUES
-(
-    :user_id,
-    :category_id,
-    :storage_location_id,
-    :food_name,
-    :quantity,
-    :unit,
-    :expiration_date,
-    :term_type
-)
-";
+    INSERT INTO ingredients
+    (
+        user_id,
+        category_id,
+        storage_location_id,
+        food_name,
+        quantity,
+        unit,
+        expiration_date,
+        term_type
+    )
+    VALUES
+    (
+        :user_id,
+        :category_id,
+        :storage_location_id,
+        :food_name,
+        :quantity,
+        :unit,
+        :expiration_date,
+        :term_type
+    )
+    ";
 
     $stmt = $pdo->prepare($sql);
 
     $stmt->execute([
         ":user_id"             => $_SESSION["user_id"],
-        ":category_id"         => 4, // その他（必要に応じて変更）
-        ":storage_location_id" => 1, // 冷蔵庫（必要に応じて変更）
-        ":food_name"           => $data["name"],
-        ":quantity"            => preg_replace('/[^0-9]/', '', $data["quantity"]),
+        ":category_id"         => 4,
+        ":storage_location_id" => 1,
+        ":food_name"           => $data["name"] ?? '',
+        ":quantity"            => (int)$quantity,
         ":unit"                => "ml",
-        ":expiration_date"     => $data["expiration"],
+        ":expiration_date"     => $data["expiration"] ?? null,
         ":term_type"           => "賞味期限"
     ]);
 
     echo json_encode([
-        "success" => true
+        "success" => true,
+        "message" => "登録しました。"
     ]);
+
 } catch (Exception $e) {
 
     echo json_encode([
         "success" => false,
-        "message" => $e->getMessage(),
-        "trace" => $e->getTraceAsString()
+        "message" => $e->getMessage()
     ]);
 }
