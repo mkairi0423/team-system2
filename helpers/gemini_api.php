@@ -24,7 +24,7 @@ function loadSimpleEnv($envPath)
         if (strpos($line, '=') !== false) {
             list($key, $value) = explode('=', $line, 2);
             $key = trim($key);
-            // クォーテーションを綺麗に剥ぎ取る
+            // クォーテーションを綺麗に剥ぎ取るA
             $value = trim(trim($value), '"\'');
 
             $_ENV[$key] = $value;
