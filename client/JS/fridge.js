@@ -1,10 +1,39 @@
 // 削除
-function deleteFood(button) {
+// 食材の「消費」または「廃棄」
+function deleteFood(ingredientId, actionStatus) {
+    const message = actionStatus === '消費済' ? 'この食材を消費しましたか？' : 'この食材を廃棄しますか？';
+    if (!confirm(message)) return;
 
-    if (confirm("この食材を削除しますか？")) {
-        button.closest(".food-row").remove();
-    }
-
+    fetch('../../server/page/fridge_server.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `ingredient_id=${ingredientId}&status=${encodeURIComponent(actionStatus)}`
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('HTTPエラーが発生しました。');
+        return res.text();
+    })
+    .then(text => {
+        try {
+            const data = JSON.parse(text);
+            if (data.success) {
+                // 配列（dbIngredients）から該当の食材を削除して再描画
+                const index = dbIngredients.findIndex(ing => ing.ingredient_id == ingredientId);
+                if (index !== -1) {
+                    dbIngredients.splice(index, 1);
+                }
+                renderIngredients(); // 画面を更新
+            } else {
+                alert('処理に失敗しました: ' + data.error);
+            }
+        } catch (e) {
+            alert('サーバーから不正なレスポンスがありました:\n' + text);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('通信エラーが発生しました。');
+    });
 }
 
 // 冷蔵庫 → 冷凍庫

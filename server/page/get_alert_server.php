@@ -21,6 +21,7 @@ function getUrgentIngredients(PDO $pdo, int $user_id, int $limit = 6): array
         FROM ingredient i
         JOIN storage_location s ON i.storage_location_id = s.location_id
         WHERE i.user_id = :user_id 
+          AND i.status = '未消費'
           AND s.is_frozen = 0 
           AND i.expiration_date IS NOT NULL
         ORDER BY i.expiration_date ASC
@@ -39,6 +40,7 @@ function getUrgentIngredients(PDO $pdo, int $user_id, int $limit = 6): array
         JOIN storage_location s ON i.storage_location_id = s.location_id
         JOIN category c ON i.category_id = c.category_id
         WHERE i.user_id = :user_id 
+          AND i.status = '未消費'
           AND s.is_frozen = 1 
           AND i.frozen_at IS NOT NULL
         ORDER BY days_left ASC
@@ -82,7 +84,7 @@ function getUrgentIngredients(PDO $pdo, int $user_id, int $limit = 6): array
 function getTotalIngredientCount(PDO $pdo, int $user_id): int
 {
     try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM ingredient WHERE user_id = :user_id");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM ingredient WHERE user_id = :user_id AND status = '未消費'");
         $stmt->execute([':user_id' => $user_id]);
         return (int)$stmt->fetchColumn();
     } catch (PDOException $e) {
@@ -103,6 +105,7 @@ function getUrgentCount(PDO $pdo, int $user_id): int
             FROM ingredient i
             JOIN storage_location s ON i.storage_location_id = s.location_id
             WHERE i.user_id = :user_id 
+              AND i.status = '未消費'
               AND s.is_frozen = 0 
               AND i.expiration_date IS NOT NULL
               AND DATEDIFF(i.expiration_date, CURRENT_DATE) <= 3
@@ -141,7 +144,9 @@ function getFrozenStockCount(PDO $pdo, int $user_id): int
             SELECT COUNT(*) 
             FROM ingredient i
             JOIN storage_location s ON i.storage_location_id = s.location_id
-            WHERE i.user_id = :user_id AND s.is_frozen = 1
+            WHERE i.user_id = :user_id 
+              AND i.status = '未消費'
+              AND s.is_frozen = 1
         ";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':user_id' => $user_id]);
