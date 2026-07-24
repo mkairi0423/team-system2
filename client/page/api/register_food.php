@@ -7,22 +7,16 @@
 session_start();
 
 require_once __DIR__ . "/../../../helpers/def.php";
+require_once __DIR__ . "/../../../helpers/utils.php";
 
 header("Content-Type: application/json; charset=UTF-8");
 
 try {
 
-    $pdo = new PDO(
-        "mysql:host=" . DB_HOST .
-            ";dbname=" . DB_NAME .
-            ";charset=" . DB_CHARSET,
-        DB_USER,
-        DB_PASS,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]
-    );
+    $pdo = getPDO();
+
+    // トランザクション開始
+    $pdo->beginTransaction();
 
     $data = json_decode(file_get_contents("php://input"), true);
 
@@ -34,7 +28,7 @@ try {
     }
 
     $sql = "
-    INSERT INTO ingredients
+    INSERT INTO ingredient
     (
         user_id,
         category_id,
@@ -71,13 +65,28 @@ try {
         ":term_type"           => "賞味期限"
     ]);
 
+    // 登録されたIDを取得しておく
+    $lastId = $pdo->lastInsertId();
+
+    // コミット
+    $pdo->commit();
+
+    // 成功レスポンス（1回だけ出力する）
     echo json_encode([
         "success" => true,
-        "message" => "登録しました。"
+        "message" => "登録しました。",
+        "lastId"  => $lastId
     ]);
 
 } catch (Exception $e) {
 
+    // トランザクション中ならロールバック
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+    // エラー時のレスポンス（HTTPステータスコード500を設定しておくとより親切です）
+    http_response_code(500);
     echo json_encode([
         "success" => false,
         "message" => $e->getMessage()
