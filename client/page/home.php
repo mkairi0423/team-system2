@@ -50,13 +50,6 @@ foreach ($urgent_ingredients as $food) {
         <h1>ホーム</h1>
     </div>
 
-    <div class="hero">
-        <h2>AIが<?= $alert_count ?>件の食品ロスを検知しました</h2>
-        <p>
-            賞味期限の近い食材を使ったレシピを提案できます。
-        </p>
-    </div>
-
     <div class="section">
         <div class="panel">
             <h2>賞味期限アラート</h2>
@@ -146,12 +139,12 @@ foreach ($urgent_ingredients as $food) {
 
         <div class="card">
             <h3>冷凍ストック</h3>
-            <div class="value"><?= $frozen_count ?>品</div>
+            <div class="value"><?= $frozen_count ?></div>
         </div>
 
         <div class="card">
             <h3>お気に入りレシピ</h3>
-            <div class="value"><?= $fav_recipe_count ?>件</div>
+            <div class="value"><?= $fav_recipe_count ?></div>
         </div>
 
     </div>

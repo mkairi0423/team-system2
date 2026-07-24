@@ -28,27 +28,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ingredientId = $_POST['ingredient_id'] ?? null;
 
     // ① 消費・廃棄の処理
-    if (isset($_POST['status'])) {
-        $status = $_POST['status'];
-        if (!$ingredientId) {
-            echo json_encode(['success' => false, 'error' => '必要なパラメータが不足しています。']);
-            exit;
-        }
-        try {
-            $sql = "UPDATE ingredient SET status = :status WHERE ingredient_id = :ingredient_id AND user_id = :user_id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                ':status' => $status,
-                ':ingredient_id' => $ingredientId,
-                ':user_id' => $_SESSION['user_id']
-            ]);
-            echo json_encode(['success' => true]);
-            exit;
-        } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'error' => 'DBエラー: ' . $e->getMessage()]);
-            exit;
-        }
+    // ① 消費・廃棄の処理
+if (isset($_POST['status'])) {
+    $status = $_POST['status'];
+    if (!$ingredientId) {
+        echo json_encode(['success' => false, 'error' => '必要なパラメータが不足しています。']);
+        exit;
     }
+
+    // ENUM値のバリデーションチェック
+    if (!in_array($status, ['未消費', '消費済', '廃棄'], true)) {
+        echo json_encode(['success' => false, 'error' => '不正なステータスです。']);
+        exit;
+    }
+
+    try {
+        $sql = "UPDATE ingredient 
+                SET status = :status 
+                WHERE ingredient_id = :ingredient_id AND user_id = :user_id";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':status'        => $status,
+            ':ingredient_id' => $ingredientId,
+            ':user_id'       => $_SESSION['user_id']
+        ]);
+
+        echo json_encode(['success' => true]);
+        exit;
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'DBエラー: ' . $e->getMessage()]);
+        exit;
+    }
+}
 
     // ② 移動の処理
     if (isset($_POST['location_id'])) {
@@ -67,16 +79,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            $frozenAt = $loc['is_frozen'] == 1 ? date('Y-m-d') : null;
+            $frozenAt = ($loc['is_frozen'] == 1) ? date('Y-m-d') : null;
 
-            $sql = "UPDATE ingredient SET storage_location_id = :location_id, frozen_at = :frozen_at WHERE ingredient_id = :ingredient_id AND user_id = :user_id";
+            $sql = "UPDATE ingredient 
+                    SET storage_location_id = :location_id, frozen_at = :frozen_at 
+                    WHERE ingredient_id = :ingredient_id";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
-                ':location_id' => $locationId,
-                ':frozen_at' => $frozenAt,
-                ':ingredient_id' => $ingredientId,
-                ':user_id' => $_SESSION['user_id']
+                ':location_id'  => $locationId,
+                ':frozen_at'     => $frozenAt,
+                ':ingredient_id' => $ingredientId
             ]);
+            
             echo json_encode(['success' => true]);
             exit;
         } catch (PDOException $e) {

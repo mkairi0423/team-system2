@@ -44,7 +44,7 @@ hasUserId();
                 if (!recipes || recipes.length === 0) {
                     container.innerHTML = `
                         <div class="card loading-card" style="border-style: dashed; width: 100%; grid-column: 1 / -1;">
-                            <p>お気に入り登録されたレシピはまだありません。</p>
+                            <p>お気に入り登録されたレシピはありません</p>
                         </div>
                     `;
                     return;

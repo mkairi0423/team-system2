@@ -24,9 +24,13 @@ async function loadCookingHistory() {
         const rawHistory = result.data; // サーバーから届いた生データ
 
         if (!rawHistory || rawHistory.length === 0) {
-            container.innerHTML = '<p class="no-history" style="text-align:center; padding:40px; color:#64748b;">まだ料理履歴がありません。最初の料理を作ってみましょう！</p>';
-            return;
-        }
+    container.innerHTML = `
+        <div class="card loading-card" style="border-style: dashed; width: 100%; grid-column: 1 / -1;">
+            <p>料理履歴はありません</p>
+        </div>
+    `;
+    return;
+}
 
         // バラバラの行データを「料理名＋日時」ごとにグループ化
         const groupedHistory = [];
