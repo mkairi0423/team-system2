@@ -5,23 +5,22 @@ require_once __DIR__ . "/../../helpers/utils.php";
 require_once __DIR__ . "/../../helpers/def.php";
 hasUserId();
 
-include "template/header.php";
-include "template/sidebar.php";
-
 $title = "調理中・確認画面";
 $page = "cooking";
 
 $dish_name = isset($_GET['dish']) ? $_GET['dish'] : '料理確認中...';
 
+include "template/header.php";
+include "template/sidebar.php";
+
 ?>
 
-<body>
-
-    <input type="hidden" id="current-user-id" value="1">
-
+<div class="main">
     <div class="cooking-container">
 
-        <h2 id="cooking-recipe-name">🍳 <?php echo htmlspecialchars($dish_name); ?></h2>
+        <input type="hidden" id="current-user-id" value="1">
+
+        <h2 id="cooking-recipe-name">🍳 <?php echo htmlspecialchars($dish_name, ENT_QUOTES, 'UTF-8'); ?></h2>
         <p class="description-text">AIが提案した食材リストです。分量の変更を追加をして調理を開始しましょう！</p>
 
         <section class="ingredient-section">
@@ -61,8 +60,7 @@ $dish_name = isset($_GET['dish']) ? $_GET['dish'] : '料理確認中...';
                         <span id="new-food-unit-display" class="unit-display">個</span>
                     </div>
 
-                    <button type="button" id="btn-add-ingredient" 
-                    class="btn-add">
+                    <button type="button" id="btn-add-ingredient" class="btn-add">
                         リストに追加
                     </button>
                 </div>
@@ -74,9 +72,10 @@ $dish_name = isset($_GET['dish']) ? $_GET['dish'] : '料理確認中...';
         <button type="button" id="btn-cooking-complete" class="btn-complete">
             🍳 料理完了
         </button>
+
     </div>
+</div>
 
-    <script src="../js/cooking.js"></script>
-</body>
+<script src="../js/cooking.js"></script>
 
-</html>
+<?php include "template/footer.php"; ?>
